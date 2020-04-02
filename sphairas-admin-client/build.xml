@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="sphairas-app" basedir=".">
+    <description>Builds the module suite sphairas-app.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <target name="build-launchers" depends="suite.build-launchers">
+        <replace file="${build.launcher.dir}/etc/${app.name}.conf"
+                 token="-J-Xms24m -J-Xmx64m" value="-J-Xms512m -J-Xmx2048m"/>
+    </target>
+    <target name="build" depends="build-all,suite.build"/>
+    <target name="clean" depends="clean-all,suite.clean"/>
+    <target name="nbms" depends="nbms-all,suite.nbms,push-nbms" />
+    <target name="build-all" depends="-init,init-cluster" if="${build-clean.all}">
+        <echo>Building ${sphairas.cluster.converted}</echo>
+        <subant target="build" buildpath="${sphairas.cluster.converted}">
+            <!--<property name="javafx.platform.select" value="${harness.taskdefs.done}"/>-->
+        </subant>
+    </target>
+    <target name="clean-all" depends="-init,init-cluster" if="${build-clean.all}">
+        <echo>Cleaning ${sphairas.cluster.converted}</echo>
+        <subant target="clean" buildpath="${sphairas.cluster.converted}"/>
+    </target>
+    <target name="nbms-all" depends="-init,init-cluster" if="${build-clean.all}">
+        <echo>Creating NBMs for ${sphairas.cluster.converted}</echo>
+        <subant target="nbms" buildpath="${sphairas.cluster.converted}">
+            <!--<property name="javafx.platform.select" value="${harness.taskdefs.done}"/>-->
+        </subant>
+    </target>
+    <target name="init-cluster">
+        <path id="sphairas.cluster" path="${sphairas.cluster.ordered}"/>
+        <pathconvert property="sphairas.cluster.converted" refid="sphairas.cluster">
+            <globmapper from="*" to="*/build.xml"/>
+        </pathconvert>
+    </target>
+    <target name="build-installers" depends="-init">
+        <property name="installer.harness.dir" value="${basedir}/harness"/>
+        <!--<property name="build.platforms" value="windows linux macosx"/>--> 
+        <property name="build.platforms" value="windows linux"/> 
+        <ant antfile="${installer.harness.dir}/nbi/stub/template.xml" target="build">
+            <property name="suite.location" value="${basedir}/" />
+            <property name="installer.harness.dir" value="${installer.harness.dir}" />
+            <property file="nbproject/installer.properties" />
+            <property name="generator-jdk-location-forward-slashes" value="${java.home}"/>
+            <property name="generate.installer.for.platforms" value="${build.platforms}"/>
+            <property name="build" value="${build.platforms}"/>
+            <property name="pack200.enabled" value="false"/>
+            <property name="nbi.license.file" value="${auxiliary.org-netbeans-modules-apisupport-installer.license-file}"/>
+        </ant>
+    </target>
+    <target name="push-nbms" >
+        <property name="pushnbms" location="${basedir}/pushnbms.sh"/>
+        <exec executable="${pushnbms}" dir="${basedir}/../" />
+    </target>
+</project>

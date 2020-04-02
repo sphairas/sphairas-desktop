@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Editors">
+        <folder name="FontsColors">
+            <folder name="NetBeans">
+                <file name="org-netbeans-modules-editor-highlight-colorings.xml" url="editor-highlight-colorings.xml">
+                    <attr name="nbeditor-settings-ColoringType" stringvalue="highlight"/>
+                </file>
+                <file name="org-netbeans-modules-editor-settings-CustomFontsColors-tokenColorings.xml" url="editor-settings-CustomFontsColors-tokenColorings.xml">
+                    <attr name="nbeditor-settings-ColoringType" stringvalue="token"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="Toolbars">
+            <folder name="Default">
+                <file name="jump-list-last-edit_hidden"/>
+                <file name="jump-list-next_hidden"/>
+                <file name="jump-list-prev_hidden"/>
+                <file name="shift-line-left_hidden"/>
+                <file name="shift-line-right_hidden"/>
+                <file name="toggle-rectangular-selection_hidden"/>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Loaders">
+        <folder name="application">
+            <folder name="pdf">
+                <folder name="Factories"/>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <file name="BuildProject_hidden"/>
+        <folder name="Edit">
+            <file name="SeparatorAfterProjectsSearch.instance_hidden"/>
+            <file name="clipboard-history.shadow_hidden"/>
+            <file name="org-netbeans-modules-editor-MainMenuAction$PasteFormattedAction.instance_hidden"/>
+            <file name="org-netbeans-modules-editor-MainMenuAction$SelectAllAction.instance_hidden"/>
+            <file name="org-netbeans-modules-editor-MainMenuAction$SelectIdentifierAction.instance_hidden"/>
+            <file name="org-netbeans-modules-editor-MainMenuAction$StartMacroRecordingAction.instance_hidden"/>
+            <file name="org-netbeans-modules-editor-MainMenuAction$StopMacroRecordingAction.instance_hidden"/>
+        </folder>
+        <file name="export-data-sep.instance">
+            <attr name="position" intvalue="1480"/>
+            <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+        </file>
+        <folder name="File">
+            <file name="org-netbeans-modules-editor-ExportHtmlAction.shadow_hidden"/>
+            <file name="org-netbeans-modules-print-action-PageSetupAction.shadow_hidden"/>
+            <file name="org-netbeans-modules-print-action-PrintAction.shadow_hidden"/>
+            <file name="org-netbeans-modules-project-ui-actions-CloseAllProjectsAction.shadow_hidden"/>
+            <file name="org-netbeans-modules-project-ui-actions-CloseOtherProjectsAction.shadow_hidden"/>
+        </folder>
+        <file name="GoTo_hidden"/>
+        <file name="Refactoring_hidden"/>
+        <file name="RunProject_hidden"/>
+        <file name="Source_hidden"/>
+        <folder name="Tools">
+            <file name="CloudManagerAction3.shadow_hidden"/>
+            <file name="I18N_hidden"/>
+            <file name="JavaPlatformsCustomizerAction.shadow_hidden"/>
+            <file name="LibrariesCustomizerAction.shadow_hidden"/>
+            <file name="PaletteManager_hidden"/>
+            <file name="Separator1.instance_hidden"/>
+            <file name="Separator2.instance_hidden"/>
+            <file name="ServerManagerAction3.shadow_hidden"/>
+            <file name="VariablesCustomizerAction.shadow_hidden"/>
+            <file name="org-netbeans-modules-xml-catalog-CatalogAction.shadow_hidden"/>
+            <file name="org-openide-actions-ToolsAction.shadow_hidden"/>
+        </folder>
+        <file name="Versioning_hidden"/>
+        <folder name="Window">
+            <file name="Debug_hidden"/>
+            <file name="SwitchToRecentDocumentAction.shadow_hidden"/>
+            <folder name="Tools">
+                <file name="JavadocAction.shadow_hidden"/>
+                <file name="ReporterResultAction.shadow_hidden"/>
+                <file name="ShowPaletteAction.shadow_hidden"/>
+                <file name="org-netbeans-core-windows-actions-GlobalPropertiesAction.shadow_hidden"/>
+                <file name="org-netbeans-modules-gsf-testrunner-ui-ResultWindowOpenAction.shadow_hidden"/>
+            </folder>
+            <file name="Web_hidden"/>
+        </folder>
+        <folder name="Help">
+            <file name="netbeans-kb.url_hidden"/>
+            <file name="sphairas-doku.url" url="sphairas-doku.url">
+                <attr name="displayName" bundlevalue="org.thespheres.betula.ui.Bundle#sphairas-doku.url"/>
+                <attr name="position" intvalue="300"/>
+            </file>         
+        </folder> <!-- Help -->
+    </folder>    
+    <folder name="OptionsDialog">
+        <folder name="Advanced">
+            <file name="TermAdvancedOption.instance_hidden"/>
+            <file name="org-netbeans-core-ui-options-filetypes-FileAssociationsOptionsPanelController.instance_hidden"/>
+        </folder>
+        <file name="Editor_hidden"/>
+        <file name="FontsAndColors.instance_hidden"/>
+        <file name="Keymaps.instance_hidden"/>
+    </folder>
+    <folder name="Services">
+        <folder name="MIMEResolver"/>
+    </folder>
+    <folder name="Templates">
+        <folder name="Other">
+            <attr name="displayName" bundlevalue="org.thespheres.betula.ui.Bundle#Templates/Other/"/>
+        </folder>
+        <folder name="Project">
+            <file name="Maven2_hidden"/>
+            <file name="Samples_hidden"/>
+            <file name="Standard_hidden"/>
+        </folder>
+        <folder name="Betula">
+            <attr name="displayName" bundlevalue="org.thespheres.betula.ui.Bundle#Templates/Betula/"/>
+        </folder>
+    </folder>
+    <folder name="Toolbars">
+        <file name="Build_hidden"/>
+        <file name="Debug_hidden"/>
+        <file name="Memory_hidden"/>
+        <folder name="QuickSearch">
+            <attr name="SystemFileSystem.localizingBundle" stringvalue="org.thespheres.betula.ui.Bundle"/>
+            <file name="org-netbeans-modules-quicksearch-QuickSearchAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-netbeans-modules-quicksearch-QuickSearchAction.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="WarmUp">
+        <file name="org-thespheres-betula-ui-platform-StartUpDiagnostics.instance"/>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Modes">
+            <file name="markers.wsmode" url="markers.wsmode"/>
+        </folder>
+    </folder>
+</filesystem>

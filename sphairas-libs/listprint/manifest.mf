@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: org.thespheres.betula.listprint
+OpenIDE-Module-Implementation-Version: 31
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/listprint/Bundle.properties
+

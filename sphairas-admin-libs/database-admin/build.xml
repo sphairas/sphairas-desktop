@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="org.thespheres.betula.admin.database"
+         default="netbeans"
+         basedir=".">
+    <description>Builds, tests, and runs the project org.thespheres.betula.admin.database.</description>
+    <import file="nbproject/build-impl.xml"/>
+   
+    <target name="module-xml-regular" if="is.regular" depends="-init-startlevel">
+        <mkdir dir="${cluster}/config/Modules"/>
+        <createmodulexml xmldir="${cluster}/config/Modules" startlevel="${module.startlevel}" strictcheck="${check.module.startlevel}">
+            <disabled dir="${cluster}">
+                <include name="${module.jar}"/>
+            </disabled>
+        </createmodulexml>
+    </target>
+    
+</project>

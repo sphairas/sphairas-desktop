@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<NdsZeugnisSekundarstufe xmlns:c="http://www.thespheres.org/xsd/betula/container.xsd" 
+                         xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" 
+                         xmlns="http://www.thespheres.org/xsd/niedersachsen/zeugnisse.xsd" 
+                         xmlns:mads="http://www.loc.gov/mads/v2" 
+                         xmlns:ta="http://www.thespheres.org/xsd/betula/target-assessment.xsd">
+    <Zweitausfertigung>
+        <SiegelSchule>Siegel der Kooperativen Gesamtschule Tarmstedt</SiegelSchule>
+        <Schulleiter>gezeichnet OStD Wolff</Schulleiter>
+        <Datum>31. März 2017</Datum>
+    </Zweitausfertigung>
+    <Kopf>
+        <Schulname>Rübezahl-Schule</Schulname>
+        <Schulname2>– Schulzentrum –</Schulname2>
+        <LogoRechts>url('schule.png')</LogoRechts>
+        <Zeugnisart>Zeugnis</Zeugnisart>
+        <Halbjahrsangaben>
+            <Links>Schuljahr 2016/2017</Links>
+            <Mitte>1. und 2. Halbjahr</Mitte>
+            <Rechts>Klasse 10b</Rechts>
+        </Halbjahrsangaben>
+        <Vorname-Nachname>Rebecca Antebreit</Vorname-Nachname>
+        <Herkunftsangaben>
+            <Links>geboren am 12. März 2001</Links>
+            <Rechts>in Berlin</Rechts>
+        </Herkunftsangaben>
+        <Schulabschluss>Erweiterter Sekundarabschluss I</Schulabschluss>
+        <Versaeumnisse>
+            <Links>versäumte Unterrichtstage im 1. und 2. Halbjahr: 3</Links>
+            <Rechts>davon unentschuldigt: 0</Rechts>
+        </Versaeumnisse>
+    </Kopf>
+    <Bereich>
+        <Unterricht>Lehrgänge</Unterricht>
+        <Zeile>
+            <Feld Position="Links">
+                <Fach>Mathematik</Fach>
+                <Noteneintrag>?</Noteneintrag>
+            </Feld>
+            <Feld Position="Rechts">
+                <Fach>Erdkunde</Fach>
+                <Noteneintrag>?</Noteneintrag>
+            </Feld>
+        </Zeile>
+        <Zeile>
+            <Feld Position="Links">
+                <Fach>Spanisch</Fach>
+                <Noteneintrag>?</Noteneintrag>
+            </Feld>
+            <Feld Position="Rechts">
+                <Fach>Biologie</Fach>
+                <Noteneintrag>?</Noteneintrag>
+            </Feld>
+        </Zeile>
+        <Zeile>
+            <Feld Position="Links">
+                <Fach>Politik-Wirtschaft</Fach>
+                <Noteneintrag>n.e.</Noteneintrag>
+            </Feld>
+            <Feld Position="Rechts">
+                <Fach>Sport</Fach>
+                <Noteneintrag>?</Noteneintrag>
+            </Feld>
+        </Zeile>
+    </Bereich>
+    <Zusatz Titel="Teilnahme an Arbeitsgemeinschaften:" Position="2000"></Zusatz>
+    <Zusatz Titel="Arbeitsverhalten:" Position="5000">Rebeccas Arbeitsverhalten entspricht den Erwartungen in vollem Umfang.</Zusatz>
+    <Zusatz Titel="Sozialverhalten:" Position="6000">Rebeccas Sozialverhalten entspricht den Erwartungen in vollem Umfang.</Zusatz>
+    <Zusatz Titel="Bemerkungen:" Position="10000"></Zusatz>
+    <Ort-Datum>Rübenberge, den 31. März 2017</Ort-Datum>
+</NdsZeugnisSekundarstufe>

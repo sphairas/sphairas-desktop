@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!DOCTYPE tc-group PUBLIC '-//NetBeans//DTD Top Component in Group Properties 2.0//EN' 'http://www.netbeans.org/dtds/tc-group2_0.dtd'>
+
+<tc-group version="2.0">
+    <module name="org.thespheres.betula.admin.units" spec="0.2.1" />
+    <tc-id id="TicketsComponent2" />
+    <open-close-behavior open="true" close="true" />
+</tc-group>

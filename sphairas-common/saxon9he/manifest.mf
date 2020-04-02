@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: net.sf.saxon
+OpenIDE-Module-Implementation-Version: 9
+OpenIDE-Module-Localizing-Bundle: net/sf/saxon/Bundle.properties
+OpenIDE-Module-Provides: javax.xml.transform.Transformer.2.0
+

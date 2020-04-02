@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: org.thespheres.betula.beansext.ui
+OpenIDE-Module-Implementation-Version: 15
+OpenIDE-Module-Layer: org/thespheres/betula/beansext/ui/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/beansext/ui/Bundle.properties
+OpenIDE-Module-Provides: TrustedSigneeAction
+

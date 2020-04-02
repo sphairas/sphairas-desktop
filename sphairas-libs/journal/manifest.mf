@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.journal
+OpenIDE-Module-Implementation-Version: 25
+OpenIDE-Module-Layer: org/thespheres/betula/journal/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/journal/Bundle.properties
+OpenIDE-Module-Requires: AssessmentConvention.mitarbeit2, org.openide.windows.WindowManager
+

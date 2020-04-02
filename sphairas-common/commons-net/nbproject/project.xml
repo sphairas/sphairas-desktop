@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.apisupport.project</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
+            <code-name-base>org.apache.commons.net</code-name-base>
+            <suite-component/>
+            <module-dependencies/>
+            <public-packages>
+                <package>org.apache.commons.net</package>
+                <package>org.apache.commons.net.bsd</package>
+                <package>org.apache.commons.net.chargen</package>
+                <package>org.apache.commons.net.daytime</package>
+                <package>org.apache.commons.net.discard</package>
+                <package>org.apache.commons.net.echo</package>
+                <package>org.apache.commons.net.finger</package>
+                <package>org.apache.commons.net.ftp</package>
+                <package>org.apache.commons.net.ftp.parser</package>
+                <package>org.apache.commons.net.imap</package>
+                <package>org.apache.commons.net.io</package>
+                <package>org.apache.commons.net.nntp</package>
+                <package>org.apache.commons.net.ntp</package>
+                <package>org.apache.commons.net.pop3</package>
+                <package>org.apache.commons.net.smtp</package>
+                <package>org.apache.commons.net.telnet</package>
+                <package>org.apache.commons.net.tftp</package>
+                <package>org.apache.commons.net.time</package>
+                <package>org.apache.commons.net.util</package>
+                <package>org.apache.commons.net.whois</package>
+            </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-net-3.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-net-3.3.jar</binary-origin>
+            </class-path-extension>
+        </data>
+    </configuration>
+</project>

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: org.tukaani.xz
+OpenIDE-Module-Localizing-Bundle: org/tukaani/xz/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.8
+

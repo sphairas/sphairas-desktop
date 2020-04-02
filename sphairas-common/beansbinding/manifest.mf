@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: org.jdesktop.beansbinding/1
+OpenIDE-Module-Implementation-Version: 122
+OpenIDE-Module-Localizing-Bundle: org/jdesktop/beansbinding/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.26.1.122
+

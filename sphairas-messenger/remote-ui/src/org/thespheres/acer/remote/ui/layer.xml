@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>    
+    <folder name="Editors">
+        <folder name="Toolbars">
+            <folder name="Default"/>
+        </folder>
+        <folder name="text">
+            <folder name="acer-edit-message">
+                <file name="EditorKit.instance">
+                    <attr name="instanceClass" stringvalue="org.netbeans.modules.editor.NbEditorKit"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="messages">
+            <attr name="displayName" bundlevalue="org.thespheres.acer.remote.ui.Bundle#Menu/messages"/>
+            <attr intvalue="800" name="position"/>
+        </folder>
+    </folder>    
+</filesystem>

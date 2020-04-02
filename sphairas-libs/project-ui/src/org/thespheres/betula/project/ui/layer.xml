@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Menu">
+        <folder name="betula-project-local">
+            <attr name="displayName" bundlevalue="org.thespheres.betula.project.ui.Bundle#Menu/betula-project-local"/>
+            <attr intvalue="400" name="position"/>
+        </folder>    
+        <folder name="Window">
+            <file name="SeparatorBeforeBetulaLocal.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="10000"/>
+            </file>
+            <folder name="betula-project-local-windows">
+                <attr name="displayName" bundlevalue="org.thespheres.betula.project.ui.Bundle#Menu/Window/betula-project-local-windows"/>
+                <attr intvalue="10100" name="position"/>
+            </folder>
+        </folder>   
+    </folder>
+    <folder name="Templates">
+        <folder name="Project">
+            <folder name="Kursmappen">
+                <attr bundlevalue="org.thespheres.betula.project.ui.wizard.Bundle#betula.project.templates.folder" name="displayName"/>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<c:marker-convention-definition 
+    xmlns:c="http://www.thespheres.org/xsd/betula/convention.xsd" 
+    xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" 
+    name="gs.xxx.textzeugnisse.klasse2.deutsch">
+    <display-name>Deutsch</display-name>
+    <description>Deutsch (Textzeugnisse, 2. Klasse)</description>
+    <subset subset="sprechenundzuhoeren">
+        <display-category>Sprechen und Zuhören</display-category>
+        <marker-definitions>
+            <c:marker-definition id="a">
+                <message>beteiligt sich an Gesprächen</message>
+            </c:marker-definition>       
+            <c:marker-definition id="b">
+                <message>erzählt zusammenhängend und verständlich</message>
+            </c:marker-definition>    
+            <c:marker-definition id="c">
+                <message>verfügt über einen altersangemessenen Wortschatz</message>
+            </c:marker-definition>    
+            <c:marker-definition id="d">
+                <message>spricht deutlich und in angemessener Lautstärke</message>
+            </c:marker-definition>    
+            <c:marker-definition id="e">
+                <message>hört anderen verstehend zu</message>
+            </c:marker-definition>    
+            <c:marker-definition id="f">
+                <message>hält sich an die Gesprächsregeln</message>
+            </c:marker-definition>    
+            <c:marker-definition id="g">
+                <message>kann etwas Gelerntes auswendig aufsagen</message>
+            </c:marker-definition>         
+        </marker-definitions>
+    </subset>
+    <subset subset="lesen">
+        <display-category>Lesen</display-category>
+        <marker-definitions>
+            <c:marker-definition id="a">
+                <message>liest geübte Texte flüssig vor</message>
+            </c:marker-definition>       
+            <c:marker-definition id="b">
+                <message>liest unbekannte Texte flüssig vor</message>
+            </c:marker-definition>    
+            <c:marker-definition id="c">
+                <message>erliest schriftliche Arbeitsaufträge und handelt danach</message>
+            </c:marker-definition>    
+            <c:marker-definition id="d">
+                <message>erliest selbstständig kurze altersangemessene Texte und beantwortet Fragen zum Text</message>
+            </c:marker-definition>    
+        </marker-definitions>
+    </subset>
+    <subset subset="schreiben">
+        <display-category>Schreiben</display-category>
+        <marker-definitions>
+            <c:marker-definition id="a">
+                <message>schreibt Texte richtig ab</message>
+            </c:marker-definition>       
+            <c:marker-definition id="b">
+                <message>schreibt Sätze mit geübtem Wortschatz nach Ansage fehlerfrei auf</message>
+            </c:marker-definition>    
+            <c:marker-definition id="c">
+                <message>wendet die eingeführten Rechtschreibregeln an</message>
+            </c:marker-definition>    
+            <c:marker-definition id="d">
+                <message>schreibt in formgerechter, lesbarer Schrift</message>
+            </c:marker-definition>    
+            <c:marker-definition id="e">
+                <message>kann die Druckschrift in die Schreibschrift übertragen</message>
+            </c:marker-definition>    
+            <c:marker-definition id="f">
+                <message>formuliert selbständig verständliche Sätze</message>
+            </c:marker-definition>    
+            <c:marker-definition id="g">
+                <message>schreibt eigene Geschichten folgerichtig auf</message>
+            </c:marker-definition>     
+            <c:marker-definition id="h">
+                <message>hält Satzgrenzen ein</message>
+            </c:marker-definition>   
+            <c:marker-definition id="i">
+                <message>verwendet das Wörterbuch als Rechtschreibhilfe</message>
+            </c:marker-definition>       
+        </marker-definitions>
+    </subset>
+</c:marker-convention-definition>

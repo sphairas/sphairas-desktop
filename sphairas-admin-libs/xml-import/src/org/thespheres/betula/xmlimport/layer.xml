@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Menu">
+        <folder name="import-export">
+            <attr name="displayName" bundlevalue="org.thespheres.betula.xmlimport.Bundle#Menu/import-export"/>
+            <attr intvalue="900" name="position"/>
+            <file name="after-import-sep.instance">
+                <attr name="position" intvalue="10000"/>
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>

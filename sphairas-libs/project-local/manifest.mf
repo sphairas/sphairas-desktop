@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.project.local
+OpenIDE-Module-Implementation-Version: 38
+OpenIDE-Module-Layer: org/thespheres/betula/project/local/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/project/local/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+

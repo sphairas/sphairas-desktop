@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.termreport
+OpenIDE-Module-Implementation-Version: 123
+OpenIDE-Module-Layer: org/thespheres/betula/termreport/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/termreport/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+

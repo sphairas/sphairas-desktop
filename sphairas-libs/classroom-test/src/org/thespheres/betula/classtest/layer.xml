@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Windows2">
+        <folder name="Groups">
+            <file name="ClasstestGroup.wsgrp" url="module2/ClasstestGroup.xml"/>
+            <folder name="ClasstestGroup">
+                <file name="AssessTopComponent.wstcgrp" url="module2/AssessTopComponent.xml"/>
+                <file name="ChartTopComponent.wstcgrp" url="chart/ChartTopComponent.xml"/>
+                <file name="navigatorTC.wstcgrp" url="navigatorTC.wstcgrp" />
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.apisupport.project</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
+            <code-name-base>com.univocity.parsers</code-name-base>
+            <suite-component/>
+            <module-dependencies/>
+            <public-packages>
+                <package>com.univocity.parsers.annotations</package>
+                <package>com.univocity.parsers.annotations.helpers</package>
+                <package>com.univocity.parsers.common</package>
+                <package>com.univocity.parsers.common.beans</package>
+                <package>com.univocity.parsers.common.fields</package>
+                <package>com.univocity.parsers.common.input</package>
+                <package>com.univocity.parsers.common.input.concurrent</package>
+                <package>com.univocity.parsers.common.iterators</package>
+                <package>com.univocity.parsers.common.processor</package>
+                <package>com.univocity.parsers.common.processor.core</package>
+                <package>com.univocity.parsers.common.record</package>
+                <package>com.univocity.parsers.common.routine</package>
+                <package>com.univocity.parsers.conversions</package>
+                <package>com.univocity.parsers.csv</package>
+                <package>com.univocity.parsers.fixed</package>
+                <package>com.univocity.parsers.tsv</package>
+            </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/univocity-parsers-2.8.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/univocity-parsers-2.8.1.jar</binary-origin>
+            </class-path-extension>
+        </data>
+    </configuration>
+</project>

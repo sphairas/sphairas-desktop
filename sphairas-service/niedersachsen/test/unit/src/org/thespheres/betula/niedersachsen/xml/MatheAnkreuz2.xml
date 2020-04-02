@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<c:marker-convention-definition 
+    xmlns:c="http://www.thespheres.org/xsd/betula/convention.xsd" 
+    xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" 
+    name="gs.xxx.textzeugnisse.klasse2.mathe">
+    <display-name>Mathematik</display-name>
+    <description>Mathematik (Textzeugnisse, 2. Klasse)</description>
+    <subset subset="zahlenundoperationen">
+        <display-category>Zahlen und Operationen</display-category>
+        <marker-definitions>
+            <c:marker-definition id="a">
+                <message>hat den Zahlenraum bis 100 erfasst</message>
+            </c:marker-definition>       
+            <c:marker-definition id="b">
+                <message>addiert im Zahlenraum bis 100 ohne Zehnerüberschreitung</message>
+            </c:marker-definition>    
+            <c:marker-definition id="c">
+                <message>subtrahiert im Zahlenraum bis 100 ohne Zehnerüberschreitung</message>
+            </c:marker-definition>    
+            <c:marker-definition id="d">
+                <message>löst Additionsaufgaben mit Zehnerüberschreitung</message>
+            </c:marker-definition>    
+            <c:marker-definition id="e">
+                <message>löst Subtraktionsaufgaben mit Zehnerüberschreitung</message>
+            </c:marker-definition>    
+            <c:marker-definition id="f">
+                <message>beherrscht die Einmaleinsreihen</message>
+            </c:marker-definition>    
+            <c:marker-definition id="g">
+                <message>löst Multiplikationsaufgaben</message>
+            </c:marker-definition>         
+            <c:marker-definition id="h">
+                <message>löst Divisionsaufgaben</message>
+            </c:marker-definition>    
+            <c:marker-definition id="i">
+                <message>kann Sachaufgaben in Rechenschritte umsetzen</message>
+            </c:marker-definition>    
+        </marker-definitions>
+    </subset>
+    <subset subset="groessenundmessen">
+        <display-category>Größen und Messen</display-category>
+        <marker-definitions>
+            <c:marker-definition id="a">
+                <message>kennt die Grundeinheiten und Zusammenhänge des Größenbereichs Geld</message>
+            </c:marker-definition>       
+            <c:marker-definition id="b">
+                <message>kennt die Grundeinheiten und Zusammenhänge des Größenbereichs Zeit</message>
+            </c:marker-definition>    
+            <c:marker-definition id="c">
+                <message>kennt die Grundeinheiten und Zusammenhänge des Größenbereichs Längen</message>
+            </c:marker-definition>    
+        </marker-definitions>
+    </subset>
+    <subset subset="raumundform">
+        <display-category>Raum und Form</display-category>
+        <marker-definitions>
+            <c:marker-definition id="a">
+                <message>kennt und benennt geometrische Körper</message>
+            </c:marker-definition>       
+            <c:marker-definition id="b">
+                <message>setzt geometrische Muster fort</message>
+            </c:marker-definition>       
+        </marker-definitions>
+    </subset>
+</c:marker-convention-definition>

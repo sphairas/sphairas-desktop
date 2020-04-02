@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<remote-unit-descriptor xmlns="http://www.thespheres.org/xsd/betula/remote-unit-descriptor.xsd">
+    <display-name>
+        Arbeitsgemeinschaften
+    </display-name>
+    <pattern>
+        ([äöüß\p{Alpha}\d]+-)*ag-[äöüß\p{Alpha}\d]+
+    </pattern>    
+</remote-unit-descriptor>

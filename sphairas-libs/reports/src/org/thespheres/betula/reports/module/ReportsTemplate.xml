@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<br:report-collection id-sequence-tip="1" xmlns:br="http://www.thespheres.org/xsd/betula/reports.xsd">
+    <report id="template">
+        <content>
+            leer
+        </content>
+    </report>
+</br:report-collection>

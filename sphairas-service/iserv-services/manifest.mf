@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module-Implementation-Version: 23
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/iserv/Bundle.properties
+OpenIDE-Module: org.thespheres.betula.iserv
+

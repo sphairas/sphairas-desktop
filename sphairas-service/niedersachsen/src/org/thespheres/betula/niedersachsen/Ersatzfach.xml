@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<c:marker-convention-definition xmlns:c="http://www.thespheres.org/xsd/betula/convention.xsd" xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" 
+                                name="de.niedersachsen.ersatzfach">
+    <display-name>Ersatzfächer</display-name>
+    <subset subset="null">
+        <marker-definitions>
+            <c:marker-definition id="herkunftssprache">
+                <message>Herkunftssprache</message>
+            </c:marker-definition>            
+        </marker-definitions>
+    </subset>
+</c:marker-convention-definition>

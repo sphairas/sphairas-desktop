@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ts:target-import-settings xmlns:ts="http://www.thespheres.org/xsd/betula/target-import-settings.xsd" 
+                           xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" 
+                           xmlns:ta="http://www.thespheres.org/xsd/betula/target-assessment.xsd" 
+                           xmlns:tsext="http://www.thespheres.org/xsd/betula/target-settings-defaults.xsd">
+    <default convention="niedersachsen.ersatzeintrag" grade-id="pending"/>
+    <default-no-signee convention="niedersachsen.ersatzeintrag" grade-id="ne"/>
+    <target-defaults>
+        <target target-type="zeugnisnoten">
+        </target>
+        <target target-type="arbeitsverhalten" target-selector="nicht-ag">
+            <default convention="niedersachsen.arbeitsverhalten" grade-id="c"/>
+            <preferred-convention>
+                niedersachsen.arbeitsverhalten
+            </preferred-convention>
+        </target>
+        <target target-type="sozialverhalten" target-selector="nicht-ag">
+            <default convention="niedersachsen.sozialverhalten" grade-id="c"/>
+            <preferred-convention>
+                niedersachsen.sozialverhalten
+            </preferred-convention>
+        </target>
+        <target target-type="quartalsnoten" target-selector="jg10">
+        </target>
+    </target-defaults>
+    <target-selectors>
+        <tsext:marker-target-selector type="ABSENCE" name="nicht-ag">
+            <marker convention="kgs.unterricht" id="ag"/>
+        </tsext:marker-target-selector>
+        <pattern-target-selector type="PRESENCE" name="jg10">
+            <pattern>
+                kgs-[äöüß\p{Alpha}]+-(1|2)\d\d\d-jg10-[äöüß\p{Alpha}\\d]+(-[äöüß\p{Alpha}\d]+)*
+            </pattern>
+        </pattern-target-selector>
+    </target-selectors>
+</ts:target-import-settings>

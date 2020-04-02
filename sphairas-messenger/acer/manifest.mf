@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module-Implementation-Version: 14
+OpenIDE-Module-Localizing-Bundle: org/thespheres/acer/Bundle.properties
+OpenIDE-Module: org.thespheres.acer
+

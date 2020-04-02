@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:betula-classtest-file xmlns:f="http://www.thespheres.org/xsd/betula-classtest-file" xmlns:ct="http://www.thespheres.org/xsd/betula/classtest.xsd">
+    <ct:classtest>        
+        <students />
+        <problems>
+            <problem-entry id="A" weight="2" max-score="10" index="0">
+                <display-name>1.)</display-name>
+            </problem-entry>
+            <problem-entry id="B" weight="2" max-score="10" index="1">
+                <display-name>2.)</display-name>
+            </problem-entry>
+            <problem-entry id="C" weight="2" max-score="10" index="2">
+                <display-name>3.)</display-name>
+            </problem-entry>
+            <problem-entry id="D" weight="2" max-score="10" index="3">
+                <display-name>4.)</display-name>
+            </problem-entry>
+        </problems>
+    </ct:classtest>
+</f:betula-classtest-file>

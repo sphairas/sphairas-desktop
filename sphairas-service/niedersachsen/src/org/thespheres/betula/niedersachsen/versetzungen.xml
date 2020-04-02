@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<v:student-mover-policies grade-convention="de.notensystem" xmlns:v="http://www.thespheres.org/xsd/niedersachsen/versetzung.xsd" xmlns:c="http://www.thespheres.org/xsd/betula/container.xsd" xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" >
+    <v:policy name="versetzt">
+        <v:grade-condition match="5" max-occurrence="1"/>
+        <v:grade-condition match="6" max-occurrence="0"/>
+        <property key="unbias" value="true"/>
+        <property key="match.short.label" value="true"/>
+    </v:policy>
+    <v:policy name="2-mangelhaft-ausgleich">
+        <v:grade-condition match="6" max-occurrence="0"/>
+        <v:grade-condition match="5" num-occurrence="2"/>
+        <grouping-condition subject-groups="hauptfaecher default">
+            <v:grade-condition match="5" pair="1 2 3"/>
+            <!--            policy = "default" = default wraps condition into policy that must apply if no other policy applies
+            wrapping only, if other policies present
+            <grade-condition match="5" pair="1 2 3" policy="default"/>
+            <sub-policy name="versetzung-mit-4-im-hoeherw-flk"> 
+                <grade-condition match="5" pair="1 2 3" applicable="apply-condition-name-zb-1234beiFLK"/>
+            </sub-policy>-->
+        </grouping-condition>
+        <property key="unbias" value="true"/>
+        <property key="match.short.label" value="true"/>
+        <hint bundle="org.thespheres.betula.niedersachsen.Bundle#versetzung.hint.ausgleich" />
+    </v:policy>
+    <v:policy name="1-ungenügend-1-ausgleich">
+        <v:grade-condition match="5" max-occurrence="0"/>
+        <v:grade-condition match="6" num-occurrence="1"/>
+        <grouping-condition subject-groups="hauptfaecher default">
+            <v:grade-condition match="6" pair="1 2"/>
+        </grouping-condition>
+        <property key="unbias" value="true"/>
+        <property key="match.short.label" value="true"/>
+        <hint bundle="org.thespheres.betula.niedersachsen.Bundle#versetzung.hint.ausgleich" />
+    </v:policy>
+    <v:policy name="1-ungenügend-2-befriedigend">
+        <v:grade-condition match="5" max-occurrence="0"/>
+        <v:grade-condition match="6" num-occurrence="1"/>
+        <grouping-condition subject-groups="hauptfaecher default">
+            <v:grade-condition match="6" pair="1 2 3" min-pairs="2"/>
+        </grouping-condition>
+        <property key="unbias" value="true"/>
+        <property key="match.short.label" value="true"/>
+        <hint bundle="org.thespheres.betula.niedersachsen.Bundle#versetzung.hint.ausgleich" />
+    </v:policy>
+    <subject-groups>
+        <v:subject-group name="hauptfaecher">
+            <display-name>
+                Hauptfächer
+            </display-name>
+            <subject convention="niedersachsen.unterricht.faecher" id="deutsch"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="englisch"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="mathematik"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="französisch"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="spanisch"/>
+        </v:subject-group>
+        <v:default-subject-group name="default"/>
+    </subject-groups>
+</v:student-mover-policies>

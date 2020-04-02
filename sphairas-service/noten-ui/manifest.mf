@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: org.thespheres.betula.noten.ui
+OpenIDE-Module-Implementation-Version: 26
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/noten/ui/Bundle.properties
+OpenIDE-Module-Provides: classtest.template
+

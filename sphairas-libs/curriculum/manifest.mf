@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: org.thespheres.betula.curriculum
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/curriculum/Bundle.properties
+OpenIDE-Module-Provides: org.thespheres.betula.curriculum
+

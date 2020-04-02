@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.adminreports
+OpenIDE-Module-Implementation-Version: 52
+OpenIDE-Module-Layer: org/thespheres/betula/adminreports/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/adminreports/Bundle.properties
+OpenIDE-Module-Recommends: betula.adminreports.support
+

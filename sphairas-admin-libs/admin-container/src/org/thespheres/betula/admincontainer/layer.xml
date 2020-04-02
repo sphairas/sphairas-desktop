@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="TargetSigneesTopComponent">
+        <folder name="Toolbars">
+            <folder name="entitled-signee">
+                <attr name="displayName" bundlevalue="org.thespheres.betula.admincontainer.Bundle#SetSigneeAction.entitled.signee.displayName"/>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

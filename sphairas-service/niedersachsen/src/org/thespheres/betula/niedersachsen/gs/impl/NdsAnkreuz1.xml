@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<c:assessment-convention-definition xmlns:c="http://www.thespheres.org/xsd/betula/convention.xsd" xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" name="ndschoice1">
+    <display-name>Ankreuznoten 1</display-name>
+    <grade-definitions>
+        <c:grade-definition id="s" label="ss">
+            <message>sehr sicher</message>
+        </c:grade-definition>
+        <c:grade-definition id="üs" label="s">
+            <message>sicher</message>
+        </c:grade-definition>
+        <c:grade-definition id="ts" label="ts">
+            <message>teilweise sicher</message>
+        </c:grade-definition>
+        <c:grade-definition id="as" label="as">
+            <message>ansatzweise sicher</message>
+        </c:grade-definition>
+        <c:grade-definition id="u" label="u">
+            <message>unsicher</message>
+        </c:grade-definition>
+    </grade-definitions>
+</c:assessment-convention-definition>

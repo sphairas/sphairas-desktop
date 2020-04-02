@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<csv:xml-csv-dictionary xmlns:csv="http://www.thespheres.org/xsd/betula/csv-import.xsd" display-name="default">
+    <csv:entry assignable-key="source-level">Stufe</csv:entry>
+    <csv:entry assignable-key="source-unit">Kurs,KURSNR,AG</csv:entry>
+    <csv:entry assignable-key="source-signee">Lehrer*</csv:entry>
+    <csv:entry assignable-key="source-grade">Note,Zensur</csv:entry>
+    <csv:entry assignable-key="source-primary-unit">Klasse</csv:entry>
+    <csv:entry assignable-key="source-name">Schüler,Schülerin,Name*,Schülername,Familienname*</csv:entry>
+    <csv:entry assignable-key="source-subject">Fach</csv:entry>
+    <csv:entry assignable-key="place-of-birth">Geburtsort</csv:entry>
+    <csv:entry assignable-key="date-of-birth">Geburtsdatum</csv:entry>
+    <csv:entry assignable-key="unit.id">Gruppen-Id,Klassen-Id,Kurs-Id</csv:entry>
+    <csv:entry assignable-key="student.id">Schüler-Id,IDENTNUMMER</csv:entry>
+    <csv:entry assignable-key="source-gender">Geschlecht</csv:entry>
+    <csv:entry assignable-key="subject-alternative-name">Herkunftssprache,Sprache</csv:entry>
+    <csv:entry assignable-key="signee" assignable-key-label="Email-ID">Email,Unterzeichner</csv:entry>
+    <csv:entry assignable-key="signee.prefix">Benutzername,Account,Konto,Anmeldename</csv:entry>
+</csv:xml-csv-dictionary>

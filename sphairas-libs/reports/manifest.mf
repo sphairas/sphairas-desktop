@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.reports
+OpenIDE-Module-Implementation-Version: 19
+OpenIDE-Module-Layer: org/thespheres/betula/reports/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/reports/Bundle.properties
+

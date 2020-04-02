@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE editor-preferences PUBLIC "-//NetBeans//DTD Editor Preferences 1.0//EN" "http://www.netbeans.org/dtds/EditorPreferences-1_0.dtd">
+
+<editor-preferences>
+    <entry name="code-folding-enable" value="true" javaType="java.lang.Boolean" />
+    <entry javaType="java.lang.String" name="text-line-wrap" xml:space="preserve">
+        <value><![CDATA[words]]></value>
+    </entry>
+    <entry category="private" javaType="java.lang.Boolean" name="text-limit-line-visible" xml:space="preserve">
+        <value><![CDATA[false]]></value>
+    </entry>
+        <entry category="private" javaType="java.lang.Integer" name="text-limit-width" xml:space="preserve">
+        <value><![CDATA[20]]></value>
+    </entry>
+    <entry javaType="java.lang.Boolean" name="line-number-visible" xml:space="preserve">
+        <value><![CDATA[false]]></value>
+    </entry>
+    <!--    <entry name="token-context-list" value="org.netbeans.modules.xml.text.ComplexValueSettingsFactory.getXMLTokenContext" javaType="methodvalue" />
+    <entry name="indentEngine" value="org.netbeans.modules.xml.text.ComplexValueSettingsFactory.getXMLIndentEngine" javaType="methodvalue" />
+    <entry name="identifier-acceptor" value="org.netbeans.modules.xml.text.ComplexValueSettingsFactory.getXMLIdentifierAcceptor" javaType="methodvalue" />
+    <entry name="abbrev-reset-acceptor" value="org.netbeans.modules.xml.text.ComplexValueSettingsFactory.getXMLAbbrevResetAcceptor" javaType="methodvalue" />-->
+</editor-preferences>

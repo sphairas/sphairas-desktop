@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.classtest
+OpenIDE-Module-Implementation-Version: 69
+OpenIDE-Module-Layer: org/thespheres/betula/classtest/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/classtest/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+OpenIDE-Module-Needs: classtest.template

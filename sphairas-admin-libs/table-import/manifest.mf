@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.tableimport
+OpenIDE-Module-Implementation-Version: 3
+OpenIDE-Module-Layer: org/thespheres/betula/tableimport/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/tableimport/Bundle.properties
+OpenIDE-Module-Requires: javax.xml.transform.Transformer.2.0
+

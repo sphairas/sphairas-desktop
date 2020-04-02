@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<report-notes-arguments>
+    <arguments>
+        <argument name="name">
+            <display-name>Vorname</display-name>
+        </argument>
+        <argument name="name-genitiv">
+            <display-name>Vorname Genitiv</display-name>
+        </argument>
+        <argument name="possesiv-pronomen">
+            <display-name>Possesivpronomen</display-name>
+        </argument>
+        <argument name="datum-zeungniskonferenz">
+            <display-name>Datum Zeugniskonferenz</display-name>
+            <insert-format-parameter>{3,date,d. MMMM yyyy}</insert-format-parameter>
+        </argument>
+        <argument name="nächste-stufe">
+            <display-name>Nächste Stufe</display-name>
+        </argument>
+        <argument name="nächstes-schuljahr">
+            <display-name>Nächstes Schuljahr</display-name>
+        </argument>
+        <argument name="geschlecht">
+            <display-name>Geschlecht</display-name>
+        </argument>
+        <argument name="possesiv-pronomen-genitiv">
+            <display-name>Possesivpronomen Genitiv</display-name>
+        </argument>
+    </arguments>
+</report-notes-arguments>

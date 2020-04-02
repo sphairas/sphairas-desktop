@@ -1,0 +1,1284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<f:curriculum-file xmlns:f="http://www.thespheres.org/xsd/betula/curriculum-file.xsd">
+    <fi:file-info xmlns:fi="http://www.thespheres.org/xsd/betula/file-info.xsd">
+        <file-display-name>Dateiname</file-display-name>
+    </fi:file-info>
+    <c:curriculum xmlns:c="http://www.thespheres.org/xsd/betula/curriculum.xsd" xmlns:ns3="http://www.thespheres.org/xsd/betula/betula.xsd">
+        <general>
+            <preferred-convention>de.notensystem</preferred-convention>
+        </general>
+        <course-entries>
+            <course id="DE" position="1">
+                <subject convention="niedersachsen.unterricht.faecher" id="deutsch"/>
+            </course>
+            <course id="MA" position="2">
+                <subject convention="niedersachsen.unterricht.faecher" id="mathematik"/>
+            </course>
+            <group id="Gruppe-Fremdsprache" position="3">
+                <name>Fremdsprachen</name>
+                <course-entries>
+                    <course id="EN" position="1">
+                        <subject convention="niedersachsen.unterricht.faecher" id="englisch"/>
+                    </course>
+                    <course id="FR" position="2">
+                        <subject convention="niedersachsen.unterricht.faecher" id="französisch"/>
+                    </course>
+                    <course id="SN" position="3">
+                        <subject convention="niedersachsen.unterricht.faecher" id="spanisch"/>
+                    </course>
+                </course-entries>
+                <definition/>
+            </group>
+            <course id="GE" position="4">
+                <subject convention="niedersachsen.unterricht.faecher" id="geschichte"/>
+            </course>
+            <course id="PW" position="5">
+                <subject convention="niedersachsen.unterricht.faecher" id="politikwirtschaft"/>
+            </course>
+            <course id="PO" position="6">
+                <subject convention="niedersachsen.unterricht.faecher" id="politik"/>
+            </course>
+            <course id="WI" position="7">
+                <subject convention="niedersachsen.unterricht.faecher" id="wirtschaft"/>
+            </course>
+            <course id="EK" position="8">
+                <subject convention="niedersachsen.unterricht.faecher" id="erdkunde"/>
+            </course>
+            <course id="BI" position="9">
+                <subject convention="niedersachsen.unterricht.faecher" id="biologie"/>
+            </course>
+            <course id="PH" position="10">
+                <subject convention="niedersachsen.unterricht.faecher" id="physik"/>
+            </course>
+            <course id="CH" position="11">
+                <subject convention="niedersachsen.unterricht.faecher" id="chemie"/>
+            </course>
+            <course id="RE" position="12">
+                <subject convention="niedersachsen.unterricht.faecher" id="religion"/>
+            </course>
+            <course id="ER" position="13">
+                <subject convention="niedersachsen.unterricht.faecher" id="evangelischereligion"/>
+            </course>
+            <course id="WN" position="14">
+                <subject convention="niedersachsen.unterricht.faecher" id="wertenormen"/>
+            </course>
+            <course id="MU" position="15">
+                <subject convention="niedersachsen.unterricht.faecher" id="musik"/>
+            </course>
+            <course id="KU" position="16">
+                <subject convention="niedersachsen.unterricht.faecher" id="kunst"/>
+            </course>
+            <course id="WE" position="17">
+                <subject convention="niedersachsen.unterricht.faecher" id="gestaltendeswerken"/>
+            </course>
+            <course id="TG" position="18">
+                <subject convention="niedersachsen.unterricht.faecher" id="textilesgestalten"/>
+            </course>
+            <course id="SP" position="19">
+                <subject convention="niedersachsen.unterricht.faecher" id="sport"/>
+            </course>
+            <course id="TE" position="20">
+                <subject convention="niedersachsen.unterricht.faecher" id="technik"/>
+            </course>
+            <course id="HW" position="21">
+                <subject convention="niedersachsen.unterricht.faecher" id="hauswirtschaft"/>
+            </course>
+            <group id="Gruppe-Profile" position="22">
+                <name>Profile</name>
+                <course-entries>
+                    <course id="Fremdsp." position="1">
+                        <subject convention="niedersachsen.realschule.profile" id="fremdsprachen"/>
+                    </course>
+                    <course id="Wirt." position="2">
+                        <subject convention="niedersachsen.realschule.profile" id="wirtschaft"/>
+                    </course>
+                    <course id="Tech." position="3">
+                        <subject convention="niedersachsen.realschule.profile" id="technik"/>
+                    </course>
+                    <course id="GuS" position="4">
+                        <subject convention="niedersachsen.realschule.profile" id="gesundheitsoziales"/>
+                    </course>
+                </course-entries>
+                <definition/>
+            </group>
+            <course id="SF" position="23">
+                <subject convention="niedersachsen.unterricht.faecher" id="seminarfach"/>
+            </course>
+            <course id="NW" position="24">
+                <subject convention="niedersachsen.unterricht.faecher" id="naturwissenschaften"/>
+            </course>
+            <course id="DS" position="25">
+                <subject convention="niedersachsen.unterricht.faecher" id="darstellendesspiel"/>
+            </course>
+            <course id="SU" position="26">
+                <subject convention="niedersachsen.unterricht.faecher" id="sachunterricht"/>
+            </course>
+        </course-entries>
+        <sections>
+            <c:section sequence="5.1">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="5.2">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="6.1">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="6.2">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="7.1">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="7.2">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="8.1">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="8.2">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="9.1">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="9.2">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="10.1">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+            <c:section sequence="10.2">
+                <course-selection-entries>
+                    <course-selection-entry course="KU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="EK">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SP">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="HW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="FR">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="ER">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="RE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Tech.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MA">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="NW">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="DS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PO">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Fremdsp.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TG">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="CH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="BI">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="GuS">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="WN">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="MU">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="SF">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="TE">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="PH">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                    <course-selection-entry course="Wirt.">
+                        <value num-lessons="2"/>
+                    </course-selection-entry>
+                </course-selection-entries>
+            </c:section>
+        </sections>
+    </c:curriculum>
+</f:curriculum-file>

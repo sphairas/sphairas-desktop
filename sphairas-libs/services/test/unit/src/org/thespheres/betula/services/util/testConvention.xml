@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<c:marker-convention-definition xmlns:c="http://www.thespheres.org/xsd/betula/convention.xsd" xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" name="de.niedersachsen.ersatzfach">
+    <subset subset="null">
+        <marker-definitions>
+            <c:marker-definition id="test.convention">
+                <message>Test convention</message>
+            </c:marker-definition>            
+        </marker-definitions>
+    </subset>
+</c:marker-convention-definition>

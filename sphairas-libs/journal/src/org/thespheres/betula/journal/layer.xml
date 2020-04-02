@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Editors">
+        <!--        <folder name="Toolbars">
+            <folder name="Default"/>
+        </folder>-->
+        <folder name="FontsColors">
+            <folder name="NetBeans">
+                <folder name="Defaults"/>
+            </folder>
+        </folder>
+        <folder name="text">
+            <folder name="betula-journal-file-minutes-editor">
+                <file name="EditorKit.instance">
+                    <attr name="instanceClass" stringvalue="org.thespheres.betula.journal.editor.Kit"/>
+                </file>
+                <folder name="Preferences">
+                    <folder name="Defaults">
+                        <file name="betula-journal-minutes-editor-Preferences.xml" url="editor/betula-journal-minutes-editor-Preferences.xml"/>
+                    </folder>
+                </folder>
+            </folder>
+            <folder name="betula-journal-file-notes-editor">
+                <file name="EditorKit.instance">
+                    <attr name="instanceClass" stringvalue="org.thespheres.betula.journal.notes.Kit"/>
+                </file>
+                <folder name="Preferences">
+                    <folder name="Defaults">
+                        <file name="betula-journal-notes-editor-Preferences.xml" url="notes/betula-journal-notes-editor-Preferences.xml"/>
+                    </folder>
+                </folder>
+                <folder name="FontsColors">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="org-netbeans-modules-editor-settings-CustomFontsColors-tokenColorings.xml" url="notes/editor-settings-CustomFontsColors-tokenColorings.xml">
+                                <attr name="nbeditor-settings-ColoringType" stringvalue="token"/>
+                            </file>
+                            <!--                            <file name="org-netbeans-modules-editor-highlight-colorings.xml" url="notes/editor-highlight-colorings.xml">
+                                <attr name="nbeditor-settings-ColoringType" stringvalue="highlight"/>
+                            </file>-->
+                        </folder>
+                        <!--                        <file name="org-netbeans-modules-editor-highlight-colorings.xml" url="notes/editor-highlight-colorings.xml">
+                            <attr name="nbeditor-settings-ColoringType" stringvalue="highlight"/>
+                        </file>-->
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <!--<file name="JournalNotesEditor.settings" url="notes/JournalNotesEditor.xml"/>-->
+        </folder>
+        <folder name="Modes">
+            <folder name="properties">
+                <!--<file name="JournalNotesEditor.wstcref" url="notes/JournalNotesEditor.wstcref"/>-->
+            </folder>
+        </folder>
+        <folder name="Groups">
+            <file name="JournalGroup.wsgrp" url="module/JournalWsgrp.xml"/>
+            <folder name="JournalGroup">
+                <file name="EntriesTopComponent.wstcgrp" url="table/EntriesWstcgrp.xml"/>
+                <file name="JournalNotesEditor2.wstcgrp" url="notes/NotesWstcgrp.xml"/>
+                <file name="navigatorTC.wstcgrp" url="navigatorTC.wstcgrp" />
+            </folder>
+            <file name="JournalTargetGroup.wsgrp" url="target/JournalTargetWsgrp.xml"/>
+            <folder name="JournalTargetGroup">
+                <!--<file name="EntriesTopComponent.wstcgrp" url="table/EntriesWstcgrp.xml"/>-->
+                <file name="JournalTargetNotesEditor.wstcgrp" url="target/TargetNotesWstcgrp.xml"/>
+                <file name="navigatorTC.wstcgrp" url="navigatorTC.wstcgrp" />
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

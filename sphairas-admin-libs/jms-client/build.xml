@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="org.thespheres.jms.client" default="netbeans" basedir=".">
+    <description>Builds, tests, and runs the project org.thespheres.jms.client.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--Maven Artifact Resolver Ant Tasks--> 
+    <import file="${basedir}/../../sphairas-admin-client/nbproject/sphairas.xml" />  
+    <target name="clean" depends="projectized-common.clean,remove-external-files" />
+    <target name="compile" depends="maven-resolve,projectized-common.compile,maven-download-licenses" />
+    <!--<target name="netbeans" depends="projectized-common.netbeans,maven-install" />-->
+</project>

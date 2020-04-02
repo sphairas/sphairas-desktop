@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: false
+OpenIDE-Module: org.thespheres.betula.niedersachsen.berichte.ui
+OpenIDE-Module-Implementation-Version: 34
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/niedersachsen/berichte/ui/Bundle.properties
+OpenIDE-Module-Provides: betula.adminreports.support
+

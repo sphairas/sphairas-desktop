@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.thespheres.betula.couchdb.users
+OpenIDE-Module-Implementation-Version: 26
+OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/couchdb/users/Bundle.properties
+

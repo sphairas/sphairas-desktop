@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<v:student-average-configuration xmlns:c="http://www.thespheres.org/xsd/betula/container.xsd" xmlns:b="http://www.thespheres.org/xsd/betula/betula.xsd" xmlns:v="http://www.thespheres.org/xsd/niedersachsen/versetzung.xsd" grade-convention="de.notensystem">
+    <subject-groups>
+        <v:subject-group name="hauptfaecher">
+            <subject convention="niedersachsen.unterricht.faecher" id="deutsch"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="englisch"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="mathematik"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="französisch"/>
+            <subject convention="niedersachsen.unterricht.faecher" id="spanisch"/>
+            <display-name>Hauptfächer</display-name>
+        </v:subject-group>
+        <v:default-subject-group name="default"/>
+    </subject-groups>
+    <property key="unbias" value="true"/>
+    <v:career-aware-grade-double career-convention="kgs.schulzweige">
+        <adjust-values conditions="gy-hs" steps="-2"/>
+        <adjust-values conditions="rs-hs gy-rs" steps="-1"/>
+        <adjust-values conditions="hs-rs rs-gy" steps="1"/>
+        <adjust-values conditions="hs-gy" steps="2"/>
+    </v:career-aware-grade-double>
+</v:student-average-configuration>

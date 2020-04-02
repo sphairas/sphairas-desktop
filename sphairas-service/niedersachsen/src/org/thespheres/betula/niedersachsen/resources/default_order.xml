@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<faecher id="default">
+    <fach position="1000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="deutsch" />
+    </fach>
+    <fach position="2000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="mathematik" />
+    </fach>
+    <fach position="2100" >
+        <marker convention="niedersachsen.unterricht.faecher" id="englisch" />
+    </fach>
+    <fach position="2200" >
+        <marker convention="niedersachsen.unterricht.faecher" id="französisch" />
+    </fach>
+    <fach position="2400" >
+        <marker convention="niedersachsen.unterricht.faecher" id="spanisch" />
+    </fach>
+    <fach position="3000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="geschichte" />
+    </fach>
+    <fach position="4000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="politikwirtschaft" />
+    </fach>
+    <fach position="4100" >
+        <marker convention="niedersachsen.unterricht.faecher" id="politik" />
+    </fach>
+    <fach position="4200" >
+        <marker convention="niedersachsen.unterricht.faecher" id="wirtschaft" />
+    </fach>
+    <fach position="5000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="erdkunde" />
+    </fach>
+    <fach position="10000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="biologie" />
+    </fach>
+    <fach position="11000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="physik" />
+    </fach>
+    <fach position="12000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="chemie" />
+    </fach>
+    <fach position="60000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="technik" />
+    </fach>
+    <fach position="61000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="hauswirtschaft" />
+    </fach>
+    <fach position="20000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="religion" />
+    </fach>
+    <fach position="20020" >
+        <marker convention="niedersachsen.unterricht.faecher" id="evangelischereligion" />
+    </fach>
+    <fach position="21000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="wertenormen" />
+    </fach>
+    <fach position="30000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="musik" />
+    </fach>
+    <fach position="31000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="kunst" />
+    </fach>
+    <fach position="32000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="gestaltendeswerken" />
+    </fach>
+    <fach position="33000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="textilesgestalten" />
+    </fach>
+    <fach position="40000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="sport" />
+    </fach>
+    <fach position="100000" >
+        <marker convention="niedersachsen.realschule.profile" id="fremdsprachen" />
+    </fach>
+    <fach position="101000" >
+        <marker convention="niedersachsen.realschule.profile" id="wirtschaft" />
+    </fach>
+    <fach position="102000" >
+        <marker convention="niedersachsen.realschule.profile" id="technik" />
+    </fach>
+    <fach position="103000" >
+        <marker convention="niedersachsen.realschule.profile" id="gesundheitsoziales" /> 
+    </fach>
+</faecher>
