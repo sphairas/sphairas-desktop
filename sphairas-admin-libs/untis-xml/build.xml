@@ -6,5 +6,5 @@
     <description>Builds, tests, and runs the project org.thespheres.betula.gpuntis.xml.</description>
     <import file="nbproject/build-impl.xml"/>
     <import file="${basedir}/../../sphairas-admin-client/nbproject/sphairas.xml" />  
-    <target name="build" depends="projectized-common.build,maven-install" />
+    <target name="netbeans" depends="projectized-common.netbeans,maven-install" />
 </project>
