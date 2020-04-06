@@ -136,7 +136,6 @@
         <property name="public.package.jar.dir" location="${build.dir}/public-package-jars"/>
         <mkdir dir="${public.package.jar.dir}"/>
         <!-- Similar to projectized.xml but does not try to set NBM homepage/distribution, nor is javahelp.excludes predefined. -->
-                        <echo>${basedir}</echo>
         <parseprojectxml
             project="."
             publicpackagesproperty="public.packages"

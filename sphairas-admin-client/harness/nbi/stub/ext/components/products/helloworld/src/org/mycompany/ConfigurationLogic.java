@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+// Portions Copyright 2019 boris.heithecker
 package org.mycompany;
 
 import java.util.List;

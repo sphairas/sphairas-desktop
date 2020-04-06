@@ -18,6 +18,9 @@
     under the License.
 
 -->
+
+<!--Portions Copyright 2019 boris.heithecker-->
+
 <project name="build installers" default="build" basedir=".">
     <property file="${basedir}/build.properties"/>
     <property file="${basedir}/custom.properties"/>
