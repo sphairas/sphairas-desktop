@@ -30,6 +30,8 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
     @XmlAttribute(name = "provider")
     private String provider;
+    @XmlElement(name = "XSL-FO-Datei")
+    private String xslFoFile;
     @XmlAttribute(name = "Sortierung")
     private String subjectOrder;
     @XmlElement(name = "Schulname")
@@ -59,6 +61,14 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
     public String getProvider() {
         return provider;
+    }
+
+    public String getXslFoFile() {
+        return xslFoFile;
+    }
+
+    public void setXslFoFile(final String xslFoFile) {
+        this.xslFoFile = xslFoFile;
     }
 
     @Override
