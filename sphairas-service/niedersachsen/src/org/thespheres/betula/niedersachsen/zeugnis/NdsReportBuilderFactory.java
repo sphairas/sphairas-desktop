@@ -52,10 +52,6 @@ public class NdsReportBuilderFactory implements CommonDocuments {
         this.template = template;
     }
 
-    public static String getXslLocation() {
-        return "/org/thespheres/betula/niedersachsen/resources/ndszgn2.fo.xsl";
-    }
-
     @Override
     public ProviderInfo getProviderInfo() {
         return template.getProviderInfo();

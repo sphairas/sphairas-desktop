@@ -65,8 +65,8 @@ public class NdsZeugnisFormularTest {
     public void testZeugnisformular() throws JAXBException, TransformerConfigurationException, TransformerException, IOException, ParserConfigurationException {
         JAXBContext ctx = JAXBContext.newInstance(ZeugnisMappe.class);
         TransformerFactory factory = TransformerFactory.newInstance(); //newInstance("net.sf.saxon.TransformerFactoryImpl", null);//
-        final InputStream is = ZeugnisData.class.getResourceAsStream(NdsReportBuilderFactory.getXslLocation());
-        Templates template = factory.newTemplates(new StreamSource(is));
+//        final InputStream is = ZeugnisData.class.getResourceAsStream(NdsReportBuilderFactory.getXslLocation());
+//        Templates template = factory.newTemplates(new StreamSource(is));
 
         final InputStream idis = NdsZeugnisFormularTest.class.getResourceAsStream("identity.xsl");
         Templates idtemplate = factory.newTemplates(new StreamSource(idis));
@@ -154,20 +154,20 @@ public class NdsZeugnisFormularTest {
         t2.setOutputProperty(OutputKeys.INDENT, "yes");
         t2.transform(src2, finalres2);
 
-        Transformer transformer = template.newTransformer();
-        // Set the value of a <param> in the stylesheet
-        transformer.setParameter("versionParam", "2.0");
-        // Setup input for XSLT transformation
-        Source src = new DOMSource(result.getNode());
-        // Resulting SAX events (the generated FO) must be piped through to FOP
-        DOMResult res = new DOMResult();
-        // Start XSLT transformation and FOP processing
-        transformer.transform(src, res);
-        transformer = factory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        src = new DOMSource(res.getNode());
-        StreamResult finalres = new StreamResult(System.out);
-        transformer.transform(src, finalres);
+//        Transformer transformer = template.newTransformer();
+//        // Set the value of a <param> in the stylesheet
+//        transformer.setParameter("versionParam", "2.0");
+//        // Setup input for XSLT transformation
+//        Source src = new DOMSource(result.getNode());
+//        // Resulting SAX events (the generated FO) must be piped through to FOP
+//        DOMResult res = new DOMResult();
+//        // Start XSLT transformation and FOP processing
+//        transformer.transform(src, res);
+//        transformer = factory.newTransformer();
+//        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//        src = new DOMSource(res.getNode());
+//        StreamResult finalres = new StreamResult(System.out);
+//        transformer.transform(src, finalres);
 
     }
 
