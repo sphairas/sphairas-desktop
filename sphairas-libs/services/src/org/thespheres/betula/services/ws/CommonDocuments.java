@@ -17,6 +17,7 @@ public interface CommonDocuments {
     public static final String STUDENT_CAREERS_DOCID = "student-bildungsgang-documentid";
     public static final String COMMON_NAMES_DOCID = "common-names-documentid";
     public static final String SUBJECT_NAMES_DOCID = "subject-names-documentid";
+    public static final String PRIMARY_UNIT_HEAD_TEACHERS_DOCID = "primary-unit-head-teachers-documentid";
     
     public ProviderInfo getProviderInfo();
 
