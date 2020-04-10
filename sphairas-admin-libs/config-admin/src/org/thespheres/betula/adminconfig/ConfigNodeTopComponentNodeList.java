@@ -44,7 +44,7 @@ public abstract class ConfigNodeTopComponentNodeList<K> extends ConfigurationTop
     }
 
     protected Node getSingleNode() {
-        throw new UnsupportedOperationException("Must be implemented.");
+        throw new UnsupportedOperationException("Must be implemented if single-node-key is used.");
     }
 
     public Key<K>[] getKeys() {

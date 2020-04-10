@@ -20,9 +20,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -36,6 +34,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
+import org.thespheres.betula.niedersachsen.NdsZeugnisFormular;
 
 @MultiViewElement.Registration(
         displayName = "#LBL_ZeugnisDataFile_VISUAL",
@@ -48,19 +47,21 @@ import org.openide.windows.TopComponent;
 @Messages("LBL_ZeugnisDataFile_VISUAL=Visual")
 public final class ZeugnisDataFileVisualElement extends JPanel implements MultiViewElement {
 
-    private final ZeugnisDataFileDataObject obj;
+    private final ZgnSekINdsDataObject obj;
     private final HTMLEditorKit kit;
     private transient MultiViewElementCallback callback;
     private final Document htmlDocument;
+    private final String provider;
 
-    public ZeugnisDataFileVisualElement(Lookup lkp) {
-        obj = lkp.lookup(ZeugnisDataFileDataObject.class);
+    public ZeugnisDataFileVisualElement(final Lookup lkp) {
+        obj = lkp.lookup(ZgnSekINdsDataObject.class);
         kit = new HTMLEditorKit();
         assert obj != null;
         initComponents();
         pane.setEditorKit(kit);
         htmlDocument = kit.createDefaultDocument();
         pane.setDocument(htmlDocument);
+        provider = obj.getLookup().lookup(NdsZeugnisFormular.class).getProvider();
         try {
             setDoc();
         } catch (IOException ex) {
@@ -68,6 +69,21 @@ public final class ZeugnisDataFileVisualElement extends JPanel implements MultiV
         }
 //        HTMLDocument d;
 //        d.setParser(parser);
+    }
+
+    private void setDoc() throws IOException {
+        final FileObject source = obj.getPrimaryFile();
+        final byte[] xslfo;
+        try (final InputStream is = source.getInputStream()) {
+            xslfo = transform(new StreamSource(is), AbstractXml2PdfAction.getTemplate(provider));
+        }
+        String s = new String(xslfo);
+        System.out.println(s);
+        try (final ByteArrayInputStream bais = new ByteArrayInputStream(xslfo)) {
+            kit.read(bais, htmlDocument, 0);
+        } catch (BadLocationException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @Override
@@ -161,40 +177,6 @@ public final class ZeugnisDataFileVisualElement extends JPanel implements MultiV
         return CloseOperationState.STATE_OK;
     }
 
-    private static Object fo2html;
-    protected static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-
-    public static synchronized Templates getXslFo2HtmlTemplate() throws IOException {
-        if (fo2html == null) {
-            final InputStream is = ZeugnisDataFileVisualElement.class.getResourceAsStream("fo2html.xsl");
-            try {
-                fo2html = TRANSFORMER_FACTORY.newTemplates(new StreamSource(is));
-            } catch (TransformerConfigurationException ex) {
-                fo2html = new IOException(ex);
-            }
-        }
-        if (fo2html instanceof IOException) {
-            throw (IOException) fo2html;
-        }
-        return (Templates) fo2html;
-    }
-
-    private void setDoc() throws IOException {
-
-        final FileObject source = obj.getPrimaryFile();
-        final byte[] xslfo;
-        try (final InputStream is = source.getInputStream()) {
-            xslfo = transform(new StreamSource(is), AbstractXml2PdfAction.getTemplate());
-        }
-        String s = new String(xslfo);
-        System.out.println(s);
-        try (final ByteArrayInputStream bais = new ByteArrayInputStream(xslfo)) {
-            kit.read(bais, htmlDocument, 0);
-        } catch (BadLocationException ex) {
-            throw new IOException(ex);
-        }
-    }
-
     private byte[] transform(final Source src, final Templates transform) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -203,7 +185,7 @@ public final class ZeugnisDataFileVisualElement extends JPanel implements MultiV
             final DOMResult xslfoResult = new DOMResult();
             transformer.transform(src, xslfoResult);
             final Result res = new StreamResult(baos);
-            final Transformer transformer2 = getXslFo2HtmlTemplate().newTransformer();
+            final Transformer transformer2 = VisualizerUtil.getXslFo2HtmlTemplate().newTransformer();
             transformer2.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer2.transform(new DOMSource(xslfoResult.getNode()), res);
         } catch (TransformerException ex) {

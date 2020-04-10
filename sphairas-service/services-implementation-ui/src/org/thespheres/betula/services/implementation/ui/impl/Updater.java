@@ -56,6 +56,9 @@ class Updater implements Runnable {
     final RequestProcessor rp;
     private final Map<String, String> lastModified = new HashMap<>();
     final RequestProcessor.Task task;
+    private long runs = 0l;
+    private boolean initialized = false;
+    private boolean updating = false;
 
     @SuppressWarnings({"LeakingThisInConstructor"})
     Updater(SyncedProviderInstance instance) {
@@ -65,17 +68,21 @@ class Updater implements Runnable {
         this.task = rp.create(this);
     }
 
-    private void init() {
+    private synchronized void init() {
+        this.initialized = doInit();
+    }
+
+    private boolean doInit() {
         final Path file = instance.getBaseDir().resolve(LAST_MODIFIED_FILE);
         if (!Files.exists(file)) {
-            return;
+            return false;
         }
         final List<String> lines;
         try {
             lines = Files.readAllLines(file, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             PlatformUtil.getCodeNameBaseLogger(Updater.class).log(Level.WARNING, "An exception has occurred reading last-modified of " + instance.getProvider(), ex);
-            return;
+            return false;
         }
         final Map<String, String> m = lines.stream()
                 .filter(l -> !StringUtils.isBlank(l))
@@ -85,11 +92,32 @@ class Updater implements Runnable {
         //Cannot be initialized in constructor of SyncedProviderInstance
         final JMSTopicListenerService jms = JMSTopicListenerService.find(instance.getProvider(), JMSTopic.APP_RESOURCES_TOPIC.getJmsResource());
         jms.registerListener(AppResourceEvent.class, instance.jmsListener);
+        return true;
+    }
+
+    //Suspends if inititialing or running
+    private synchronized void lock() {
+    }
+
+    long getNumRuns(final Long waitUntil) {
+        if (waitUntil != null) {
+            while (this.runs < waitUntil) {
+                lock();
+            }
+        }
+        return this.runs;
     }
 
     @NbBundle.Messages({"Updater.error.message=Bei Synchronisieren der Datei {0} des Mandanten {1} ist ein Fehler aufgetreten."})
     @Override
-    public void run() {
+    public synchronized void run() {
+        this.updating = true;
+        runUpdates();
+        runs++;
+        updating = false;
+    }
+
+    private void runUpdates() {
         int count[] = {0};
         try {
             boolean dpChanged = updateFile("default.properties", false);
@@ -284,6 +312,10 @@ class Updater implements Runnable {
         }
         Files.copy(tmp, target, StandardCopyOption.REPLACE_EXISTING);
         return true;
+    }
+
+    public String getLastModified(String resource) {
+        return lastModified.get(resource);
     }
 
     public void setLastModified(final String res, final String lm) throws IOException {

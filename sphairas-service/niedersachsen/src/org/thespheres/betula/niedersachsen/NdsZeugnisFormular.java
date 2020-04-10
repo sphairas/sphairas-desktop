@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -36,12 +37,15 @@ import org.thespheres.betula.niedersachsen.zeugnis.DeReportBuilderUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NdsZeugnisFormular {
 
+    public static final String FORMULAR_MIME = "text/zeugnis-sekundarstufe-niedersachsen+xml";
     public static String PFLICHTUNTERRICHT = "pu";
     public static String LEHRGAENGE = "lehrgaenge";
     public static String WAHLPFLICHTUNTERRICHT = "wpu";
     public static String PROFILUNTERRICHT = "profilu";
     public static String BERICHTE = "berichte";
 
+    @XmlAttribute(name = "Mandant", required = false)
+    private String provider;
     @Deprecated //In TemplateOptions
     @XmlAttribute(name = "Vorlage")
     private String template;
@@ -70,6 +74,10 @@ public class NdsZeugnisFormular {
     private final List<String> exception = new ArrayList<>();
     @XmlElement(name = "report", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
     private DocumentId report;
+    //This is necessary to catch all unknown elements during unmarshalling, 
+    //so they will be marshalled again back into the document and don't get lost.
+    @XmlAnyElement
+    public org.w3c.dom.Element[] otherElements;
 
     //JAXB only
     public NdsZeugnisFormular() {
@@ -77,6 +85,14 @@ public class NdsZeugnisFormular {
 
     public NdsZeugnisFormular(final String sortString) {
         this.sortString = sortString;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
     String getSortString() {
@@ -180,7 +196,7 @@ public class NdsZeugnisFormular {
         footnotes.add(toAdd);
         return toAdd;
     }
-    
+
     public void addExceptionMessage(final String msg) {
         exception.add(msg);
     }
@@ -988,8 +1004,19 @@ public class NdsZeugnisFormular {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class ZeugnisMappe {
 
+        public static final String MAPPE_MIME = "text/zeugnis-sekundarstufe-niedersachsen-mappe+xml";
+        @XmlAttribute(name = "Mandant", required = false)
+        private String provider;
         @XmlElementRef
         private final List<NdsZeugnisFormular> reports = new ArrayList<>();
+
+        public String getProvider() {
+            return provider;
+        }
+
+        public void setProvider(String provider) {
+            this.provider = provider;
+        }
 
         public void add(final NdsZeugnisFormular add) {
             reports.add(add);

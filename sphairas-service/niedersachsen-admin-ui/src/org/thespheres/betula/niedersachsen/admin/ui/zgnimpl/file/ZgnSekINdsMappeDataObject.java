@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thespheres.betula.niedersachsen.admin.ui.docsrv;
+package org.thespheres.betula.niedersachsen.admin.ui.zgnimpl.file;
 
 import java.io.IOException;
+import org.netbeans.spi.project.support.LookupProviderSupport;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -15,7 +16,9 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.loaders.XMLDataObject;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
+import org.thespheres.betula.niedersachsen.NdsZeugnisFormular;
 
 @Messages({
     "LBL_ZeugnisSekINiedersachsenMappe_LOADER=Files of ZeugnisSekINiedersachsenMappe"
@@ -86,6 +89,8 @@ import org.openide.util.NbBundle.Messages;
 })
 public class ZgnSekINdsMappeDataObject extends XMLDataObject {
 
+    private Lookup lookup;
+
     public ZgnSekINdsMappeDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
 //        registerEditor("text/zeugnis-sekundarstufe-niedersachsen-mappe+xml", true);
@@ -94,6 +99,15 @@ public class ZgnSekINdsMappeDataObject extends XMLDataObject {
     @Override
     protected int associateLookup() {
         return 1;
+    }
+
+    @Override
+    public synchronized Lookup getLookup() {
+        if (lookup == null) {
+            final Lookup base = super.getLookup();
+            lookup = LookupProviderSupport.createCompositeLookup(base, "Loaders/" + NdsZeugnisFormular.FORMULAR_MIME + "/Lookup");
+        }
+        return lookup;
     }
 //
 //    @MultiViewElement.Registration(
@@ -106,6 +120,5 @@ public class ZgnSekINdsMappeDataObject extends XMLDataObject {
 //    public static MultiViewEditorElement createEditor(Lookup lkp) {
 //        return new MultiViewEditorElement(lkp);
 //    }
-
 
 }

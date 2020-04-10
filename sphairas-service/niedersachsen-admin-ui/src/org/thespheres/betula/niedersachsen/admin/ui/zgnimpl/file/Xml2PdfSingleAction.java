@@ -23,8 +23,9 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.thespheres.betula.listprint.Formatter;
+import org.thespheres.betula.niedersachsen.NdsZeugnisFormular;
 import org.thespheres.betula.niedersachsen.admin.ui.docsrv.DownloadZeugnisse;
-import org.thespheres.betula.niedersachsen.admin.ui.docsrv.ZgnSekINdsMappeDataObject;
+import static org.thespheres.betula.niedersachsen.admin.ui.zgnimpl.file.AbstractXml2PdfAction.notifyNoProvider;
 
 @ActionID(category = "Betula",
         id = "org.thespheres.betula.niedersachsen.admin.ui.zgnimpl.file.Xml2PdfSingleAction")
@@ -46,11 +47,12 @@ public final class Xml2PdfSingleAction extends AbstractXml2PdfAction implements 
     public void actionPerformed(ActionEvent ev) {
 
         for (final ZgnSekINdsMappeDataObject report : context) {
+            final String provider = report.getLookup().lookup(NdsZeugnisFormular.ZeugnisMappe.class).getProvider();
+            if (provider == null) {
+                notifyNoProvider(report);
+                continue;
+            }
             final FileObject source = report.getPrimaryFile();
-//            final Project prj = FileOwnerQuery.getOwner(source);
-//            final String p = prj.getLookup().lookup(LocalProperties.class).getProperty("providerURL");
-//            final Formatter f = getFormatter(p);
-//            final String path = System.getProperty("com.sun.aas.instanceRoot");
             final Path p = Paths.get(System.getProperty("user.home"));//User dialog for resources, or create inline data base64
             final URI base = p.toUri();
             final Formatter f = Formatter.create(base);
@@ -63,7 +65,7 @@ public final class Xml2PdfSingleAction extends AbstractXml2PdfAction implements 
             }
             try {
                 final FileObject result = FileUtil.createData(source.getParent(), name);
-                processOne(source, result, f);
+                processOne(provider, source, result, f);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }

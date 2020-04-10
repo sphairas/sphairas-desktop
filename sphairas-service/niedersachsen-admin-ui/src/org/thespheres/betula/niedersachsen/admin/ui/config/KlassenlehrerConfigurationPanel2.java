@@ -73,7 +73,7 @@ public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<Re
         }
     }
 
-    private void updateItems(UnitId[] items) { 
+    private void updateItems(UnitId[] items) {
         if (items != null) {
             Arrays.stream(items)
                     .forEach(model::addElement);
@@ -84,7 +84,9 @@ public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<Re
     protected void updateValue(UnitId pu) {
         if (current != null) {
             final Klassenlehrer kl = Klassenlehrer.find(current.getSignees());
-            kl.post(current.getSignee(), pu);
+            if (kl != null) {
+                kl.post(current.getSignee(), pu);
+            }
         }
     }
 
@@ -114,13 +116,17 @@ public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<Re
             if (currentSignees != null) {
                 currentNamingResolver = NamingResolver.find(currentSignees.getProviderUrl());
                 final Klassenlehrer kl = Klassenlehrer.find(currentSignees);
-                try {
-                    //                kl.addChangeListener(this);
-                    pus = kl.getUnits();
-                } catch (IOException ex) {
-                    currentSignees = null;
-                    PlatformUtil.getCodeNameBaseLogger(KlassenlehrerConfigurationPanel2.class).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-                    return;
+                if (kl != null) {
+                    try {
+                        //                kl.addChangeListener(this);
+                        pus = kl.getUnits();
+                    } catch (IOException ex) {
+                        currentSignees = null;
+                        PlatformUtil.getCodeNameBaseLogger(KlassenlehrerConfigurationPanel2.class).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+                        return;
+                    }
+                } else {
+                    pus = null;
                 }
             } else {
                 currentNamingResolver = null;

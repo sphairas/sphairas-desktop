@@ -64,7 +64,8 @@ public class SyncedProviderInstance {
     final RequestProcessor eventsrp = new RequestProcessor("EVENTS", 1);
     final EventBus events = new AsyncEventBus(eventsrp);
     final ConfigurationEventBusImpl cfgbus = new ConfigurationEventBusImpl();
-    private final Updater updater;
+    final ConfigurationsImpl config = new ConfigurationsImpl(this);
+    final Updater updater;
     final Map<String, ConfigNodeTopComponentNodeList> configNodes = new HashMap<>();
     final Listener jmsListener = new Listener();
 

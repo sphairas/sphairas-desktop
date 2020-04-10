@@ -18,6 +18,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.thespheres.betula.listprint.Formatter;
+import org.thespheres.betula.niedersachsen.NdsZeugnisFormular;
 
 @ActionID(category = "Betula",
         id = "org.thespheres.betula.niedersachsen.admin.ui.zgnimpl.file.Xml2PdfAction")
@@ -29,24 +30,27 @@ import org.thespheres.betula.listprint.Formatter;
 @Messages("Xml2PdfAction.displayName=pdf-Datei erstellen")
 public final class Xml2PdfAction extends AbstractXml2PdfAction implements ActionListener {
 
-    private final List<ZeugnisDataFileDataObject> context;
+    private final List<ZgnSekINdsDataObject> context;
 
-    public Xml2PdfAction(List<ZeugnisDataFileDataObject> context) {
+    public Xml2PdfAction(List<ZgnSekINdsDataObject> context) {
         this.context = context;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
 
-        for (final ZeugnisDataFileDataObject report : context) {
+        for (final ZgnSekINdsDataObject report : context) {
+            final String provider = report.getLookup().lookup(NdsZeugnisFormular.class).getProvider();
+            if (provider == null) {
+                notifyNoProvider(report);
+                continue;
+            }
             final FileObject source = report.getPrimaryFile();
-//            final Project prj = FileOwnerQuery.getOwner(source);
-//            final String p = prj.getLookup().lookup(LocalProperties.class).getProperty("providerURL");
             final Formatter f = Formatter.getDefault(); //getFormatter(p);
             final String name = FileUtil.findFreeFileName(source.getParent(), source.getName(), "pdf") + ".pdf";
             try {
                 final FileObject result = FileUtil.createData(source.getParent(), name);
-                processOne(source, result, f);
+                processOne(provider, source, result, f);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }

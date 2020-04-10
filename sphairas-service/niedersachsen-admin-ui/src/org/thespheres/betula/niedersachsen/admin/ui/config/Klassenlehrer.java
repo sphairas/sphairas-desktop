@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.niedersachsen.admin.ui.config;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,8 @@ import org.openide.util.lookup.ServiceProvider;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
 import org.thespheres.betula.admin.units.RemoteSignees;
+import org.thespheres.betula.adminconfig.Configuration;
+import org.thespheres.betula.adminconfig.Configurations;
 import org.thespheres.betula.services.jms.AbstractDocumentEvent;
 import org.thespheres.betula.services.client.jms.JMSListener;
 import org.thespheres.betula.services.client.jms.JMSTopicListenerService;
@@ -36,10 +39,12 @@ import org.thespheres.betula.document.Envelope;
 import org.thespheres.betula.document.ExceptionMessage;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.document.util.DocumentUtilities;
-import org.thespheres.betula.niedersachsen.NdsCommonConstants;
+import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
 import org.thespheres.betula.services.WebProvider;
 import org.thespheres.betula.services.jms.JMSTopic;
+import org.thespheres.betula.services.util.ServiceConfiguration;
 import org.thespheres.betula.services.util.Signees;
+import org.thespheres.betula.services.ws.CommonDocuments;
 import org.thespheres.betula.services.ws.Paths;
 import org.thespheres.betula.services.ws.WebServiceProvider;
 import org.thespheres.betula.ui.util.LogLevel;
@@ -55,24 +60,57 @@ import org.thespheres.betula.util.ContainerBuilder;
 public class Klassenlehrer {
 
     private final Listener listener = new Listener();
-    private final static Map<String, Klassenlehrer> INSTANCES = new HashMap<>();
+    private final static Map<String, Object> INSTANCES = new HashMap<>();
     private final Signees signees;
     private final WebServiceProvider service;
     private final Map<UnitId, Set<Signee>> map = new HashMap<>();
     private final ChangeSupport cSupport = new ChangeSupport(this);
     private final Set<String> ignoreEvents = new HashSet<>();
     private final RequestProcessor.Task reload;
+    private final DocumentId klDocument;
 
     private Klassenlehrer(final Signees signees) {
         this.signees = signees;
         this.service = WebProvider.find(signees.getProviderUrl(), WebServiceProvider.class);
+        this.klDocument = initKlassenlehrerDocument();
         reload = service.getDefaultRequestProcessor().post(this::reload);
     }
 
-    static Klassenlehrer find(final Signees signees) {
-        synchronized (INSTANCES) {
-            return INSTANCES.computeIfAbsent(signees.getProviderUrl(), key -> new Klassenlehrer(signees));
+    private DocumentId initKlassenlehrerDocument() {
+        final Configurations cfgs = Configurations.find(signees.getProviderUrl());
+        if (cfgs != null) {
+            final Configuration<NdsReportBuilderFactory> cfg;
+            try {
+                cfg = cfgs.readConfiguration("schulvorlage.xml", NdsReportBuilderFactory.class);
+            } catch (IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+            if (cfg != null) {
+                final NdsReportBuilderFactory nrbf = cfg.get();
+                final DocumentId d = nrbf.forName(CommonDocuments.PRIMARY_UNIT_HEAD_TEACHERS_DOCID);
+                if (d != null) {
+                    return d;
+                }
+            }
         }
+        throw new IllegalStateException("No Klassenlehrer document found for " + this.signees.getProviderUrl());
+    }
+
+    static Klassenlehrer find(final Signees signees) {
+        final Object i;
+        synchronized (INSTANCES) {
+            i = INSTANCES.computeIfAbsent(signees.getProviderUrl(), key -> {
+                try {
+                    return new Klassenlehrer(signees);
+                } catch (IllegalStateException e) {
+                    return e;
+                }
+            });
+        }
+        if (i instanceof IllegalStateException) {
+            return null;
+        }
+        return (Klassenlehrer) i;
     }
 
     private static void load(PrimaryUnitOpenSupport puos) {
@@ -109,10 +147,15 @@ public class Klassenlehrer {
     }
 
     UnitId[] getUnits() throws IOException {
-        try {
-            reload.waitFinished(30000);
-        } catch (InterruptedException ex) {
-          throw new IOException();
+        if (EventQueue.isDispatchThread()) {
+            final long maxWait = ServiceConfiguration.getInstance().getMaxWaitTimeInEDT();
+            try {
+                reload.waitFinished(maxWait);
+            } catch (InterruptedException ex) {
+                throw new IOException(ex);
+            }
+        } else {
+            reload.waitFinished();
         }
         return map.keySet().stream()
                 .toArray(UnitId[]::new);
@@ -128,8 +171,7 @@ public class Klassenlehrer {
 
     private void callService(final UnitId pu, final Signee signee) {
         final ContainerBuilder builder = new ContainerBuilder();
-        if(true) throw new UnsupportedOperationException("KLASSENLEHRER_DOCUMENT");
-        final DocumentEntry de = new DocumentEntry(null, null); //NdsCommonConstants.KLASSENLEHRER_DOCUMENT);
+        final DocumentEntry de = new DocumentEntry(null, klDocument);
         builder.add(de, Paths.PRIMARY_UNITS_SIGNEES_PATH);
         final boolean reloadAll;
         if (signee != null && pu != null) {
@@ -175,7 +217,7 @@ public class Klassenlehrer {
                         notifyError(em);
                     }
                 })
-                .filter(node -> DocumentUtilities.isEntryIdentity(node, DocumentId.class) && ((DocumentId) ((Entry) node).getIdentity()).equals(null)) //NdsCommonConstants.KLASSENLEHRER_DOCUMENT))
+                .filter(node -> DocumentUtilities.isEntryIdentity(node, DocumentId.class) && ((DocumentId) ((Entry) node).getIdentity()).equals(klDocument))
                 .flatMap(node -> node.getChildren().stream())
                 .filter(node -> DocumentUtilities.isEntryIdentity(node, UnitId.class))
                 .map(node -> (Entry<UnitId, ?>) node)
@@ -223,7 +265,7 @@ public class Klassenlehrer {
 
         @Override
         public void onMessage(AbstractDocumentEvent event) {
-            if (event.getSource().equals(null)){ //NdsCommonConstants.KLASSENLEHRER_DOCUMENT)) {
+            if (event.getSource().equals(klDocument)) {
                 final String pid = event.getPropagationId();
                 final boolean update;
                 if (pid != null) {
