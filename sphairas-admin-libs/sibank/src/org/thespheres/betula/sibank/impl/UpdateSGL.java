@@ -13,6 +13,7 @@ import org.openide.util.NbBundle;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.document.Action;
+import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Entry;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerParsingException;
@@ -20,6 +21,7 @@ import org.thespheres.betula.document.Template;
 import org.thespheres.betula.document.Timestamp;
 import org.thespheres.betula.document.util.MarkerAdapter;
 import org.thespheres.betula.services.scheme.spi.Term;
+import org.thespheres.betula.services.ws.CommonDocuments;
 import org.thespheres.betula.services.ws.Paths;
 import org.thespheres.betula.sibank.SiBankImportStudentItem;
 import org.thespheres.betula.sibank.SiBankImportTarget;
@@ -82,7 +84,11 @@ public class UpdateSGL implements SiBankUpdaterService {
             }
         }
         if (!sglMap.isEmpty()) {
-            final Template t = builder.createTemplate(null, config.getStudentCareersDocumentId(), null, Paths.STUDENTS_MARKERS_PATH, null, null);
+            final DocumentId sglDoc = config.forName(CommonDocuments.STUDENT_CAREERS_DOCID);
+            if (sglDoc == null) {
+                throw new IllegalStateException("No student-bildungsgang-documentid set.");
+            }
+            final Template t = builder.createTemplate(null, sglDoc, null, Paths.STUDENTS_MARKERS_PATH, null, null);
             //TODO: set effective dates
             final Timestamp termBegin = new Timestamp(term.getBegin());
             sglMap.entrySet().stream()

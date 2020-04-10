@@ -34,14 +34,15 @@ import org.thespheres.betula.document.Template;
 import org.thespheres.betula.document.util.DocumentUtilities;
 import org.thespheres.betula.document.util.MarkerAdapter;
 import org.thespheres.betula.services.ProviderRegistry;
+import org.thespheres.betula.services.ws.CommonDocuments;
 import org.thespheres.betula.services.ws.Paths;
 import org.thespheres.betula.services.ws.WebServiceProvider;
-import org.thespheres.betula.sibank.SiBankImportTarget;
-import org.thespheres.betula.sibank.SiBankPlus;
 import org.thespheres.betula.ui.util.LogLevel;
 import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.util.ContainerBuilder;
 import org.thespheres.betula.xmlimport.ImportTargetFactory;
+import org.thespheres.betula.xmlimport.model.Product;
+import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 
 /**
  *
@@ -55,7 +56,7 @@ import org.thespheres.betula.xmlimport.ImportTargetFactory;
     "SGLValues.status.noCareerDocument.message=Keine Schulzweig-Liste für {0} gefunden."})
 public class SGLValues {
 
-    protected DocumentId studentCareersDocumentId;
+    protected DocumentId studentCareersDocumentId = null;
     private final PrimaryUnitOpenSupport support;
     private WebServiceProvider service;
     private final Listener listener = new Listener();
@@ -81,15 +82,15 @@ public class SGLValues {
             notifyError(ioex, msg);
             return;
         }
+        DocumentId sglDoc;
+        IllegalStateException illex = null;
         try {
-            service = support.findWebServiceProvider();
-            studentCareersDocumentId = findCareerDocument(provider);
-            model = support.getRemoteUnitsModel(RemoteUnitsModel.INITIALISATION.STUDENTS);
-        } catch (IOException ioex) {
-            final String msg = NbBundle.getMessage(SGLValues.class, "SGLValues.message.ioexception.message");
-            notifyError(ioex, msg);
-            return;
-        } catch (IllegalStateException illex) {
+            sglDoc = findCareerDocument(provider);
+        } catch (IllegalStateException e) {
+            sglDoc = null;
+            illex = e;
+        }
+        if (sglDoc == null) {
             final String msg = NbBundle.getMessage(SGLValues.class, "SGLValues.message.noStudentCareersDocumentId", ProviderRegistry.getDefault().get(provider).getDisplayName());
             final boolean notified;
             synchronized (NOTIFIED_PROVIDERS) {
@@ -103,20 +104,38 @@ public class SGLValues {
             }
             return;
         }
+        studentCareersDocumentId = sglDoc;
+        try {
+            service = support.findWebServiceProvider();
+            model = support.getRemoteUnitsModel(RemoteUnitsModel.INITIALISATION.STUDENTS);
+        } catch (IOException ioex) {
+            final String msg = NbBundle.getMessage(SGLValues.class, "SGLValues.message.ioexception.message");
+            notifyError(ioex, msg);
+            return;
+        }
         if (studentCareersDocumentId
                 == null) {
             final String msg = NbBundle.getMessage(SGLValues.class, "SGLValues.status.noCareerDocument.message", support.getNodeDelegate().getDisplayName());
             PlatformUtil.getCodeNameBaseLogger(SGLValues.class).log(Level.INFO, msg);
             return;
         }
-
         model.addPropertyChangeListener(listener);
-
         reload();
     }
 
+    private static DocumentId findCareerDocument(final String url) {
+        if (url != null) {
+            final ConfigurableImportTarget fac = ImportTargetFactory.find(url, ConfigurableImportTarget.class,
+                    Product.NO);
+            if (fac instanceof CommonDocuments) {
+                return ((CommonDocuments) fac).forName(CommonDocuments.STUDENT_CAREERS_DOCID);
+            }
+        }
+        return null;
+    }
+
     public void reload() {
-        if (!model.getInitialization().satisfies(RemoteUnitsModel.INITIALISATION.STUDENTS)) {
+        if (studentCareersDocumentId == null || !model.getInitialization().satisfies(RemoteUnitsModel.INITIALISATION.STUDENTS)) {
             return;
         }
         final List<RemoteStudent> students = model.getStudents();
@@ -153,20 +172,8 @@ public class SGLValues {
                 .forEach(rs -> rs.putClientProperty("sgl", m.get(rs.getStudentId())));
     }
 
-    private static DocumentId findCareerDocument(final String url) throws IOException {
-        if (url != null) {
-            final SiBankImportTarget fac = ImportTargetFactory.find(url, SiBankImportTarget.class,
-                    SiBankPlus.getProduct());
-            if (fac != null) {
-                return fac.getStudentCareersDocumentId();
-            }
-        }
-        return null;
-    }
-
     static void notifyError(Exception ex, String message) {
-        PlatformUtil.getCodeNameBaseLogger(SGLValues.class
-        ).log(LogLevel.INFO_WARNING, ex.getMessage(), ex);
+        PlatformUtil.getCodeNameBaseLogger(SGLValues.class).log(LogLevel.INFO_WARNING, ex != null ? ex.getMessage() : message, ex);
         final Icon ic = ImageUtilities.loadImageIcon("org/thespheres/betula/ui/resources/exclamation-red-frame.png", true);
         final String title = NbBundle.getMessage(SGLValues.class,
                 "SGLValues.status.initError.title");
