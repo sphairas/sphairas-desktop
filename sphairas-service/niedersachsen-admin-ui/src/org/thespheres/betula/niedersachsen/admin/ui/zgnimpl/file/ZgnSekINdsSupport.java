@@ -62,6 +62,8 @@ public class ZgnSekINdsSupport extends BaseAbstractXmlSupport {
         }
         try {
             final Marshaller m = JAXB.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             try (final OutputStream os = getDataObject().getPrimaryFile().getOutputStream()) {
                 m.marshal(node, os);
             }
