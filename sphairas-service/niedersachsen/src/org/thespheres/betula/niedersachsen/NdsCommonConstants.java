@@ -13,7 +13,6 @@ import org.thespheres.betula.services.LocalFileProperties;
  */
 public class NdsCommonConstants {
 
-    public static final String DEFAULT_NAMES_AUTHORITY = "thespheres.org/default-names/de.niedersachsen";
     public static final String SUFFIX_AV = "arbeitsverhalten";
     public static final String SUFFIX_ZEUGNISNOTEN = "zeugnisnoten";
     public static final String SUFFIX_SV = "sozialverhalten";
