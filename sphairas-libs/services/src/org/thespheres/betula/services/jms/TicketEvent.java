@@ -13,6 +13,8 @@ import org.thespheres.betula.Ticket;
  */
 public class TicketEvent extends AbstractJMSEvent<Ticket> {
 
+    private static final long serialVersionUID = 1L;
+
     public enum TicketEventType {
 
         ADD, REMOVE

@@ -18,6 +18,7 @@ import org.thespheres.betula.document.Timestamp;
  */
 public class TextTargetAssessmentEvent extends AbstractDocumentEvent implements QualifiedEvent, Serializable {
 
+    private static final long serialVersionUID = 1L;
     private final StudentId student;
     private final TermId term;
     private final String text;

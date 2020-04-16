@@ -6,6 +6,7 @@
 package org.thespheres.betula.services.jms;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import org.thespheres.betula.Identity;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.assess.Grade;
@@ -21,6 +22,7 @@ import org.thespheres.betula.document.Timestamp;
  */
 public class MultiTargetAssessmentEvent<G extends Identity> extends AbstractDocumentEvent implements QualifiedEvent, Serializable {
 
+    private static final long serialVersionUID = 1L;
     private final Update<G>[] updates;
     private final Timestamp time;
 
@@ -51,6 +53,11 @@ public class MultiTargetAssessmentEvent<G extends Identity> extends AbstractDocu
     @Override
     public Timestamp getTimestamp() {
         return time;
+    }
+
+    @Override
+    public String toString() {
+        return "MultiTargetAssessmentEvent{" + "updates=" + Arrays.toString(updates) + ", time=" + time + '}';
     }
 
     public static class Update<G extends Identity> implements Serializable {
@@ -87,6 +94,11 @@ public class MultiTargetAssessmentEvent<G extends Identity> extends AbstractDocu
 
         public Timestamp getTimestamp() {
             return time;
+        }
+
+        @Override
+        public String toString() {
+            return "MultiTargetAssessmentEvent.Update{" + "student=" + student + ", gradeId=" + gradeId + ", beforeGrade=" + old + ", grade=" + grade + ", timeStamp=" + time + "}";
         }
 
     }

@@ -13,6 +13,8 @@ import org.thespheres.betula.StudentId;
  */
 public class StudentEvent extends AbstractJMSEvent<StudentId> {
 
+    private static final long serialVersionUID = 1L;
+
     public enum StudentEventType {
 
         ADD, REMOVE, CHANGE

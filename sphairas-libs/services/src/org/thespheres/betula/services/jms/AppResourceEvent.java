@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 public class AppResourceEvent implements JMSEvent, Serializable {
 
+    private static final long serialVersionUID = 1L;
     private final String resource;
 
     public AppResourceEvent(String resource) {

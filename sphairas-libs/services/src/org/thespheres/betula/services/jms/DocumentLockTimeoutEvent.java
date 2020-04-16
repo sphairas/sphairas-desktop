@@ -10,6 +10,8 @@ import org.thespheres.betula.document.DocumentId;
 
 public class DocumentLockTimeoutEvent extends AbstractJMSEvent<DocumentId> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public DocumentLockTimeoutEvent(DocumentId source) {
         super(source);
     }
