@@ -19,6 +19,7 @@ import org.openide.util.RequestProcessor;
 import org.thespheres.betula.services.NoProviderException;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.jms.JMSEvent;
+import org.thespheres.betula.services.jms.JMSEvents;
 import org.thespheres.betula.services.util.MessageUtil;
 import org.thespheres.betula.services.util.MessageUtil.Dispatch;
 import org.thespheres.betula.util.CollectionUtil;
@@ -75,6 +76,7 @@ public abstract class JMSTopicListenerService implements Runnable {
     }
 
     public void run(final JMSEvent evt) {
+        JMSEvents.log(evt);
         if (initialized && evt != null) {
             final JMSListener[] l;
             synchronized (listeners) {
@@ -104,7 +106,7 @@ public abstract class JMSTopicListenerService implements Runnable {
     }
 
     protected abstract void initListener();
-    
+
     static class DispatchImpl extends Dispatch {
 
         final JMSTopicListenerService service;
