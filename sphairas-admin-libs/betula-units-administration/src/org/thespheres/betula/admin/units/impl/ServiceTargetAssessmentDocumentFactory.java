@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import java.util.stream.StreamSupport;
 import javax.swing.Icon;
 import org.openide.awt.NotificationDisplayer;
@@ -101,7 +100,7 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
         }
         final double nanos = cache.stats().averageLoadPenalty();
         final int round = DoubleMath.roundToInt(nanos / 1000000, RoundingMode.UP);
-        PlatformUtil.getCodeNameBaseLogger(ServiceTargetAssessmentDocumentFactory.class).log(Level.INFO, "Average load penalty is {0}ms.", round);
+        PlatformUtil.logPerformance("Average load penalty", round);
         return get;
     }
 
@@ -118,7 +117,7 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
         }
         final double nanos = cache.stats().averageLoadPenalty();
         final int round = DoubleMath.roundToInt(nanos / 1000000, RoundingMode.UP);
-        PlatformUtil.getCodeNameBaseLogger(ServiceTargetAssessmentDocumentFactory.class).log(Level.INFO, "Average load penalty is {0}ms.", round);
+        PlatformUtil.logPerformance("Average load penalty", round);
         return get;
     }
 

@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
@@ -244,7 +243,6 @@ public class TargetsForStudentsElement extends AbstractTableElement implements P
     }
 
     void initTable(TargetsForStudentsModel m) throws IOException {
-//        final long l = System.currentTimeMillis();
         if (currentModel != null) {
             targetTypeBox.removeItemListener(currentModel);
             termBox.removeItemListener(currentModel);
@@ -268,9 +266,6 @@ public class TargetsForStudentsElement extends AbstractTableElement implements P
         support.addUndoableEditListener(undoRedo);
 
         activatedNodes(Collections.EMPTY_LIST);
-
-//        int r = Integer.getInteger("org.netbeans.core.TimeableEventQueue.report", -1);//20000 in production, 3000 develop/debug
-//        Logger.getLogger("---TargetsForStudentsElementDebug---").log(Level.INFO, "Time in initTable: " + Long.toString(System.currentTimeMillis() - l) + " data: " + support.getNodeDelegate().getDisplayName());
     }
 
     @Override
@@ -379,11 +374,10 @@ public class TargetsForStudentsElement extends AbstractTableElement implements P
                 ((ColumnControlButtonExt) table.getColumnControl()).quiet(false);
                 targetTypeBox.removeItemListener(currentModel);
                 termBox.removeItemListener(currentModel);
-                final long l2 = System.currentTimeMillis() - start;
                 initTermAndTargetBoxes();
-                final long l3 = System.currentTimeMillis() - start;
-                int r = Integer.getInteger("org.netbeans.core.TimeableEventQueue.report", -1);//20000 in production, 3000 develop/debug
-                Logger.getLogger("---TargetsForStudentsElementDebug---").log(Level.INFO, "Time in updateComboBoxes: " + Long.toString(l2) + "/" + Long.toString(l3) + " data: " + support.getNodeDelegate().getDisplayName());
+                final long t = System.currentTimeMillis() - start;
+                final String res = support.getNodeDelegate().getDisplayName() + ":updateComboBoxes";
+                PlatformUtil.logPerformance(res, t);
             });
         }
     }
@@ -506,8 +500,6 @@ public class TargetsForStudentsElement extends AbstractTableElement implements P
 
     @Override
     public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
-        final int c = rc.getAndIncrement();
-//        Logger.getLogger("---TargetsForStudentsElementDebug---").log(Level.INFO, "Reading: " + c);
         super.readExternal(oi);
         Object o = oi.readObject();
         if (o instanceof AbstractUnitOpenSupport.Env) {
@@ -525,11 +517,8 @@ public class TargetsForStudentsElement extends AbstractTableElement implements P
             if (o != null && o instanceof String) {
                 savedTargetType = (String) o;
             }
-//            final String log = "Read: " + ((AbstractUnitOpenSupport) env.findCloneableOpenSupport()).getNodeDelegate().getDisplayName();
-//            PlatformUtil.getCodeNameBaseLogger(TargetsForStudentsElement.class).log(Level.INFO, log);
             initializeComponent();
             activatedNodes(Collections.EMPTY_LIST);
-//            Logger.getLogger("---TargetsForStudentsElementDebug---").log(Level.INFO, "Read: " + c);
         } else {
             throw new IOException();
         }

@@ -150,7 +150,6 @@ public class TargetsForStudentsColumnFactory extends ColumnFactory {
             tfst.hidden.registerColumn(col, rd.getTargetType());
         }
         final String pConv = rd.getPreferredConvention();
-//        long l2 = System.currentTimeMillis() - time;
         if (pConv != null) {
             JXComboBox gradesBox = gBoxes.get(pConv);
             if (gradesBox == null) {
@@ -174,8 +173,6 @@ public class TargetsForStudentsColumnFactory extends ColumnFactory {
         col.addHighlighter(nullHL);
         col.addHighlighter(invalHL);
         col.addHighlighter(new AlignmentHighlighter(SwingConstants.CENTER));
-//        long l3 = System.currentTimeMillis() - time;
-//        Logger.getLogger("---TargetsForStudentsElementDebug---").log(Level.INFO, "Time in configureTargetColumn: " + Long.toString(l2) + "/" + Long.toString(l3) + " data: " + name.getColumnLabel());
     }
 
 }
