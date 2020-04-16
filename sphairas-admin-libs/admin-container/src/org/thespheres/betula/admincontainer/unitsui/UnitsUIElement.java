@@ -168,9 +168,6 @@ public class UnitsUIElement extends AbstractTableElement implements PropertyChan
         support.addUndoableEditListener(undoRedo);
 
         activatedNodes(Collections.EMPTY_LIST);
-
-//        int r = Integer.getInteger("org.netbeans.core.TimeableEventQueue.report", -1);//20000 in production, 3000 develop/debug
-//        Logger.getLogger("---TargetsForStudentsElementDebug---").log(Level.INFO, "Time in initTable: " + Long.toString(System.currentTimeMillis() - l) + " data: " + support.getNodeDelegate().getDisplayName());
     }
 
     @Override
