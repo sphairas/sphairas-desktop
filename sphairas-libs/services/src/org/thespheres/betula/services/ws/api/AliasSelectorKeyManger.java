@@ -9,13 +9,15 @@ import java.net.Socket;
 import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedKeyManager;
 import javax.net.ssl.X509KeyManager;
 
 /**
  *
  * @author boris.heithecker
  */
-public class AliasSelectorKeyManger implements X509KeyManager {
+public class AliasSelectorKeyManger extends X509ExtendedKeyManager implements X509KeyManager {
 
     private final X509KeyManager original;
     private final String alias;
@@ -31,16 +33,29 @@ public class AliasSelectorKeyManger implements X509KeyManager {
     }
 
     @Override
+    public String chooseEngineClientAlias(String[] keyTypes, Principal[] issuers, SSLEngine engine) {
+        if (alias == null || original instanceof X509ExtendedKeyManager) {
+            return ((X509ExtendedKeyManager) original).chooseEngineClientAlias(keyTypes, issuers, engine);
+        }
+        if (keyTypes == null || alias == null) {
+            return null;
+        }
+        return findForAlias(keyTypes, issuers);
+    }
+
+    @Override
     public String chooseClientAlias(String[] keyTypes, Principal[] issuers, Socket socket) {
-//        PrivateKeyCallback sc = PrivateKeyCallback.getCurrent();
         if (alias == null) {
             return original.chooseClientAlias(keyTypes, issuers, socket);
         }
-
         if (keyTypes == null) {
             return null;
         }
-//        final String name = alias != null ? alias : sc.getAlias();
+        return findForAlias(keyTypes, issuers);
+    }
+
+    private String findForAlias(String[] keyTypes, Principal[] issuers) {
+        //        final String name = alias != null ? alias : sc.getAlias();
         for (final String keyType : keyTypes) {
             final String[] aliases = getClientAliases(keyType, issuers);
             if ((aliases != null) && (aliases.length > 0)) {
@@ -62,6 +77,14 @@ public class AliasSelectorKeyManger implements X509KeyManager {
     @Override
     public String chooseServerAlias(String string, Principal[] prncpls, Socket socket) {
         return original.chooseServerAlias(string, prncpls, socket);
+    }
+
+    @Override
+    public String chooseEngineServerAlias(String keyType, Principal[] issuers, SSLEngine engine) {
+        if (original instanceof X509ExtendedKeyManager) {
+            return ((X509ExtendedKeyManager) original).chooseEngineServerAlias(keyType, issuers, engine);
+        }
+        return super.chooseEngineServerAlias(keyType, issuers, engine);
     }
 
     @Override
