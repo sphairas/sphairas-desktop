@@ -63,7 +63,7 @@ public class SSLUtil {
         char[] password = null;
         SSLContext ctx = null;
         try {
-            ctx = SSLContext.getInstance("TLSv1.2"); //.getInstance("SSLv3");  //TLSv1.2
+            ctx = SSLContext.getInstance("TLSv1.3"); //.getInstance("SSLv3");  //TLSv1.2
             final KeyManagerFactory kstorefac = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             final Path kspath = Paths.get(KeyStores.getKeystore());
             final KeyStore kstore = KeyStore.getInstance(KeyStores.getKeystoreType());
