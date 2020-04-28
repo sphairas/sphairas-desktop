@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.thespheres.betula.adminconfig
-OpenIDE-Module-Implementation-Version: 5
+OpenIDE-Module-Implementation-Version: 6
 OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/adminconfig/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager
 

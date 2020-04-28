@@ -58,8 +58,9 @@ public abstract class AbstractConfigurations implements Configurations {
             final InputStream is = getResource(res);
             final Object ret = meth.invoke(null, is);
             return retType.cast(ret);
-        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IOException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             throw new RuntimeException("Could not invode " + method + " on class " + clz, ex);
+            
         }
     }
 
