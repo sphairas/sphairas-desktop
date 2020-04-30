@@ -6,7 +6,6 @@
 package org.thespheres.betula.sibank;
 
 import org.thespheres.betula.UnitId;
-import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.services.CommonStudentProperties;
 import org.thespheres.betula.services.CommonTargetProperties;
@@ -60,7 +59,6 @@ public interface SiBankImportTarget extends ImportTarget, CommonTargetProperties
     public String getStudentsAuthority(Object... params);
 
 //    public TargetDocumentProperties[] createTargetDocuments(SiBankKursItem lesson);
-    public DocumentId getStudentCareersDocumentId();
 
     public static abstract class Factory extends ImportTargetFactory<SiBankImportTarget> {
 
