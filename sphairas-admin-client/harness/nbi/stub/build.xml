@@ -167,7 +167,7 @@
 
     <target name="-generate-bundles">
         
-        <property file="${suite.location}/nbproject/private/jdk.properties" />
+        <property file="${suite.location}/nbproject/jdk.properties" />
         <macrodef name="createBundle">
             <attribute name="platform"/>
             <sequential>
