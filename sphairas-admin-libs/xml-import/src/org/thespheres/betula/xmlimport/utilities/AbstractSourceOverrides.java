@@ -77,8 +77,13 @@ public abstract class AbstractSourceOverrides<T extends ImportTargetsItem & Impo
     protected void doInitialize(K l) {
         final K before = this.links;
         synchronized (listeners) {
+            if (this.links != null) {
+                listeners.forEach(AbstractItemListener::uninitialize);
+            }
             this.links = l;
-            listeners.forEach(AbstractItemListener::initialize);
+            if (this.links != null) {
+                listeners.forEach(AbstractItemListener::initialize);
+            }
         }
         if (!Objects.equals(this.links, before)) {
             cSupport.fireChange();
