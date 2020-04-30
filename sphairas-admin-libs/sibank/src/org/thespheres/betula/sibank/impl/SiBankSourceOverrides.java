@@ -18,9 +18,9 @@ import org.thespheres.betula.sibank.SiBankImportData;
 import org.thespheres.betula.sibank.SiBankKursItem;
 import org.thespheres.betula.sibank.UniqueSatzDistinguisher;
 import org.thespheres.betula.sibank.impl.SiBankSourceOverrides.Listener;
-import org.thespheres.betula.sibank.ui2.impl.ImportUnitsAction;
 import org.thespheres.betula.util.ChangeSet;
 import org.thespheres.betula.xmlimport.utilities.ColumnProperty;
+import org.thespheres.betula.xmlimport.utilities.SourceTargetLinksAccess;
 
 /**
  *
@@ -62,7 +62,7 @@ public class SiBankSourceOverrides extends AbstractSourceOverrides<SiBankKursIte
     }
 
     private void waitForSourceTargetAccess() {
-        final SiBankSourceTargetAccess sta = (SiBankSourceTargetAccess) wizard.getProperty(ImportUnitsAction.SIBANK_SOURCE_TARGET_ACCESS);
+        final SiBankSourceTargetAccess sta = (SiBankSourceTargetAccess) wizard.getProperty(SourceTargetLinksAccess.PROP_SOURCE_TARGET_LINKS_ACCESS);
         sta.waitLoadingFinished();
     }
 

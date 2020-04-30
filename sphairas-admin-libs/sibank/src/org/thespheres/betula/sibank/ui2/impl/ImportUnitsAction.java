@@ -52,6 +52,7 @@ import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportWizard;
 import org.thespheres.betula.xmlimport.utilities.AbstractSourceOverrides;
 import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
+import org.thespheres.betula.xmlimport.utilities.SourceTargetLinksAccess;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 import org.thespheres.betula.xmlimport.utilities.TargetItemsUpdater;
 import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
@@ -66,7 +67,6 @@ import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
     "ImportUnitsAction.message.fileType=Import aus dem SiBankPlus-Bereich \"{0}\""})
 public class ImportUnitsAction extends AbstractFileImportAction<SiBankImportData, DatenExportXml, SiBankImportTarget, ImportTargetsItem> {
 
-    public static final String SIBANK_SOURCE_TARGET_ACCESS = "sibank-source-target-access";
     public static final String SIBANK_IMPORT_ACTION_TYPE = "sibank-import-action-type";
     private final static FileFilter FILTER = new MimeFileFilter(DatenExportDataObject.MIME,
             NbBundle.getMessage(ImportUnitsAction.class, "ImportUnitsAction.FileChooser.FileDescription"));
@@ -139,8 +139,8 @@ public class ImportUnitsAction extends AbstractFileImportAction<SiBankImportData
         if (!DatenExportXml.File.SCHUELER.equals(file)) {
             final SiBankSourceTargetAccess l = new SiBankSourceTargetAccess(wiz, iterator);
             wiz.addPropertyChangeListener(l);
-            wiz.putProperty(SIBANK_SOURCE_TARGET_ACCESS, l);
-         final   SiBankSourceOverrides userOverrides = new SiBankSourceOverrides(wiz);
+            wiz.putProperty(SourceTargetLinksAccess.PROP_SOURCE_TARGET_LINKS_ACCESS, l);
+            final SiBankSourceOverrides userOverrides = new SiBankSourceOverrides(wiz);
             wiz.putProperty(AbstractSourceOverrides.USER_SOURCE_OVERRIDES, userOverrides);
         }
     }
@@ -163,7 +163,7 @@ public class ImportUnitsAction extends AbstractFileImportAction<SiBankImportData
 
     @Override
     protected void onUpdateFinished(SiBankImportTarget config, Set<?> selected, DatenExportXml xml, SiBankImportData wiz, AbstractUpdater<?> updater) {
-        final SiBankSourceTargetAccess acc = (SiBankSourceTargetAccess) wiz.getProperty(SIBANK_SOURCE_TARGET_ACCESS);
+        final SiBankSourceTargetAccess acc = (SiBankSourceTargetAccess) wiz.getProperty(SourceTargetLinksAccess.PROP_SOURCE_TARGET_LINKS_ACCESS);
         if (acc != null) {
             final SiBankAssoziationenCollection links = (SiBankAssoziationenCollection) wiz.getProperty(AbstractFileImportAction.SOURCE_TARGET_LINKS);
             if (links != null) {
