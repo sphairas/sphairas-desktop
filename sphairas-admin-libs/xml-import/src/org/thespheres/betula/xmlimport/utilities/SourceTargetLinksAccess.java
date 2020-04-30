@@ -46,6 +46,7 @@ import org.thespheres.betula.xmlimport.ImportUtil;
     "SourceTargetLinksAccess.message.newAssoc=Verwende neue leere {0}-Daten."})
 public abstract class SourceTargetLinksAccess<I, C extends ImportTarget> {
 
+    public static final String PROP_SOURCE_TARGET_LINKS_ACCESS = "source-target-links-access";
     protected boolean useFileOnly;
     private WebProvider.SSL webService;
     protected JAXBContext ctx2;
@@ -106,7 +107,7 @@ public abstract class SourceTargetLinksAccess<I, C extends ImportTarget> {
         }
         EntityTemplate fe = new EntityTemplate(new CP());
         put.setEntity(fe);
-        try ( CloseableHttpResponse resp = httpclient.execute(put)) {
+        try (CloseableHttpResponse resp = httpclient.execute(put)) {
             int s = resp.getStatusLine().getStatusCode();
             if (s >= 200 && s < 300) {
                 String msg = NbBundle.getMessage(SourceTargetLinksAccess.class, "SourceTargetLinksAccess.upload.result", assoziationenURL, name);
