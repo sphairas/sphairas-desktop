@@ -34,7 +34,7 @@
             <globmapper from="*" to="*/build.xml"/>
         </pathconvert>
     </target>
-    <target name="build-installers" depends="-init">
+    <target name="build-installers" depends="-init,package-jdk">
         <property name="installer.harness.dir" value="${basedir}/harness"/>
         <!--<property name="build.platforms" value="windows linux macosx"/>--> 
         <property name="build.platforms" value="windows linux"/> 
@@ -48,6 +48,10 @@
             <property name="pack200.enabled" value="false"/>
             <property name="nbi.license.file" value="${auxiliary.org-netbeans-modules-apisupport-installer.license-file}"/>
         </ant>
+    </target>
+    <target name="package-jdk" >
+        <property name="package-jdk-exec" location="${basedir}/jdk.sh"/>
+        <exec executable="${package-jdk-exec}" dir="${basedir}" />
     </target>
     <target name="push-nbms" >
         <property name="pushnbms" location="${basedir}/pushnbms.sh"/>
