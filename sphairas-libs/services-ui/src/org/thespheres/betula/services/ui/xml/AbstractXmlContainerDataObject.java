@@ -78,20 +78,17 @@ public class AbstractXmlContainerDataObject extends XMLDataObject {
         }
         final FileObject file = getPrimaryFile();
         final Collection<? extends BaseAbstractXmlSupport> supports = getLookup().lookupAll(BaseAbstractXmlSupport.class);
-        for (final BaseAbstractXmlSupport support : supports) {
-            file.getFileSystem().runAtomicAction(() -> {
-                final FileLock l = file.lock();
-                try (final OutputStream os = file.getOutputStream(l)) {
-                    XMLUtil.write(doc, os, "utf-8");
-                    if (support != null) {
-                        support.setTime(file.lastModified().getTime());
-                    }
-                    setModified(false);
-                } finally {
-                    l.releaseLock();
-                }
-            });
-        }
+        file.getFileSystem().runAtomicAction(() -> {
+            final FileLock l = file.lock();
+            try (final OutputStream os = file.getOutputStream(l)) {
+                XMLUtil.write(doc, os, "utf-8");
+                supports.forEach(s -> s.setTime(file.lastModified().getTime()));
+                setModified(false);
+            } finally {
+                l.releaseLock();
+            }
+        });
+
     }
 
     protected class FileSaver extends AbstractSavable implements SaveCookie {
