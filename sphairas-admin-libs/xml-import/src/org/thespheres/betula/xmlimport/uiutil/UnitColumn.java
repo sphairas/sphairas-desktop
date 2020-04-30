@@ -42,18 +42,19 @@ import org.thespheres.betula.xmlimport.ImportTargetsItem;
  */
 public class UnitColumn<I extends ImportTargetsItem, T extends ImportTarget, W extends AbstractImportWizardSettings<T>, M extends ImportTableModel<I, W>> extends DefaultColumns<I, T, W, M> {
 
+    public static final String ID = "unit";
     private final JXComboBox unitsBox;
     private final UnitFormatter unitFormatter = new UnitFormatter();
     private final ExistsHL existsHighlighter = new ExistsHL();
 
     public UnitColumn(String product) {
-        super("unit", 300, true, 170, product);
+        super(ID, 300, true, 170, product);
         unitsBox = new JXComboBox();
         unitsBox.setEditable(true);
     }
 
     public UnitColumn(String product, boolean editable) {
-        super("unit", 300, editable, 170, product);
+        super(ID, 300, editable, 170, product);
         unitsBox = new JXComboBox();
         unitsBox.setEditable(true);
     }
