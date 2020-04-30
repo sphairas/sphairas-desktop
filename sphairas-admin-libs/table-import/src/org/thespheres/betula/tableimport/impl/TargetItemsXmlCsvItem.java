@@ -47,7 +47,6 @@ import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetItem> {
 
     static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("d.M.y", Locale.getDefault());
-    public static final String PROP_CONFIGURATION = "configuration";
     public static final String PROP_TARGET_ID = "targetId";
     private final ConfigurableImportTargetHelper<TargetItemsXmlCsvItem> helper;
     private final TableImportStudentsSet<TargetItemsXmlCsvItem> importStudents = new TableImportStudentsSet<>(this);
