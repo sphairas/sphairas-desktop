@@ -157,7 +157,7 @@ public class ConfigurableImportTargetHelper<I extends AbstractXmlCsvImportItem<?
         final String pn = evt.getPropertyName();
         if (ImportTargetsItem.PROP_UNIQUE_SUBJECT.equals(pn)
                 || TargetItemsXmlCsvItem.PROP_TARGET_ID.equals(pn)
-                || TargetItemsXmlCsvItem.PROP_CONFIGURATION.equals(pn)
+                || TargetItemsXmlCsvItem.PROP_IMPORT_TARGET.equals(pn)
                 || TargetItemsXmlCsvItem.PROP_UNITID.equals(pn)) {
             final ConfigurableImportTarget cfg = item.getConfiguration();
             if (cfg != null) {
