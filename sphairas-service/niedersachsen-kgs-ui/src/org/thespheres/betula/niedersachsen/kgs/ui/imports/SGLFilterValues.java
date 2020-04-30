@@ -35,36 +35,43 @@ import org.thespheres.betula.xmlimport.ImportUtil;
  *
  * @author boris.heithecker
  */
-@NbBundle.Messages({"SGLFilterValues.message.noSGL=Kein Schulzweig für {0} gefunden!"})
+@NbBundle.Messages({"SGLFilterValues.message.noSGL=Kein Schulzweig für {0} gefunden!",
+    "SGLFilterValues.message.noCareersDocument=Keine Schulzweigliste für {0} definiert."})
 public class SGLFilterValues {
-
+    
     private final static Map<String, SGLFilterValues> INSTANCES = new HashMap<>();
     private final ImportTarget config;
     private final Map<StudentId, Marker> sgl = new HashMap<>();
     private final Set<StudentId> warned = new HashSet<>();
     private final DocumentId studentCareersDocumentId;
-
+    
     private SGLFilterValues(final ImportTarget support, final DocumentId carreers) {
         this.config = support;
         this.studentCareersDocumentId = carreers;
+        if (studentCareersDocumentId == null) {
+            final String msg = NbBundle.getMessage(SGLFilterValues.class, "SGLFilterValues.message.noCareersDocument", support.getProviderInfo().getDisplayName());
+            ImportUtil.getIO().getErr().println(msg);
+        }
     }
-
+    
     public static SGLFilterValues get(final ImportTarget config, final Function<ImportTarget, DocumentId> careers) {
         final String url = config.getProviderInfo().getURL();
         return INSTANCES.computeIfAbsent(url, key -> new SGLFilterValues(config, careers.apply(config)));
     }
-
+    
     public SGLFilterValues add(ImportTargetsItem kurs) {
-        final StudentId[] all = kurs.getUnitStudents();
-        if (all != null) {
-            final Set<StudentId> studs = Arrays.stream(all)
-                    .filter(s -> !sgl.containsKey(s))
-                    .collect(Collectors.toSet());
-            reload(studs);
+        if (studentCareersDocumentId != null) {
+            final StudentId[] all = kurs.getUnitStudents();
+            if (all != null) {
+                final Set<StudentId> studs = Arrays.stream(all)
+                        .filter(s -> !sgl.containsKey(s))
+                        .collect(Collectors.toSet());
+                reload(studs);
+            }
         }
         return this;
     }
-
+    
     public Marker get(StudentId student) {
         final Marker ret = sgl.get(student);
         if (Marker.isNull(ret) && !warned.contains(student)) {
@@ -76,7 +83,7 @@ public class SGLFilterValues {
         }
         return ret;
     }
-
+    
     private void reload(final Set<StudentId> students) {
         final ContainerBuilder builder = new ContainerBuilder();
         final Template t = builder.createTemplate(null, studentCareersDocumentId, null, Paths.STUDENTS_MARKERS_PATH, null, null);
@@ -102,5 +109,5 @@ public class SGLFilterValues {
                 .filter(m::containsKey)
                 .forEach(s -> sgl.put(s, m.get(s)));
     }
-
+    
 }

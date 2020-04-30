@@ -72,14 +72,18 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
 
     @Override
     public Marker getColumnValue(ITI il) {
-        return markers.get(il).value();
+        synchronized (markers) {
+            return markers.get(il).value();
+        }
     }
 
     @Override
     protected void initialize(ITI il) {
         super.initialize(il);
         final MarkerListener ml = new MarkerListener(il);
-        markers.put(il, ml);
+        synchronized (markers) {
+            markers.put(il, ml);
+        }
         final ChangeListener cl = WeakListeners.change(listener, null);
         il.getUniqueMarkerSet().addChangeListener(cl);
         initializeOverrides(il);
@@ -162,7 +166,9 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
 
         @Override
         public void stateChanged(ChangeEvent e) {
-            markers.forEach((k, v) -> v.stateChanged(null));
+            synchronized (markers) {
+                markers.forEach((k, v) -> v.stateChanged(null));
+            }
         }
     }
 
