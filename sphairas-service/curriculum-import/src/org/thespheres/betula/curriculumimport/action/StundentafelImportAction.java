@@ -5,14 +5,13 @@ package org.thespheres.betula.curriculumimport.action;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
+import org.thespheres.betula.curriculumimport.StundentafelImportTargetsItem;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.swing.filechooser.FileFilter;
-import org.openide.WizardDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -24,12 +23,12 @@ import org.openide.loaders.DataObject;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
-import org.thespheres.betula.curriculum.Curriculum;
 import org.thespheres.betula.services.scheme.spi.Term;
-import org.thespheres.betula.services.util.NbUtilities;
 import org.thespheres.betula.ui.util.MimeFileFilter;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.model.Product;
+import org.thespheres.betula.xmlimport.uiutil.AbstractImportAction;
+import org.thespheres.betula.xmlimport.utilities.AbstractSourceOverrides;
 import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 import org.thespheres.betula.xmlimport.utilities.TargetItemsUpdater;
@@ -44,8 +43,9 @@ import org.thespheres.betula.xmlimport.utilities.TargetItemsUpdater;
     @ActionReference(path = "Loaders/application/betula-unit-data/Actions", position = 4200, separatorBefore = 4000, separatorAfter = 5000)})
 @Messages({"StundentafelImportAction.displayName=Import aus einer Stundentafel",
     "StundentafelImportAction.dialog.title=Studentafel-Import"})
-public class StundentafelImportAction extends AbstractFileImportAction<StundentafelImportSettings, Curriculum, ConfigurableImportTarget, StundentafelImportTargetsItem> {
+public class StundentafelImportAction extends AbstractImportAction<StundentafelImportSettings, ConfigurableImportTarget, StundentafelImportTargetsItem> {
 
+    public static final String CURRICULUM = "curriculum";
     public static final String SELECTED_UNITS = "selected.units";
     public static final String ALLOW_SELECT_UNITS = "allow.select.units";
     private final static FileFilter FILE_FILTER = new MimeFileFilter("text/curriculum-file+xml",
@@ -63,61 +63,44 @@ public class StundentafelImportAction extends AbstractFileImportAction<Stundenta
     }
 
     @Override
-    protected StundentafelImportSettings createSettings(final Curriculum xml) {
+    protected StundentafelImportSettings createSettingsAndIterator() {
+        final StundentafelImportSettings settings;
         if (context != null) {
-            return ContextStundentafelImportSettings.createSettings(xml, context);
+            settings = ContextStundentafelImportSettings.createSettings(context);
         } else {
-            return new GeneralStundentafelImportSettings(xml);
+            settings = GeneralStundentafelImportSettings.createSettings();
         }
+        this.iterator = settings.createIterator();
+        return settings;
     }
 
     @Override
-    protected WizardDescriptor.Iterator<StundentafelImportSettings> createIterator(Curriculum xml, StundentafelImportSettings settings) {
-        return settings.createIterator();
+    protected void beforeWizardShow(final StundentafelImportSettings wiz) {
+        final CurriculumSourceOverrides userOverrides = new CurriculumSourceOverrides(wiz);
+        wiz.putProperty(AbstractSourceOverrides.USER_SOURCE_OVERRIDES, userOverrides);
     }
 
     @Messages({"StundentafelImportAction.FileChooser.Title=Importiere aus Stundentafel",
         "StundentafelImportAction.FileChooser.FileDescription=xml-Dateien"})
-    @Override
-    protected Curriculum openFile() throws IOException {
-        final FileObject projectDir = context != null ? findCommonImportProjectDir(context) : null;
-        final File home = projectDir != null ? FileUtil.toFile(projectDir) : new File(System.getProperty("user.home"));
+    static DataObject openFile() throws IOException {
+//        final FileObject projectDir = context != null ? findCommonImportProjectDir(context) : null;
+//        final File home = projectDir != null ? FileUtil.toFile(projectDir) : new File(System.getProperty("user.home"));
         final String title = NbBundle.getMessage(StundentafelImportAction.class, "StundentafelImportAction.FileChooser.Title");
-        FileChooserBuilder fcb = new FileChooserBuilder(StundentafelImportAction.class);
+        final File home = new File(System.getProperty("user.home"));
+        final FileChooserBuilder fcb = new FileChooserBuilder(StundentafelImportAction.class);
         fcb.setTitle(title)
                 .setDefaultWorkingDirectory(home)
                 .setFileHiding(true)
                 .setFileFilter(FILE_FILTER);
-        File open = fcb.showOpenDialog();
+        final File open = fcb.showOpenDialog();
         if (open == null || !open.exists()) {
             return null;
         }
-        FileObject fo = FileUtil.toFileObject(open);
+        final FileObject fo = FileUtil.toFileObject(open);
         if (fo == null) {
             throw new IOException();
         }
-        final DataObject dob = DataObject.find(fo);
-        final Curriculum ret = NbUtilities.waitForLookup(dob.getLookup(), Curriculum.class, 5000);
-        if (ret == null) {
-            throw new IOException();
-        }
-        return ret;
-    }
-
-    private static FileObject findCommonImportProjectDir(final List<PrimaryUnitOpenSupport> l) throws IOException {
-        FileObject found = null;
-        for (final PrimaryUnitOpenSupport auos : l) {
-            final FileObject fo = auos.getProjectDirectory();
-            if (fo == null) {
-                return null;
-            }
-            if (found == null) {
-                found = fo;
-            } else if (!found.equals(fo)) {
-                return null;
-            }
-        }
-        return found;
+        return DataObject.find(fo);
     }
 
     @Override
@@ -127,4 +110,15 @@ public class StundentafelImportAction extends AbstractFileImportAction<Stundenta
                 .toArray(StundentafelImportTargetsItem[]::new);
         return new TargetItemsUpdater(iti, config.getWebServiceProvider(), term, Collections.singletonList(new StundentafelImportTargetsItem.Filter()));
     }
+
+    @Override
+    protected void onUpdateFinished(final ConfigurableImportTarget config, final Set<?> selected, final StundentafelImportSettings wiz, final AbstractUpdater<?> updater) {
+        wiz.saveAssociations();
+    }
+
+    @Override
+    protected void onWizardExit(final StundentafelImportSettings d) {
+        d.releaseLock();
+    }
+
 }

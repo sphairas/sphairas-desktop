@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.curriculumimport.action;
 
+import org.thespheres.betula.curriculumimport.StundentafelImportTargetsItem;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JPanel;

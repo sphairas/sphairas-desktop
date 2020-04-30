@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.curriculumimport.action;
 
+import org.thespheres.betula.curriculumimport.StundentafelImportTargetsItem;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -25,6 +26,7 @@ import org.thespheres.betula.xmlimport.uiutil.DefaultColumns;
 import org.thespheres.betula.xmlimport.uiutil.DefaultColumns.SigneeColumn;
 import org.thespheres.betula.xmlimport.uiutil.DefaultColumns.SourceSigneeColumn;
 import org.thespheres.betula.xmlimport.uiutil.ImportTableColumn;
+import org.thespheres.betula.xmlimport.uiutil.UnitColumn;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 
 /**
@@ -48,8 +50,11 @@ class StundentafelImportDocumentsTableModel extends ImportTableModel<Stundentafe
                 it.remove();
             } else if (SourceSigneeColumn.ID.equals(itc.columnId())) {
                 it.remove();
+            } else if (UnitColumn.ID.equals(itc.columnId())) {
+                it.remove();
             }
         }
+        s.add(new UnitColumn(product, false));
         s.add(new StundentafelSigneeColumn(product));
         s.add(new SelectedColumn());
         s.add(new FixedSubjectColumn(product));
@@ -62,11 +67,11 @@ class StundentafelImportDocumentsTableModel extends ImportTableModel<Stundentafe
 
     @Override
     public void initialize(final StundentafelImportSettings descriptor) {
-        final ConfigurableImportTarget config = (ConfigurableImportTarget) descriptor.getProperty(AbstractFileImportAction.IMPORT_TARGET);
+//        final ConfigurableImportTarget config = (ConfigurableImportTarget) descriptor.getProperty(AbstractFileImportAction.IMPORT_TARGET);
         final ChangeSet<StundentafelImportTargetsItem> s = (ChangeSet<StundentafelImportTargetsItem>) descriptor.getProperty(AbstractFileImportAction.SELECTED_NODES);
         selected.clear();
         s.stream()
-                .peek(il -> il.initialize(config, descriptor))
+                //                .peek(il -> ((StundentafelImportTargetsItemImpl) il).initialize(config, descriptor))
                 .peek(il -> descriptor.addPropertyChangeListener(createPCL(il, descriptor)))
                 .forEach(selected::add);
         fireTableDataChanged();
@@ -75,8 +80,8 @@ class StundentafelImportDocumentsTableModel extends ImportTableModel<Stundentafe
     private PropertyChangeListener createPCL(final StundentafelImportTargetsItem il, StundentafelImportSettings descriptor) {
         return (PropertyChangeEvent evt) -> {
             if (AbstractFileImportAction.IMPORT_TARGET.equals(evt.getPropertyName())) {
-                ConfigurableImportTarget cfg = (ConfigurableImportTarget) evt.getNewValue();
-                il.initialize(cfg, descriptor);
+                final ConfigurableImportTarget cfg = (ConfigurableImportTarget) evt.getNewValue();
+                ((StundentafelImportTargetsItemImpl) il).initialize(cfg, descriptor);
             }
         };
     }
@@ -164,7 +169,7 @@ class StundentafelImportDocumentsTableModel extends ImportTableModel<Stundentafe
 
         @Override
         public boolean isCellEditable(StundentafelImportTargetsItem il) {
-            if (!il.isTaught()) {
+            if (!((StundentafelImportTargetsItemImpl) il).isTaught()) {
                 return false;
             }
             return super.isCellEditable(il);

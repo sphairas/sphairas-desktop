@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thespheres.betula.curriculumimport.action;
+package org.thespheres.betula.curriculumimport;
 
 import org.thespheres.betula.xmlimport.uiutil.ImportUnitStudentsCache;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
-import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -18,7 +17,6 @@ import org.thespheres.betula.StudentId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.curriculum.CourseSelection;
 import org.thespheres.betula.curriculum.Curriculum;
-import org.thespheres.betula.curriculum.DefaultCourseSelectionValue;
 import org.thespheres.betula.curriculum.StringClientProperty;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Marker;
@@ -28,9 +26,6 @@ import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
-import org.thespheres.betula.xmlimport.ImportUtil;
-import org.thespheres.betula.xmlimport.parse.TranslateID;
-import org.thespheres.betula.xmlimport.uiutil.DefaultImportWizardSettings;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
@@ -39,7 +34,7 @@ import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
  *
  * @author boris.heithecker
  */
-public class StundentafelImportTargetsItem extends ImportTargetsItem {
+public class StundentafelImportTargetsItem extends ImportTargetsItem implements ImportItem.CloneableImport {
 
 //    public static final String PROP_CONFIGURATION = "configuration";
     public static final String PROP_TARGET_ID = "targetId";
@@ -48,14 +43,16 @@ public class StundentafelImportTargetsItem extends ImportTargetsItem {
 //    private ConfigurableImportTarget configuration;
 //    private final ConfigurableImportTargetHelper helper;
 //    private final Term term;
-    private final CourseSelection selection;
+    protected final CourseSelection selection;
     private final NamingResolver.Result name;
-    private final int base;
+    protected final int base;
     private final int sequence;
     private String customTargetId;
+    private final IDHelper helper;
+    private final ID identifier;
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
-    StundentafelImportTargetsItem(NamingResolver.Result name, UnitId pu, CourseSelection cs, int base, int seq, Term term, Curriculum cur) {
+    protected StundentafelImportTargetsItem(NamingResolver.Result name, UnitId pu, CourseSelection cs, int base, int seq, Term term, Curriculum cur) {
         super(name.getResolvedName());
         this.name = name;
         this.selection = cs;
@@ -73,53 +70,24 @@ public class StundentafelImportTargetsItem extends ImportTargetsItem {
         } else {
             throw new UnsupportedOperationException();
         }
+        this.identifier = new ID(this);
         this.preferredConvention = cs.getClientProperty("preferred-convention", StringClientProperty.class)
                 .map(StringClientProperty::getValue)
                 .orElse(cur.getGeneral().getPreferredAssessmenConvention());
+        this.helper = new IDHelper(this);
     }
 
-    synchronized void initialize(final ConfigurableImportTarget config, final DefaultImportWizardSettings<ConfigurableImportTarget, StundentafelImportTargetsItem> wizard) {
-        final ConfigurableImportTarget oldCfg = getConfiguration();
-        boolean configChanged = oldCfg == null
-                || !oldCfg.getProviderInfo().equals(config.getProviderInfo());
+    @Override
+    public int id() {
+        return 0;
+    }
 
-        if (configChanged || getDeleteDate() == null) {
-            if (base != 0) {
-                setDeleteDate(ImportUtil.calculateDeleteDate(base, 5, Month.JULY));
-            }
-        }
+    public ID getIdentifier() {
+        return identifier;
+    }
 
-        if (configChanged) {
-//            importStudents.setConfiguration(config);
-//            if (!source.getStudents().isEmpty()) {
-//                List<ImportStudentKey> l = source.getStudents().stream()
-//                        .map(xmls -> new ImportStudentKey(xmls.getSourceName(), null, null))
-//                        .collect(Collectors.toList());
-//                try {
-//                    importStudents.set(l);
-//                    importStudentsException = null;
-//                } catch (IOException ex) {
-//                    importStudentsException = ex;
-//                    Exceptions.printStackTrace(ex);
-//                }
-//            } else {
-//                importStudents.clear();
-//                students = null;
-//            }
-        }
-
-//        final String ts = config.getTermSchemeProvider().getInfo().getURL();
-//        if (ts != null) {
-//            setPreferredTermScheduleProvider(ts);
-//        }
-//        configuration = config;
-        try {
-//            vSupport.fireVetoableChange(PROP_IMPORT_TARGET, oldCfg, configuration);
-            setClientProperty(ImportItem.PROP_IMPORT_TARGET, config);
-        } catch (PropertyVetoException ex) {
-            //TODO: reset config?
-            ex.printStackTrace(ImportUtil.getIO().getErr());
-        }
+    public CourseSelection getSelection() {
+        return selection;
     }
 
     public Term getTerm() {
@@ -173,8 +141,12 @@ public class StundentafelImportTargetsItem extends ImportTargetsItem {
 
     @Override
     public DocumentId getTargetDocumentIdBase() {
-        String id = TranslateID.translateUnitToTarget(getUnitId().getId(), getSubjectMarker(), customTargetId);
-        return new DocumentId(getConfiguration().getAuthority(), id, DocumentId.Version.LATEST);
+        return helper.getTargetDocumentIdBase();
+    }
+
+    @Override
+    public void setTargetDocumentIdBase(DocumentId did) {
+        helper.setTargetDocumentBase(did);
     }
 
     @Override
@@ -243,14 +215,6 @@ public class StundentafelImportTargetsItem extends ImportTargetsItem {
         return Objects.equals(this.getUnitId(), other.getUnitId());
     }
 
-    boolean isTaught() {
-        if (selection.getCourseSelectionValue() instanceof DefaultCourseSelectionValue) {
-            final DefaultCourseSelectionValue dcsv = (DefaultCourseSelectionValue) selection.getCourseSelectionValue();
-            return dcsv.getNumLessons() != null && dcsv.getNumLessons() > 0;
-        }
-        return false;
-    }
-
     public static class Filter implements UpdaterFilter<StundentafelImportTargetsItem, TargetDocumentProperties> {
 
         @Override
@@ -263,6 +227,57 @@ public class StundentafelImportTargetsItem extends ImportTargetsItem {
             final List<UpdaterFilter> f = iti.getFilters();
             return td.getPreferredConvention() != null
                     && (f.isEmpty() ? true : f.stream().allMatch(sbf -> sbf.accept(iti, td, stud)));
+        }
+    }
+
+    public static class ID {
+
+        private final String course;
+        private final UnitId unit;
+
+        public ID(final String course, final UnitId unit) {
+            super();
+            this.course = course;
+            this.unit = unit;
+        }
+
+        ID(final StundentafelImportTargetsItem item) {
+            super();
+            this.course = item.getSelection().getCourse().getId();
+            this.unit = item.getUnitId();
+        }
+
+        public String getCourse() {
+            return course;
+        }
+
+        public UnitId getUnit() {
+            return unit;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 53 * hash + Objects.hashCode(this.course);
+            return 53 * hash + Objects.hashCode(this.unit);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ID other = (ID) obj;
+            if (!Objects.equals(this.course, other.course)) {
+                return false;
+            }
+            return Objects.equals(this.unit, other.unit);
         }
     }
 }

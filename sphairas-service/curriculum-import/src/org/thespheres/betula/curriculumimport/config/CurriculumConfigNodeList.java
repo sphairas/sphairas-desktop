@@ -48,18 +48,23 @@ public class CurriculumConfigNodeList extends ConfigNodeTopComponentNodeList<Dat
     public static final String PROVIDER_FILE_LIST_NAME = "curriculum-files";
     public static final String NAME = "curriculum";
     public static final String BEMERKUNGEN_CONFIG_NODE_POSITION_KEY = "CurriculumConfigNode.position";
+    static final Map<String, CurriculumConfigNodeList> NODE_LISTS = new HashMap<>();
     private final Map<DataObject, Node> nodes = new HashMap<>();
     private final List<DataObject> files = new ArrayList<>();
     private final RequestProcessor RP = new RequestProcessor(CurriculumConfigNodeList.class.getName());
     private final RequestProcessor.Task task;
 
     @SuppressWarnings({"LeakingThisInConstructor"})
-    CurriculumConfigNodeList(String provider) {
+    private CurriculumConfigNodeList(String provider) {
         super(provider, NbPreferences.forModule(CurriculumConfigNodeList.class).getInt(BEMERKUNGEN_CONFIG_NODE_POSITION_KEY, 1500));
         task = RP.create(this);
         task.schedule(0);
         Optional.ofNullable(ConfigurationEventBus.find(provider))
                 .ifPresent(b -> b.register(this));
+    }
+
+    public static CurriculumConfigNodeList find(String provider) {
+        return NODE_LISTS.computeIfAbsent(provider, p -> new CurriculumConfigNodeList(p));
     }
 
     @Override
@@ -164,7 +169,7 @@ public class CurriculumConfigNodeList extends ConfigNodeTopComponentNodeList<Dat
 
         @Override
         public CurriculumConfigNodeList create(String provider, Map props) {
-            return new CurriculumConfigNodeList(provider);
+            return CurriculumConfigNodeList.find(provider);
         }
 
     }

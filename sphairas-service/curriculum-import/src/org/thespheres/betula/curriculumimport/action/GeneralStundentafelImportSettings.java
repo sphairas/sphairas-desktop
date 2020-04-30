@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.curriculumimport.action;
 
+import org.thespheres.betula.curriculumimport.StundentafelImportTargetsItem;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -13,10 +14,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.openide.WizardDescriptor;
+import org.openide.loaders.DataObject;
 import org.openide.util.NetworkSettings;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.curriculum.CourseSelection;
-import org.thespheres.betula.curriculum.Curriculum;
 import org.thespheres.betula.curriculum.Section;
 import org.thespheres.betula.document.Action;
 import org.thespheres.betula.document.Container;
@@ -31,6 +32,7 @@ import org.thespheres.betula.services.ws.BetulaWebService;
 import org.thespheres.betula.services.ws.Paths;
 import org.thespheres.betula.services.ws.ServiceException;
 import org.thespheres.betula.services.ws.WebServiceProvider;
+import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.util.ContainerBuilder;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportWizard;
@@ -42,10 +44,23 @@ import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
  */
 public class GeneralStundentafelImportSettings extends StundentafelImportSettings implements PropertyChangeListener {
 
-    @SuppressWarnings({"LeakingThisInConstructor"})
-    GeneralStundentafelImportSettings(final Curriculum file) {
-        super(file);
+    @SuppressWarnings({"LeakingThisInConstructor",
+        "OverridableMethodCallInConstructor"})
+    private GeneralStundentafelImportSettings(final DataObject file) {
+        super();
+        setCurriculum(file);
         addPropertyChangeListener(this);
+    }
+
+    static GeneralStundentafelImportSettings createSettings() {
+        final DataObject d;
+        try {
+            d = StundentafelImportAction.openFile();
+        } catch (IOException ex) {
+            PlatformUtil.getCodeNameBaseLogger(GeneralStundentafelImportSettings.class).warning(ex.getLocalizedMessage());
+            return null;
+        }
+        return new GeneralStundentafelImportSettings( d);
     }
 
     @Override
@@ -112,14 +127,15 @@ public class GeneralStundentafelImportSettings extends StundentafelImportSetting
                 try {
                     stufe = Integer.parseInt(se);
                     final int hj = (Integer) he;
-                    final Section sec = curriculum.findSection(stufe, hj);
+                    final Section sec = getCurriculum().findSection(stufe, hj);
                     if (sec != null) {
                         final Set<CourseSelection> subjects = sec.getSelection();
                         for (final CourseSelection cs : subjects) {
                             if (cs.getCourse() == null || cs.getCourse().getSubject() == null) {
                                 continue;
                             }
-                            final StundentafelImportTargetsItem add = new StundentafelImportTargetsItem(nr, pu, cs, stufe, hj, importTerm, curriculum);
+                            final StundentafelImportTargetsItemImpl add = new StundentafelImportTargetsItemImpl(nr, pu, cs, stufe, hj, importTerm, getCurriculum());
+                            add.initialize(cit, this);
                             getSelectedNodesProperty().add(add);
                         }
                     }
