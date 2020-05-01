@@ -169,14 +169,9 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
     public DocumentId forName(final String name) {
         switch (name) {
             case CommonDocuments.STUDENT_CAREERS_DOCID:
-                return getStudentCareersDocumentId();
+                return careersDocument;
         }
         return null;
-    }
-
-    @Override
-    public DocumentId getStudentCareersDocumentId() {
-        return careersDocument;
     }
 
     @Override
