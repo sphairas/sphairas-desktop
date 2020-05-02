@@ -3,23 +3,15 @@
 <filesystem>
     <folder name="Services">
         <folder name="AutoupdateType">
-            <file name="org_thespheres_app_branding_update_center.instance">
+            
+<!--            <file name="org_thespheres_app_branding_update_center.instance">
                 <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_app_branding_update_center.instance"/>
                 <attr name="enabled" boolvalue="true"/>
                 <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
                 <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
                 <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_app_branding_update_center"/>
-            </file>
-            
-<!--            <file name="platform-update-provider.instance">
-                <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/standard-update-provider.instance"/>
-                <attr name="iconBase" stringvalue="org/thespheres/app/branding/resources/updateAction.gif"/>
-                <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#URL_LatestBuild"/>
-                <attr name="category" stringvalue="STANDARD"/>
-                <attr name="enabled" boolvalue="true"/>
-                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider" />
-                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider" />        
             </file>-->
+
             <file name="org_thespheres_client_update_center.instance">
                 <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_client_update_center.instance"/>
                 <attr name="enabled" boolvalue="true"/>
@@ -28,34 +20,6 @@
                 <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_client_update_center.instance"/>
             </file>
             
-<!--            <file name="org_thespheres_betula_ui_update_center.instance">
-                <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_betula_ui_update_center.instance"/>
-                <attr name="enabled" boolvalue="true"/>
-                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
-                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
-                <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_betula_ui_update_center"/>
-            </file>
-            <file name="org_thespheres_betula_common_update_center.instance">
-                <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_betula_common_update_center.instance"/>
-                <attr name="enabled" boolvalue="true"/>
-                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
-                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
-                <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_betula_common_update_center"/>
-            </file>
-            <file name="org_thespheres_betula_ext_admin_update_center.instance">
-                <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_betula_ext_admin_update_center.instance"/>
-                <attr name="enabled" boolvalue="true"/>
-                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
-                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
-                <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_betula_ext_admin_update_center"/>
-            </file>        
-            <file name="org_thespheres_betula_services_implementation_ui_update_center.instance">
-                <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_betula_services_implementation_ui_update_center.instance"/>
-                <attr name="enabled" boolvalue="true"/>
-                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
-                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
-                <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_betula_services_implementation_ui_update_center"/>
-            </file>            -->
             
         </folder>
     </folder>

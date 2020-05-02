@@ -53,8 +53,10 @@
         <property name="package-jdk-exec" location="${basedir}/jdk.sh"/>
         <exec executable="${package-jdk-exec}" dir="${basedir}" />
     </target>
-    <target name="push-nbms" >
+    <target name="push-nbms" depends="-init">
         <property name="pushnbms" location="${basedir}/pushnbms.sh"/>
-        <exec executable="${pushnbms}" dir="${basedir}/../" />
+        <exec executable="${pushnbms}" dir="${basedir}/../">
+            <arg value="${nbms.target}" />
+        </exec>
     </target>
 </project>
