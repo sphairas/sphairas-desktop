@@ -8,6 +8,7 @@
  */
 package org.thespheres.betula.util;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -32,8 +33,9 @@ import org.thespheres.betula.assess.GradeFactory;
 @XmlRootElement(name = "grade", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
 @XmlType(name = "gradeAdapterType", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class GradeAdapter extends XmlAdapter<GradeAdapter, Grade> {
+public final class GradeAdapter extends XmlAdapter<GradeAdapter, Grade> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlAttribute(name = "convention", required = true)
     private String convention;
     @XmlAttribute(name = "grade-id", required = true)

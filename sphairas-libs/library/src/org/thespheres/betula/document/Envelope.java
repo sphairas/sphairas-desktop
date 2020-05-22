@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document;
 
+import java.io.Serializable;
 import org.thespheres.betula.util.XmlZonedDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -40,8 +41,9 @@ import org.thespheres.betula.document.util.XmlDocumentEntry;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "envelopeType",
         propOrder = {"id", "action", "children", "hints", "description", "time", "exception"})
-public class Envelope {
+public class Envelope implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final String PROP_ID = "PROP_ID"; //im container
     public static final String PROP_METHOD = "PROP_METHOD";
     public static final String PROP_CHILDREN = "PROP_CHILDREN";

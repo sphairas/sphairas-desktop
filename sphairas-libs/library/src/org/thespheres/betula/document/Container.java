@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.document;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
@@ -26,8 +27,9 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlRootElement(name = "container") //, namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(propOrder = {"paths", "files", "messages", "version"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Container {
+public class Container implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlElementWrapper(name = "paths")
     @XmlElement(name = "path")
     private ArrayList<PathDescriptorElement> paths = new ArrayList<>();
@@ -87,8 +89,9 @@ public class Container {
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static final class Message {
+    public static final class Message implements Serializable {
 
+        private static final long serialVersionUID = 1L;
         @XmlAttribute(required = true)
         private String source;
         @XmlValue
@@ -110,8 +113,9 @@ public class Container {
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class PathDescriptorElement {
+    public static class PathDescriptorElement implements Serializable {
 
+        private static final long serialVersionUID = 1L;
         @XmlAttribute(required = true)
         protected String identifier;
         @XmlAttribute
