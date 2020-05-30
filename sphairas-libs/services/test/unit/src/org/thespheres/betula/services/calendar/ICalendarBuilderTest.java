@@ -53,7 +53,7 @@ public class ICalendarBuilderTest {
         InputStream source = ICalendarBuilderTest.class.getResourceAsStream("payday.ics");
         List<ICalendar> result = ICalendarBuilder.parseCalendars(source);
         CalendarComponent cc = result.get(0).getComponents().get(1);
-        ICalendar inflate = ((CalendarComponentImpl) cc).inflate3(new Date());
+        ICalendar inflate = ((CalendarComponentImpl) cc).inflate(LocalDateTime.now());
         DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         for (CalendarComponent ccp : inflate.getComponents()) {
             LocalDateTime ldt = IComponentUtilities.parseLocalDateTimeProperty(ccp, CalendarComponentProperty.DTSTART);
@@ -67,7 +67,7 @@ public class ICalendarBuilderTest {
         InputStream source = ICalendarBuilderTest.class.getResourceAsStream("stundenplan.ics");
         List<ICalendar> result = ICalendarBuilder.parseCalendars(source);
         CalendarComponent cc = result.get(0).getComponents().get(0);
-        ICalendar inflate = ((CalendarComponentImpl) cc).inflate3(new Date());
+        ICalendar inflate = ((CalendarComponentImpl) cc).inflate(LocalDateTime.now());
         DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         for (CalendarComponent ccp : inflate.getComponents()) {
             LocalDateTime ldt = IComponentUtilities.parseLocalDateTimeProperty(ccp, CalendarComponentProperty.DTSTART);

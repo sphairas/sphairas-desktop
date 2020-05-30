@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,9 +29,15 @@ import org.thespheres.betula.util.LocalDateAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LessonData implements Serializable {
 
+    public static final String METHOD_PUBLISH = "PUBLISH";
+    public static final String METHOD_UPDATE = "UPDATE";
     private static final long serialVersionUID = 1L;
+    @XmlAttribute(name = "method")
+    private String method;
+    @XmlElement(name = "lesson", required = true)
     private LessonId lesson;
-    private UnitId unit;
+    @XmlElement(name = "unit")
+    private UnitId[] units;
     private Signee signee;
     @XmlElementWrapper(name = "subject")
     @XmlJavaTypeAdapter(XmlMarkerAdapter.class)
@@ -43,31 +50,35 @@ public class LessonData implements Serializable {
     private LocalDate endDate;
     private String message;
     @XmlElementWrapper(name = "course-times")
-    @XmlElement(name = "course-time")
+    @XmlElement(name = "course-times")
     private LessonTimeData[] times;
+    @XmlElement(name = "vendor-data")
     private VendorData vendorData;
 
     public LessonData() {
     }
 
-    public LessonData(final LessonId lesson, final UnitId unit, final Signee signee, final Marker[] subject, final LocalDate effectiveBegin, final LocalDate effectiveEnd, final String timegrid, final LessonTimeData[] times, final VendorData vendorData, final String text) {
+    public LessonData(final LessonId lesson, final String method, final UnitId[] units, final Signee signee, final Marker[] subject, final LocalDate effectiveBegin, final LocalDate effectiveEnd, final LessonTimeData[] times) {
         this.lesson = lesson;
-        this.unit = unit;
+        this.method = method;
+        this.units = units;
         this.signee = signee;
         this.definition = subject;
         this.beginDate = effectiveBegin;
         this.endDate = effectiveEnd;
-        this.message = text;
         this.times = times;
-        this.vendorData = vendorData;
     }
 
     public LessonId getLesson() {
         return lesson;
     }
 
-    public UnitId getUnit() {
-        return unit;
+    public String getMethod() {
+        return method;
+    }
+
+    public UnitId[] getUnits() {
+        return units;
     }
 
     public Signee getSignee() {
@@ -86,16 +97,24 @@ public class LessonData implements Serializable {
         return endDate;
     }
 
-    public String getText() {
-        return message;
-    }
-
     public LessonTimeData[] getTimes() {
         return times;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public VendorData getVendorData() {
         return vendorData;
+    }
+
+    public void setVendorData(VendorData vendorData) {
+        this.vendorData = vendorData;
     }
 
 }
