@@ -6,13 +6,10 @@
 package org.thespheres.betula.gpuntis.impl;
 
 import java.time.DayOfWeek;
-import java.time.ZoneId;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import javax.ws.rs.client.Client;
@@ -33,14 +30,12 @@ import org.thespheres.betula.gpuntis.xml.Lesson;
 import org.thespheres.betula.gpuntis.xml.Time;
 import org.thespheres.betula.services.calendar.LessonData;
 import org.thespheres.betula.services.calendar.VendorData;
-import org.thespheres.betula.services.calendar.LessonTimeData.ExWeeks;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.WebProvider;
 import org.thespheres.betula.services.calendar.LessonTimeData;
 import org.thespheres.betula.services.scheme.spi.LessonId;
 import org.thespheres.betula.services.scheme.spi.PeriodId;
 import org.thespheres.betula.services.ui.util.dav.URLs;
-import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.ImportUtil;
 import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
 
@@ -54,21 +49,21 @@ import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
     "StudenplanUpdater.message.http.status=\"{0}\" hat den Status-Code {1} (\"{2}\") zurückgegeben.",
     "StudenplanUpdater.message.kupplung.workaround=\"{0}\" ist eine Verdopplung (clone) mit der Verdopplungsnummer (clone id) {1}; der Unterricht wird als Untis-Kupplung {2} gespeichert."})
 public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
-    
+
     private final UntisImportConfiguration config;
-    
+
     public StudenplanUpdater(final UntisImportConfiguration config, final Set<ImportedLesson> selected) {
         super(selected.stream().toArray(ImportedLesson[]::new));
         this.config = config;
     }
-    
+
     @Override
     public void run() {
         final String msg = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.start");
         ImportUtil.getIO().getOut().println(msg);
         int[] numImport = new int[]{0};
         long timeStart = System.currentTimeMillis();
-        
+
         final DocumentId calendar = null; //ub.getCurrentCalendarId();
 
         Arrays.stream(items)
@@ -79,7 +74,7 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
         final String msg2 = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.finish", numImport[0], dur);
         ImportUtil.getIO().getOut().println(msg2);
     }
-    
+
     boolean doUpdate(final DocumentId calendar, final ImportedLesson imp) {
         final Lesson lesson = imp.getLesson();
         int untisLessonKopplung = imp.getUntisKopplung();
@@ -104,14 +99,15 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
         }
         final LessonTimeData[] times = imp.getTimes();
         final String teacherId = lesson.getLessonTeacher().getId().substring(3);//remove TR_
-        final String grid = lesson.getTimegrid();
         final VendorData vData = new VendorData(imp.getUntisLessonId(), untisLessonKopplung, teacherId);
         Arrays.stream(items)
                 .map(ImportedLesson::getUntisLessonId)
                 .forEach(vData.getJoinedVendorLessons()::add);
         final LessonId lid = new LessonId(imp.getTargetDocumentIdBase().getAuthority(), imp.getTargetDocumentIdBase().getId());
-        final LessonData ld = new LessonData(lid, unit, signee, fach, lesson.getEffectiveBeginDate(), lesson.getEffectiveEndDate(), grid, times, vData, lesson.getText());
-        
+        final LessonData ld = new LessonData(lid, LessonData.METHOD_PUBLISH, new UnitId[]{unit}, signee, fach, lesson.getEffectiveBeginDate(), lesson.getEffectiveEndDate(), times);
+        ld.setVendorData(vData);
+        ld.setMessage(lesson.getText());
+
         final String provider = config.getWebServiceProvider().getInfo().getURL();
         final WebProvider wp = WebProvider.find(provider, WebProvider.class);
         final String base = URLs.adminBase(LocalProperties.find(provider));
@@ -121,9 +117,9 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
                 .sslContext(((WebProvider.SSL) wp).getSSLContext())
                 //                .hostnameVerifier(arg0)
                 .build();
-        
+
         final WebTarget target = client.target(url);
-        
+
         final Response resp;
 //        final String authority;
 //        try {
@@ -154,72 +150,45 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
         }
         return true;
     }
-    
+
     public static String untisAuthority(final General general) {
         return "gpuntis/" + Integer.toString(general.getSchoolnumber());
     }
-    
+
     public static LessonTimeData[] createTimes(final Lesson lesson, final General general) {
         return lesson.getTimes().stream()
                 .map(t -> StudenplanUpdater.createTime(lesson, general, t))
                 .filter(Objects::nonNull)
                 .toArray(LessonTimeData[]::new);
     }
-    
+
     private static LessonTimeData createTime(final Lesson lesson, final General general, final Time t) {
         if (t.getPeriod() == 0) {
             return null;
         }
-//        LocalDateTime ldt = LocalDateTime.from(general.getSchoolyearbegindate());
-
-        final Calendar cal = Calendar.getInstance(Locale.GERMANY);
-        final String occ = lesson.getOccurence();
-//        cal.setTime(lesson.getEffectiveBeginDate());
-//        cal.setFirstDayOfWeek(Calendar.MONDAY);
-//        cal.setMinimalDaysInFirstWeek(1);
-        final Date d = Date.from(general.getSchoolyearbegindate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        cal.setTime(d);
-        final List<ExWeeks> exWeeks = new ArrayList<>();
-        for (char c : occ.toCharArray()) {
-            int wday = cal.get(Calendar.DAY_OF_WEEK);
-            if (wday != Calendar.SATURDAY && wday != Calendar.SUNDAY && ('F' == c || '0' == c) && wday == t.getDay() + 1) {
-                int year = cal.get(Calendar.YEAR);
-                int week = cal.get(Calendar.WEEK_OF_YEAR);
-                if (cal.get(Calendar.MONTH) == Calendar.JANUARY && week == 53) {
-                    --year;
-                }
-                final int y = year;
-                ExWeeks ew = exWeeks.stream().filter(e -> e.getYear() == y).collect(CollectionUtil.requireSingleOrNull());
-                int[] sn;
-                if (ew == null) {
-                    sn = new int[]{week};
-                    exWeeks.add(new ExWeeks(y, sn));
-                } else {
-                    sn = Arrays.copyOf(ew.getExWeeks(), ew.getExWeeks().length + 1);
-                    sn[sn.length - 1] = week;
-                    ew.setExWeeks(sn);
-                }
-//                exWeeks.put(year, sn);
-            }
-            cal.add(Calendar.DAY_OF_YEAR, 1);
-        }
-//        d = Date.from(lesson.getEffectiveBeginDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        cal.setTime(d);
-//        final int firstOccurenceDay = cal.get(Calendar.DAY_OF_WEEK);
-//        cal.set(Calendar.DAY_OF_WEEK, t.getDay() + 1);
-//        if (firstOccurenceDay > t.getDay() + 1) {
-//            cal.add(Calendar.WEEK_OF_YEAR, 1);
-//        }
-//        cal.set(Calendar.HOUR_OF_DAY, t.getStarttime().getHour());
-//        cal.set(Calendar.MINUTE, t.getStarttime().getMinute());
-//        final Date start = cal.getTime();
-//        cal.set(Calendar.HOUR_OF_DAY, t.getEndtime().getHour());
-//        cal.set(Calendar.MINUTE, t.getEndtime().getMinute());
-//        final Date end = cal.getTime();
-        final String room = t.getAssignedRoom() != null ? t.getAssignedRoom().getId() : null;
-        //TODO: add lesson.getEffectiveEndDate() || general.schoolYearEnd() ==> Calendar:: RRULE unitl
+        final DayOfWeek day = DayOfWeek.of(t.getDay());
         final PeriodId period = new PeriodId(untisAuthority(general), t.getPeriod(), PeriodId.Version.UNSPECIFIED);
-        return new LessonTimeData(t.getStarttime(), t.getEndtime(), DayOfWeek.of(t.getDay()), lesson.getTimegrid(), period, exWeeks.toArray(new ExWeeks[exWeeks.size()]), room);
+        final LessonTimeData ret = new LessonTimeData(t.getStarttime(), t.getEndtime(), day, period);
+        final String occ = lesson.getOccurence();
+        LocalDate ld = general.getSchoolyearbegindate();
+        final List<LocalDate> exDates = new ArrayList<>();
+        for (char c : occ.toCharArray()) {
+            final DayOfWeek dow = ld.getDayOfWeek();
+            if (dow != DayOfWeek.SATURDAY && dow != DayOfWeek.SUNDAY && ('F' == c || '0' == c) && dow.equals(day)) {
+                exDates.add(ld);
+            }
+            ld = ld.plusDays(1);
+        }
+        ret.setSince(general.getTermbegindate());
+        ret.setUntil(general.getTermenddate());
+        if (!exDates.isEmpty()) {
+            ret.setExdates(exDates.toArray(LocalDate[]::new));
+        }
+        final String room = t.getAssignedRoom() != null ? t.getAssignedRoom().getId() : null;
+        if (room != null) {
+            ret.setLocation(room);
+        }
+        return ret;
     }
-    
+
 }
