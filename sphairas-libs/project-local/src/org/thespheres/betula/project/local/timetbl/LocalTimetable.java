@@ -135,7 +135,7 @@ public class LocalTimetable {
         ccb.addProperty(CalendarComponentProperty.DTEND, IComponentUtilities.DATETIME_FORMATTER.format(endLesson));
         ccb.addProperty(CalendarComponentProperty.RRULE, "FREQ=WEEKLY;UNTIL=" + IComponentUtilities.DATETIME_FORMATTER.format(end.plusDays(1l).atStartOfDay()));
         ccb.addProperty(CalendarComponentProperty.CATEGORIES, "regular,local-timetable");
-        ccb.addProperty("X-PERIOD", Integer.toString(periodId.getId()), new Parameter("x-period-authority", periodId.getAuthority()), new Parameter("x-period-version", periodId.getVersion().getVersion()));
+        ccb.addProperty("X-PERIOD", Integer.toString(periodId.getId()), new Parameter("x-authority", periodId.getAuthority()), new Parameter("x-version", periodId.getVersion().getVersion()));
         ccb.addProperty("X-UNIT", unit.getId(), new Parameter("x-authority", unit.getAuthority()));
         if (lesson != null) {
             ccb.addProperty("X-TARGET-BASE", lesson.getId(), new Parameter("x-authority", lesson.getAuthority()));
