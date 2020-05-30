@@ -73,9 +73,4 @@ public final class StudentId extends Identity<Long> implements Serializable {
         return 59 * hash + (this.authority != null ? this.authority.hashCode() : 0);
     }
 
-    @Override
-    public String toString() {
-        return "{" + getAuthority() + "}" + Long.toString(getId());
-    }
-
 }

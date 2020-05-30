@@ -6,6 +6,7 @@ package org.thespheres.betula.document;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.StringJoiner;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -60,7 +61,13 @@ public final class DocumentId extends Identity<String> implements Serializable {
 
     @Override
     public String toString() {
-        return "{" + authority + "}" + id + (getVersion().equals(Version.UNSPECIFIED) ? "" : "#" + version);
+        final StringJoiner sj = new StringJoiner("@");
+        final String prefix = id + (getVersion().equals(Version.UNSPECIFIED) ? "" : "#" + version);
+        sj.add(prefix);
+        if (authority != null) {
+            sj.add(authority);
+        }
+        return sj.toString();
     }
 
     @Override

@@ -4,6 +4,8 @@
  */
 package org.thespheres.betula;
 
+import java.util.StringJoiner;
+
 /**
  *
  * @author boris.heithecker
@@ -11,13 +13,22 @@ package org.thespheres.betula;
  */
 public abstract class Identity<I> {
 
+    public static final String AUTHORITY_DELIMITER = "@";
+    public static final String VERSION_DELIMITER = "#";
+
     public abstract I getId();
 
     public abstract String getAuthority();
 
     @Override
     public String toString() {
-        return "{" + getAuthority() + "}" + getId().toString();
+        final StringJoiner sj = new StringJoiner(AUTHORITY_DELIMITER);
+        sj.add(getId().toString());
+        final String authority = getAuthority();
+        if (authority != null) {
+            sj.add(authority);
+        }
+        return sj.toString();
     }
 
 }

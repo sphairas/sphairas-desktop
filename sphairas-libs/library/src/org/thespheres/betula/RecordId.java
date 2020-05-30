@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang3.StringUtils;
+import org.thespheres.betula.document.util.Identities;
 
 /**
  *
@@ -105,8 +107,17 @@ public final class RecordId extends Identity<String> implements Serializable {
         return id;
     }
 
-    public int getPeriod() {
+    /**
+     *
+     * @return The PeriodId respresentation, e. g. "5" or
+     * "5@demo/class-schedule-2019"
+     */
+    public String getPeriodRepresentation() {
         return getParsed().period;
+    }
+
+    public int getPeriod() {
+        return getParsed().getPeriod();
     }
 
     public LocalDate getLocalDate() {
@@ -123,22 +134,21 @@ public final class RecordId extends Identity<String> implements Serializable {
             switch (disc) {
                 case 'T':
                     try {
-                        LocalDateTime val = LocalDateTime.parse(id, DTF);
-                        parsed = new Parsed(val);
-                    } catch (DateTimeParseException e) {
-                        parsed = e;
-                    }
-                    break;
+                    LocalDateTime val = LocalDateTime.parse(id, DTF);
+                    parsed = new Parsed(val);
+                } catch (DateTimeParseException e) {
+                    parsed = e;
+                }
+                break;
                 case 'P':
                     try {
-                        String pval = id.substring(10);
-                        int period = Integer.parseInt(pval);
-                        LocalDate val = LocalDate.parse(pval.substring(0, 10), DF);
-                        parsed = new Parsed(period, val);
-                    } catch (DateTimeParseException | NumberFormatException e) {
-                        throw new IllegalArgumentException(e);
-                    }
-                    break;
+                    String pval = id.substring(10);
+                    LocalDate val = LocalDate.parse(pval.substring(0, 10), DF);
+                    parsed = new Parsed(val, pval);
+                } catch (DateTimeParseException | NumberFormatException e) {
+                    throw new IllegalArgumentException(e);
+                }
+                break;
                 default:
                     parsed = new IllegalStateException();
                     break;
@@ -185,20 +195,35 @@ public final class RecordId extends Identity<String> implements Serializable {
 
     private static class Parsed {
 
-        private final int period;
+        private final String period;
         private final LocalDate ld;
         private final LocalDateTime ldt;
 
         private Parsed(LocalDateTime ldt) {
-            this.period = -1;
+            this.period = null;
             this.ld = null;
             this.ldt = ldt;
         }
 
-        private Parsed(int period, LocalDate ld) {
+        private Parsed(LocalDate ld, String period) {
             this.period = period;
             this.ld = ld;
             this.ldt = null;
+        }
+
+        private int getPeriod() {
+            if (StringUtils.isBlank(period)) {
+                return 0;
+            }
+            int[] ret = new int[1];
+            Identities.<Identity<Integer>>parse(period, (a, i, v) -> {
+                try {
+                    ret[0] = Integer.parseInt(i);
+                } catch (NumberFormatException nfex) {
+                }
+                return null;
+            });
+            return ret[0];
         }
 
     }
