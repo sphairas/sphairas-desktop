@@ -36,7 +36,11 @@ public class CalendarUtilities {
     }
 
     public static PeriodId extractPeriodIdFromCalendarComponent(final CalendarComponent cc) {
-        return Optional.ofNullable(cc.getAnyProperty("X-PERIOD")).flatMap((CalendarComponentProperty unitProp) -> unitProp.getAnyParameter("x-period-authority").flatMap((String auth) -> unitProp.getAnyParameter("x-period-version").map((String v) -> new PeriodId(auth, Integer.parseInt(unitProp.getValue()), PeriodId.Version.parse(v))))).orElse(null);
+        return Optional.ofNullable(cc.getAnyProperty("X-PERIOD"))
+                .flatMap((CalendarComponentProperty unitProp) -> unitProp.getAnyParameter("x-authority")
+                        .flatMap((String auth) -> unitProp.getAnyParameter("x-version")
+                                .map((String v) -> new PeriodId(auth, Integer.parseInt(unitProp.getValue()), PeriodId.Version.parse(v)))))
+                .orElse(null);
     }
 
 }
