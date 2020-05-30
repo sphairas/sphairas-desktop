@@ -11,7 +11,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
@@ -212,10 +211,11 @@ public class CalendarComponentImpl extends ComponentImpl<ComponentPropertyImpl> 
         return builder.toICalendar();
     }
 
-    public ICalendar inflate3(Date limit) throws InvalidComponentException {
-        final ZoneId zid = ZoneId.systemDefault();
-        LocalDateTime ldt = LocalDateTime.ofInstant(limit.toInstant(), zid);
-        Inflater3 inflater = new Inflater3(this, ldt);
+    @Override
+    public ICalendar inflate(final LocalDateTime limit) throws InvalidComponentException {
+//        final ZoneId zid = ZoneId.systemDefault();
+//        LocalDateTime ldt = LocalDateTime.ofInstant(limit.toInstant(), zid);
+        final Inflater3 inflater = new Inflater3(this, limit);
         ICalendarBuilder builder = new ICalendarBuilder();
         builder.addProperty(CalendarComponent.VERSION, "2.0");
         ComponentPropertyImpl prodid = calendar.getAnyProperty(CalendarComponent.PRODID);

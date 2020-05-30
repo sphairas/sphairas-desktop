@@ -47,6 +47,13 @@ public interface CalendarComponent extends IComponent<CalendarComponentProperty>
      *Try to resolve the recurrence set of this component to a new calendar object
      *The resultung calendar's components share one common (this component's) UID with distict recurrence ids. 
      */
+    @Deprecated
     public ICalendar inflate(Date limit) throws InvalidComponentException;
+    
+    /*
+     *Try to resolve the recurrence set of this component to a new calendar object
+     *The resultung calendar's components share one common (this component's) UID with distict recurrence ids. 
+     */
+    public ICalendar inflate(LocalDateTime limit) throws InvalidComponentException;
 
 }

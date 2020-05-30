@@ -27,12 +27,12 @@ class Inflater3 implements Iterable<LocalDateTime> {
     private final ArrayList<RDates3> rdates = new ArrayList<>();
     private final ArrayList<RDates3> exdates = new ArrayList<>();
 
-    Inflater3(CalendarComponentImpl orig, LocalDateTime max) throws InvalidComponentException {
+    Inflater3(final CalendarComponentImpl orig, final LocalDateTime max) throws InvalidComponentException {
         this.original = orig;
-        this.max = max;
-        ComponentPropertyImpl dtStart = original.getAnyProperty(CalendarComponentProperty.DTSTART);
+        final ComponentPropertyImpl dtStart = original.getAnyProperty(CalendarComponentProperty.DTSTART);
         start = IComponentUtilities.parseLocalDateTime(dtStart.getValue(), dtStart.getAnyParameter("VALUE").orElse(null));
-        ComponentPropertyImpl rr = original.getAnyProperty(CalendarComponentProperty.RRULE);
+        this.max = max; //TODO: check start timezone and adjust max to 
+        final ComponentPropertyImpl rr = original.getAnyProperty(CalendarComponentProperty.RRULE);
         rrule = RRule3.parse(rr);
         for (ComponentPropertyImpl ccp : original.properties) {
             switch (ccp.getName()) {
@@ -48,7 +48,7 @@ class Inflater3 implements Iterable<LocalDateTime> {
 
     @Override
     public ResultHolder iterator() {
-        return new ResultHolder(start, max);
+        return new ResultHolder(start, max != null ? max : LocalDateTime.MAX);
     }
 
     private class ResultHolder implements Iterator<LocalDateTime> {
@@ -61,7 +61,7 @@ class Inflater3 implements Iterable<LocalDateTime> {
         private final LocalDateTime maximumDate;
         private int returned = 0;
 
-        public ResultHolder(final LocalDateTime initial, LocalDateTime max) {
+        public ResultHolder(final LocalDateTime initial, final LocalDateTime max) {
             this.currentRaw = initial;
             next = initial;
 //            this.initialByRule = rrule.getFirstLinkedByRule();
