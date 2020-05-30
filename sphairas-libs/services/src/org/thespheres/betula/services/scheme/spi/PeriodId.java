@@ -6,6 +6,7 @@ package org.thespheres.betula.services.scheme.spi;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.StringJoiner;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -53,11 +54,21 @@ public final class PeriodId extends Identity<Integer> implements Serializable {
     }
 
     @Override
+    public String toString() {
+        final StringJoiner sj = new StringJoiner("@");
+        final String prefix = Integer.toString(period, 10) + (getVersion().equals(PeriodId.Version.UNSPECIFIED) ? "" : "#" + version);
+        sj.add(prefix);
+        if (authority != null) {
+            sj.add(authority);
+        }
+        return sj.toString();
+    }
+
+    @Override
     public int hashCode() {
         int hash = 3;
         hash = 67 * hash + (this.period != null ? this.period.hashCode() : 0);
-        hash = 67 * hash + (this.authority != null ? this.authority.hashCode() : 0);
-        return hash;
+        return 67 * hash + (this.authority != null ? this.authority.hashCode() : 0);
     }
 
     @Override
