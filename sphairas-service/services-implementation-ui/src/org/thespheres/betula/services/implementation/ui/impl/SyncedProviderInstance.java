@@ -113,7 +113,7 @@ public class SyncedProviderInstance {
         return INSTANCES;
     }
 
-    static void add(String provider, Path dir, boolean newProvider) {
+    static void add(final String provider, final Path dir, final boolean newProvider) {
         synchronized (INSTANCES) {
             if (INSTANCES.containsKey(provider)) {
                 throw new IllegalArgumentException("Provider " + provider + " already registered.");
@@ -121,8 +121,13 @@ public class SyncedProviderInstance {
             final SyncedProviderInstance add = new SyncedProviderInstance(provider, dir);
             if (!newProvider) {
                 add.checkProvider();
+            } else {
+                final int delay = getStartupUpdateDelay();
+                //Update layers before running other updates
+                final RequestProcessor.Task lu = LayerProv.fireUpdate();
+                lu.addTaskListener(t -> add.enqueue(delay));
+                //TODO: fire change
             }
-            if (newProvider) ;//TODO: fire change
             INSTANCES.put(provider, add);
         }
     }
@@ -284,6 +289,10 @@ public class SyncedProviderInstance {
         return jmsProvider[0].getListenerServices(provider);
     }
 
+    static int getStartupUpdateDelay() {
+        return NbPreferences.forModule(SyncedProviderInstance.class).getInt("startup.updater.delay", 0);
+    }
+
     class ConfigurationEventBusImpl extends ConfigurationEventBus {
 
         ConfigurationEventBusImpl() {
@@ -320,7 +329,7 @@ public class SyncedProviderInstance {
         public void run() {
             SyncedProviderInstance.ensureInitialized();
             if (!Boolean.getBoolean("SyncedProviderInstance.update.disable")) {
-                final int delay = NbPreferences.forModule(SyncedProviderInstance.class).getInt("startup.updater.delay", 0);
+                final int delay = getStartupUpdateDelay();
                 SyncedProviderInstance.getInstances().forEach((p, i) -> i.enqueue(delay));
             }
         }

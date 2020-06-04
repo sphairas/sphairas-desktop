@@ -35,7 +35,7 @@ import org.thespheres.betula.services.ui.web.SSLUtil;
  */
 public class BaseNewProviderAction {
 
-    protected void newProvider(final String host, final String certName) throws IOException {
+    protected String newProvider(final String host, final String certName) throws IOException {
         final String base = NbBundle.getMessage(URLs.class, "resources.dav.base.url", host);
         final Properties prop = fetchProperties(base, certName);
         String name = retrieveProviderName(host, certName);
@@ -48,7 +48,7 @@ public class BaseNewProviderAction {
         }
         if (SyncedProviderInstance.getInstances().containsKey(provider)) {
             notifyProviderExists(provider);
-            return;
+            return null;
         }
         final Path dir = Files.createDirectories(ServiceConstants.providerConfigBase(provider));
         Files.write(dir.resolve("provider"), Lists.newArrayList(provider), StandardCharsets.UTF_8);
@@ -60,7 +60,7 @@ public class BaseNewProviderAction {
         prop.store(Files.newOutputStream(dir.resolve("default.properties")), null);
         copyLayer(base, certName, dir);
         SyncedProviderInstance.add(provider, dir, true);
-//        SyncedProviderInstance.getInstances().get(provider).enqueue(1500);
+        return provider;
     }
 
     String retrieveProviderName(final String host, final String certName) throws IOException {
@@ -111,7 +111,6 @@ public class BaseNewProviderAction {
 
         }
         HttpUtilities.get(new Access(), uri, (lm, is) -> Files.copy(is, dir.resolve("layer.xml"), StandardCopyOption.REPLACE_EXISTING), null, false);
-        LayerProv.fireUpdate();
     }
 
     Properties fetchProperties(final String base, final String certName) throws IOException {

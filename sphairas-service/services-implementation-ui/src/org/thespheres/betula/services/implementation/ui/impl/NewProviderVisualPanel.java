@@ -5,7 +5,11 @@
  */
 package org.thespheres.betula.services.implementation.ui.impl;
 
+import com.google.common.io.Resources;
 import java.awt.Color;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeListener;
@@ -13,6 +17,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.BorderUIResource;
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.swingx.JXLabel;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import org.openide.util.RequestProcessor;
@@ -32,6 +37,15 @@ class NewProviderVisualPanel extends javax.swing.JPanel {
     public NewProviderVisualPanel() {
         initComponents();
         updateUrl = rp.create(this::setUrlFromHostname);
+        final URL agree = NewProviderVisualPanel.class.getResource("/org/thespheres/betula/services/implementation/ui/resources/newProviderKeyInfo.html");
+        initComponents();
+        ((JXLabel) keyInfoLabel).setLineWrap(true);
+        updateAliasTextField(null);
+        try {
+            keyInfoLabel.setText(Resources.toString(agree, Charset.forName("utf-8")));
+        } catch (IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     void setUrlFromHostname() {
@@ -59,37 +73,48 @@ class NewProviderVisualPanel extends javax.swing.JPanel {
         chooseButtonGroup = new javax.swing.ButtonGroup();
         hostLabel = new javax.swing.JLabel();
         hostTextField = new javax.swing.JTextField();
-        aliasCheckBox = new javax.swing.JCheckBox();
+        updateAliasTextField = new javax.swing.JCheckBox();
         aliasLabel = new javax.swing.JLabel();
         aliasTextField = new javax.swing.JTextField();
+        keyInfoLabel = new JXLabel();
+
+        setPreferredSize(new java.awt.Dimension(300, 300));
 
         org.openide.awt.Mnemonics.setLocalizedText(hostLabel, org.openide.util.NbBundle.getMessage(NewProviderVisualPanel.class, "NewProviderVisualPanel.hostLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(aliasCheckBox, org.openide.util.NbBundle.getMessage(NewProviderVisualPanel.class, "NewProviderVisualPanel.aliasCheckBox.text")); // NOI18N
-        aliasCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(updateAliasTextField, org.openide.util.NbBundle.getMessage(NewProviderVisualPanel.class, "NewProviderVisualPanel.updateAliasTextField.text")); // NOI18N
+        updateAliasTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aliasCheckBox(evt);
+                updateAliasTextField(evt);
             }
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(aliasLabel, org.openide.util.NbBundle.getMessage(NewProviderVisualPanel.class, "NewProviderVisualPanel.aliasLabel.text")); // NOI18N
+
+        keyInfoLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(hostLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hostTextField))
+                .addComponent(updateAliasTextField)
+                .addGap(0, 117, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(aliasCheckBox)
-                .addGap(0, 171, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(aliasLabel)
-                .addGap(26, 26, 26)
-                .addComponent(aliasTextField))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(hostLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(hostTextField))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(keyInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(aliasLabel)
+                                .addGap(26, 26, 26)
+                                .addComponent(aliasTextField)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,28 +123,30 @@ class NewProviderVisualPanel extends javax.swing.JPanel {
                     .addComponent(hostTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hostLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(aliasCheckBox)
+                .addComponent(updateAliasTextField)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aliasLabel)
                     .addComponent(aliasTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(keyInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void aliasCheckBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aliasCheckBox
-        final boolean enable = aliasCheckBox.isSelected();
+    private void updateAliasTextField(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateAliasTextField
+        final boolean enable = updateAliasTextField.isSelected();
         aliasTextField.setEnabled(enable);
-    }//GEN-LAST:event_aliasCheckBox
+    }//GEN-LAST:event_updateAliasTextField
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox aliasCheckBox;
     private javax.swing.JLabel aliasLabel;
     private javax.swing.JTextField aliasTextField;
     private javax.swing.ButtonGroup chooseButtonGroup;
     private javax.swing.JLabel hostLabel;
     private javax.swing.JTextField hostTextField;
+    private javax.swing.JLabel keyInfoLabel;
+    private javax.swing.JCheckBox updateAliasTextField;
     // End of variables declaration//GEN-END:variables
 
     private class HostnameListener implements DocumentListener {

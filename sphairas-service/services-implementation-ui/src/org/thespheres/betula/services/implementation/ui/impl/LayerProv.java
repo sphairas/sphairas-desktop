@@ -43,8 +43,8 @@ public class LayerProv extends LayerProvider {
                 });
     }
 
-    static void fireUpdate() {
-        RP.post(() -> Lookup.getDefault().lookupAll(LayerProvider.class).stream()
+    static RequestProcessor.Task fireUpdate() {
+        return RP.post(() -> Lookup.getDefault().lookupAll(LayerProvider.class).stream()
                 .filter(LayerProv.class::isInstance)
                 .map(LayerProv.class::cast)
                 .collect(CollectionUtil.requireSingleton())

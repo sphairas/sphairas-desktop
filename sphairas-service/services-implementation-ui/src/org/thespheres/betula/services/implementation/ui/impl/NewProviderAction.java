@@ -22,6 +22,7 @@ import org.openide.awt.StatusDisplayer;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import org.thespheres.betula.services.ProviderRegistry;
 import org.thespheres.betula.services.implementation.ui.impl.NewProviderVisualPanel.NewProviderPanel;
 
 @ActionID(category = "Betula",
@@ -68,13 +69,20 @@ public final class NewProviderAction extends BaseNewProviderAction implements Ac
             }
             final String aliasProp = (String) wiz.getProperty(NewProviderAction.PROP_ALIAS);
             final String alias = aliasProp != null ? aliasProp : host;
+            final String provider;
             try {
-                newProvider(host, alias);
+                provider = newProvider(host, alias);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
                 return;
             }
-            final String msg = NbBundle.getMessage(NewProviderAction.class, "NewProviderAction.message.success", host);
+            String providerName;
+            try {
+                providerName = ProviderRegistry.getDefault().get(provider).getDisplayName();
+            } catch (final Exception ex) {
+                providerName = provider;
+            }
+            final String msg = NbBundle.getMessage(NewProviderAction.class, "NewProviderAction.message.success", providerName);
             StatusDisplayer.getDefault().setStatusText(msg, StatusDisplayer.IMPORTANCE_ANNOTATION);
         }
     }
