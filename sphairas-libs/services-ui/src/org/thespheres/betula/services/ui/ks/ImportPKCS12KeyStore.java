@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.swing.filechooser.FileFilter;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -31,7 +33,7 @@ import org.thespheres.betula.services.ui.KeyStores;
     "ImportPKCS12KeyStore.FileChooser.FileDescription=PKCS12 (.p12) Dateien",
     "ImportPKCS12KeyStore.FileChooser.Title=.p12-Datei auswählen",
     "ImportPKCS12KeyStore.showUserPasswordDialog.hint=Passwort für den privaten Schlüssel in der PKCS12-Datei (oder abbrechen)",
-    "ImportPKCS12KeyStore.success=Schlüssel/Zertifikat erfolgreich importiert."})
+    "ImportPKCS12KeyStore.success=Schlüssel/Zertifikat(e) {0} erfolgreich importiert."})
 public final class ImportPKCS12KeyStore implements ActionListener {
 
     @Override
@@ -42,8 +44,9 @@ public final class ImportPKCS12KeyStore implements ActionListener {
             final String hint = NbBundle.getMessage(ImportPKCS12KeyStore.class, "ImportPKCS12KeyStore.showUserPasswordDialog.hint");
             try {
                 final char[] pw = KeyStores.showUserPasswordDialog(file, hint, true);
-                KeyStoreUtil.copyPKCS12EntriesToSystemKeyStore(p, pw);
-                final String msg = NbBundle.getMessage(ImportPKCS12KeyStore.class, "ImportPKCS12KeyStore.success");
+                final String[] aliases = KeyStoreUtil.copyPKCS12EntriesToSystemKeyStore(p, pw);
+                final String arr = Arrays.stream(aliases).collect(Collectors.joining(","));
+                final String msg = NbBundle.getMessage(ImportPKCS12KeyStore.class, "ImportPKCS12KeyStore.success", arr);
                 StatusDisplayer.getDefault().setStatusText(msg);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);

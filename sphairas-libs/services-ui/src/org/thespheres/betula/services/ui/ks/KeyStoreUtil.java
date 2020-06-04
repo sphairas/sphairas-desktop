@@ -20,9 +20,11 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.netbeans.api.keyring.Keyring;
@@ -34,7 +36,7 @@ import org.thespheres.betula.services.ui.KeyStores;
  */
 class KeyStoreUtil {
 
-    static void copyPKCS12EntriesToSystemKeyStore(final Path file, char[] pkcs12pw) throws IOException {
+    static String[] copyPKCS12EntriesToSystemKeyStore(final Path file, char[] pkcs12pw) throws IOException {
         final KeyStore ks;
         try {
             ks = KeyStore.getInstance("PKCS12");
@@ -46,7 +48,7 @@ class KeyStoreUtil {
         } catch (NoSuchAlgorithmException | CertificateException ex) {
             throw new IOException(ex);
         }
-
+        final List<String> ret = new ArrayList<>();
         final Map<String, KeyStore.PrivateKeyEntry> keys = new HashMap<>();
         final Map<String, Certificate[]> certs = new HashMap<>();
         Enumeration<String> aliases;
@@ -84,6 +86,7 @@ class KeyStoreUtil {
                 final String name = e.getKey();
                 certs.put(name, e.getValue().getCertificateChain());
                 ks2.setEntry(name, e.getValue(), new KeyStore.PasswordProtection(password));
+                ret.add(name);
             }
         } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException ex) {
             throw new IOException(ex);
@@ -115,7 +118,6 @@ class KeyStoreUtil {
         } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException ex) {
             throw new IOException(ex);
         }
-
 //        char[] pw2 = Keyring.read(KeyStores.KEYRING_KEYSTORE_PASSWORD_KEY);
 //        if (pw2 == null) {
 //            pw2 = KeyStores.showUserKeyStorePasswordDialog();
@@ -123,6 +125,7 @@ class KeyStoreUtil {
         final char[] cp = Arrays.copyOf(password, password.length);
         KeyStores.storeKeyStore(ks2, p, password);
         KeyStores.storeKeyStore(trustStore, tspath, cp);
+        return ret.toArray(String[]::new);
     }
 
     static void updateCertificate(String csrAlias, String certs, String destAlias) throws CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
