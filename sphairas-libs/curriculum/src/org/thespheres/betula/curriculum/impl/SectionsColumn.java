@@ -197,7 +197,7 @@ class SectionsColumn extends PluggableTableColumn.IndexedColumn<Curriculum, Cour
             } else if (value instanceof CourseSelectionValue) {
                 return ((CourseSelectionValue) value).toString(getContext());
             }
-            return value != null ? value.toString() : "null";
+            return value != null ? value.toString() : "---";
         }
 
         @Override

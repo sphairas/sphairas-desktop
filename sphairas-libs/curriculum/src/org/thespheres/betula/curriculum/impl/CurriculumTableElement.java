@@ -121,8 +121,8 @@ public final class CurriculumTableElement extends NbSwingXTreeTableElement imple
                 }
 //                scrollPane.setViewportView(treeTable);
                 model.setEnv(obj);
-                        setModel(model);
-        setName(obj.getNodeDelegate().getDisplayName());
+                setModel(model);
+                setName(obj.getNodeDelegate().getDisplayName());
 //                ac.addUndoableEditListener(undoRedo);
             } else {
 //                scrollPane.setViewportView(initLoading());
