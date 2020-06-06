@@ -26,6 +26,7 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -83,9 +84,9 @@ public class ConfigTopComponent extends CloneableTopComponent implements Explore
     @Override
     public void resultChanged(final LookupEvent ev) {
         final Set<String> l = result.allInstances().stream()
-                .flatMap(m -> m.nodeLists().stream())
-                .map(p -> p.getProvider())
-                .collect(Collectors.toSet());
+                    .flatMap(m -> m.nodeLists().stream())
+                    .map(p -> p.getProvider())
+                    .collect(Collectors.toSet());
         if (l.isEmpty()) {
             manager.setRootContext(Node.EMPTY);
         } else if (l.size() == 1) {

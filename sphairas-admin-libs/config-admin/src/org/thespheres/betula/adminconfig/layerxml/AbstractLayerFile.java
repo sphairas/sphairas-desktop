@@ -15,8 +15,8 @@ public abstract class AbstractLayerFile {
 
     protected AbstractLayerFile() {
     }
-
-    protected AbstractLayerFile(String name) {
+    
+    protected AbstractLayerFile(final String name) {
         this.name = name;
     }
 

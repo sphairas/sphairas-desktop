@@ -3,71 +3,55 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thespheres.betula.admin.database.action;
+package org.thespheres.betula.admin.database.configui;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import org.netbeans.core.api.multiview.MultiViews;
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.EditCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.util.NbBundle;
 import org.openide.windows.CloneableOpenSupport;
 import org.openide.windows.CloneableTopComponent;
-import org.thespheres.betula.services.NoProviderException;
+import org.thespheres.betula.adminconfig.ProviderReference;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.ProviderRegistry;
-import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
-import org.thespheres.betula.services.ui.util.dav.VCardStudents;
-import org.thespheres.betula.xmlimport.model.Product;
-import org.thespheres.betula.xmlimport.utilities.VCardStudentsUtil;
 
 /**
  *
  * @author boris.heithecker
  */
-class StudentsDBOpenSupport extends CloneableOpenSupport implements OpenCookie, EditCookie, CloseCookie {
+class AppResourcesConfigOpenSupport extends CloneableOpenSupport implements OpenCookie, EditCookie, CloseCookie {
 
-    public static final String STUDENTSDB_MIME = "application/students-db-ui";
-    private final VCardStudents students;
-    private static final Map<String, WeakReference<StudentsDBOpenSupport>> ENV = new HashMap<>();
+    private static final Map<String, WeakReference<AppResourcesConfigOpenSupport>> ENV = new HashMap<>();
 
-    // , NavigatorLookupHint, Lookup.Provider
-    StudentsDBOpenSupport(final String prov) throws IOException {
-        super(new StudentsDBOpenSupport.Env(prov));
-        ConfigurableImportTarget config = null;
-        try {
-            config = ConfigurableImportTarget.Factory.find(prov, ConfigurableImportTarget.class, Product.NO);
-        } catch (final NoProviderException e) {
-            throw new IOException(e);
-        } catch (final Exception other) {
-            throw new IOException("An exception has occured while creating StudentsDBOpenSupport for provider " + prov, other);
-        }
-        students = VCardStudentsUtil.findFromConfiguration(config);
+    AppResourcesConfigOpenSupport(final String prov) {
+        super(new AppResourcesConfigOpenSupport.Env(prov));
     }
 
-    static StudentsDBOpenSupport find(final String prov) throws IOException {
-        StudentsDBOpenSupport env;
+    static AppResourcesConfigOpenSupport find(final String prov) {
+        AppResourcesConfigOpenSupport env;
         synchronized (ENV) {
-            final WeakReference<StudentsDBOpenSupport> ref = ENV.get(prov);
+            final WeakReference<AppResourcesConfigOpenSupport> ref = ENV.get(prov);
             if (ref == null || (env = ref.get()) == null) {
-                env = new StudentsDBOpenSupport(prov);
+                env = new AppResourcesConfigOpenSupport(prov);
                 ENV.put(prov, new WeakReference<>(env));
             }
         }
         return env;
     }
 
-    @NbBundle.Messages(value = "StudentsDBOpenSupport.messageOpening=Datenbank wird geöffnet.")
+    @NbBundle.Messages(value = "AppResourcesConfigOpenSupport.messageOpening=Konfigurations-UI wird geöffnet.")
     @Override
     protected String messageOpening() {
-        return NbBundle.getMessage(StudentsDBOpenSupport.class, "StudentsDBOpenSupport.messageOpening");
+        return NbBundle.getMessage(AppResourcesConfigOpenSupport.class, "AppResourcesConfigOpenSupport.messageOpening");
     }
 
     @Override
@@ -77,16 +61,11 @@ class StudentsDBOpenSupport extends CloneableOpenSupport implements OpenCookie, 
 
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
-        return new StudentsDBTopComponent((StudentsDBOpenSupport.Env) env);
+        return MultiViews.createCloneableMultiView(ProviderReference.MIME, (AppResourcesConfigOpenSupport.Env) env);
     }
 
-    public VCardStudents getVCardStudents() {
-        return students;
-    }
+    static class Env implements ProviderReference, CloneableOpenSupport.Env {
 
-    static class Env implements Serializable, CloneableOpenSupport.Env {
-
-        //Lookup.Provider,
         public static final long serialVersionUID = 1L;
         private transient PropertyChangeSupport pSupport; //do not initialize in constructor, missing after deserialization
         private transient VetoableChangeSupport vetoableChangeSupport; //see above
@@ -97,6 +76,7 @@ class StudentsDBOpenSupport extends CloneableOpenSupport implements OpenCookie, 
             this.provider = prov;
         }
 
+        @Override
         public ProviderInfo getProviderInfo() {
             return ProviderRegistry.getDefault().get(provider);
         }
@@ -158,12 +138,8 @@ class StudentsDBOpenSupport extends CloneableOpenSupport implements OpenCookie, 
         }
 
         @Override
-        public StudentsDBOpenSupport findCloneableOpenSupport() {
-            try {
-                return StudentsDBOpenSupport.find(provider);
-            } catch (IOException ex) {
-                throw new IllegalStateException(ex);
-            }
+        public AppResourcesConfigOpenSupport findCloneableOpenSupport() {
+            return AppResourcesConfigOpenSupport.find(provider);
         }
     }
 }

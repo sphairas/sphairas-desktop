@@ -11,11 +11,6 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.Lookups;
-
-/**
- *
- * @author boris.heithecker
- */
 import java.io.IOException;
 import java.util.Map;
 import org.openide.nodes.Node;

@@ -10,7 +10,7 @@ package org.thespheres.betula.adminconfig.layerxml;
  * @author boris.heithecker
  */
 public abstract class LayerFile extends AbstractLayerFile {
-    
+
     protected LayerFile() {
     }
 
@@ -24,8 +24,6 @@ public abstract class LayerFile extends AbstractLayerFile {
 
     public abstract void setValue(String value);
 
-    public abstract void setStringValueAttribute(final String name, final String value);
+    public abstract void setAttribute(final String name, final String valueType, final String value);
 
-    public abstract void setMethodValueAttribute(final String name, final String value);
-    
 }
