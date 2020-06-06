@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,9 +29,9 @@ import org.thespheres.betula.util.CollectionUtil;
         namespace = "http://www.thespheres.org/xsd/betula/container.xsd",
         propOrder = {"xmlContent", "markerSet"})
 @XmlAccessorType(XmlAccessType.FIELD)
-abstract class XmlContent {
+abstract class XmlContent implements Serializable {
 
-//    @XmlElementWrapper(name = "document-content-elements")
+    private static final long serialVersionUID = 1L;
     @XmlElements({
         @XmlElement(name = "text-content", type = XmlTextContentElement.class),
         @XmlElement(name = "element-content", type = XmlElementContentElement.class)})
