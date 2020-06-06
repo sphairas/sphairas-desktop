@@ -1,32 +1,16 @@
 package org.thespheres.betula.services.implementation.ui.layerxml;
 
-import org.thespheres.betula.adminconfig.layerxml.AbstractLayerFile;
-import java.util.ArrayList;
-import java.util.List;
 import org.thespheres.betula.adminconfig.layerxml.LayerFileSystem;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "filesystem")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class LayerFileSystemImpl extends LayerFolderImpl implements LayerFileSystem {
-
-    @XmlElements(value = {
-        @XmlElement(name = "folder", type = LayerFolderImpl.class),
-        @XmlElement(name = "file", type = LayerFileImpl.class),
-        @XmlElement(name = "attr", type = LayerFileAttribute.class)})
-    protected List<AbstractLayerFile> folderOrFileOrAttr = new ArrayList<>();
+public class LayerFileSystemImpl extends LayerFolderImpl implements LayerFileSystem {
 
     public LayerFileSystemImpl() {
         super(null);
-    }
-
-    @Override
-    public List files() {
-        return folderOrFileOrAttr;
     }
 
     @Override

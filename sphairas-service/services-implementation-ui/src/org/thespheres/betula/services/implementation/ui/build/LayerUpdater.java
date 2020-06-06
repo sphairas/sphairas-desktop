@@ -12,10 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import javax.xml.bind.Binder;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import org.openide.xml.XMLUtil;
@@ -23,6 +23,7 @@ import org.thespheres.betula.adminconfig.ConfigurationBuildTask;
 import org.thespheres.betula.adminconfig.layerxml.LayerFileSystem;
 import org.thespheres.betula.services.implementation.ui.impl.SyncedProviderInstance;
 import org.thespheres.betula.services.implementation.ui.layerxml.LayerFileSystemImpl;
+import org.thespheres.betula.services.implementation.ui.layerxml.LayerUtils;
 import org.thespheres.betula.services.ui.util.HttpUtilities;
 import org.thespheres.betula.ui.util.PlatformUtil;
 import org.w3c.dom.Comment;
@@ -38,7 +39,6 @@ import org.xml.sax.SAXException;
 public class LayerUpdater extends AbstractResourceUpdater {
 
     public static final String LAYER_XML_FILE = "layer.xml";
-    private static JAXBContext JAXB;
     protected final BiConsumer<ConfigurationBuildTask, LayerFileSystem> agent;
     private final Binder<Node> binder;
     private Document dom;
@@ -46,20 +46,7 @@ public class LayerUpdater extends AbstractResourceUpdater {
     LayerUpdater(final SyncedProviderInstance instance, final BiConsumer<ConfigurationBuildTask, LayerFileSystem> agent) {
         super(instance, LAYER_XML_FILE, null);
         this.agent = agent;
-        binder = getJAXB().createBinder();
-    }
-
-    static JAXBContext getJAXB() {
-        synchronized (LayerUpdater.class) {
-            if (JAXB == null) {
-                try {
-                    JAXB = JAXBContext.newInstance(LayerFileSystemImpl.class);
-                } catch (JAXBException ex) {
-                    throw new IllegalStateException(ex);
-                }
-            }
-            return JAXB;
-        }
+        binder = LayerUtils.getJAXB().createBinder();
     }
 
     @Override
@@ -120,7 +107,7 @@ public class LayerUpdater extends AbstractResourceUpdater {
 //            Comment comment = dom.createComment("This is a comment");
 //            Node insertBefore = e.appendChild(comment);    // insertBefore(comment, e);
 //            String nodeName = e.getNodeName();
-            final String now = LocalDateTime.now().toString();
+            final String now = LocalDateTime.now().atZone(ZoneId.of("UTC")).toString();
             Comment comment2 = dom.createComment("Modified: " + now);
             dom.getDocumentElement().appendChild(comment2);
             XMLUtil.write(dom, baos, "UTF-8");

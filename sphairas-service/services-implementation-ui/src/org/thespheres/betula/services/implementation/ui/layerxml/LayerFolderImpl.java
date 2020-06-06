@@ -8,26 +8,28 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import org.thespheres.betula.adminconfig.layerxml.LayerFile;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LayerFolderImpl extends AbstractLayerFile implements LayerFolder {
 
     @XmlElements(value = {
         @XmlElement(name = "folder", type = LayerFolderImpl.class),
-        @XmlElement(name = "file", type = LayerFile.class),
+        @XmlElement(name = "file", type = LayerFileImpl.class),
         @XmlElement(name = "attr", type = LayerFileAttribute.class)})
     protected List<AbstractLayerFile> folderOrFileOrAttr = new ArrayList<>();
-
 
     //JAXB only
     public LayerFolderImpl() {
     }
 
-    LayerFolderImpl(String name) {
+    protected LayerFolderImpl(String name) {
         super(name);
     }
 
+    @Override
+    public List<AbstractLayerFile> files() {
+        return folderOrFileOrAttr;
+    }
 
     LayerFolderImpl findChildFolder(final String name, final boolean create) {
         return files().stream()
@@ -70,8 +72,4 @@ public class LayerFolderImpl extends AbstractLayerFile implements LayerFolder {
                 .toArray(LayerFileImpl[]::new);
     }
 
-    @Override
-    public List<AbstractLayerFile> files() {
-        return folderOrFileOrAttr;
-    }
 }

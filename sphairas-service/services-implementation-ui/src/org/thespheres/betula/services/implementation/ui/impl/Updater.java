@@ -288,6 +288,29 @@ class Updater implements Runnable {
         return tmp;
     }
 
+    private Path findBackupPath(final String file) throws IOException {
+        final Path dir = instance.getBaseDir().resolve("bak");
+        Files.createDirectories(dir);
+        final Path bak1 = dir.resolve(file + ".bak1");
+        final Path bak0 = dir.resolve(file + ".bak0");
+        final Path bak = dir.resolve(file + ".bak");
+        if (Files.exists(bak0)) {
+            try {
+                Files.copy(bak0, bak1, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                PlatformUtil.getCodeNameBaseLogger(Updater.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+            }
+        }
+        if (Files.exists(bak)) {
+            try {
+                Files.copy(bak, bak0, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                PlatformUtil.getCodeNameBaseLogger(Updater.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+            }
+        }
+        return bak;
+    }
+
     private boolean doUpdateFile(final String file, final boolean ignoreNotFound, final Path tmp) throws IOException {
         final String encoded = UrlEscapers.urlFragmentEscaper().escape(file);
 //        final String encoded = URLEncoder.encode(file, "utf-8");
@@ -309,6 +332,10 @@ class Updater implements Runnable {
         final Path target = instance.getBaseDir().resolve(file);
         if (!target.getParent().equals(instance.getBaseDir())) {
             Files.createDirectories(target.getParent());
+        }
+        if (Files.exists(target)) {
+            final Path backup = findBackupPath(file);
+            Files.copy(target, backup, StandardCopyOption.REPLACE_EXISTING);
         }
         Files.copy(tmp, target, StandardCopyOption.REPLACE_EXISTING);
         return true;

@@ -4,7 +4,6 @@ import org.thespheres.betula.adminconfig.layerxml.LayerFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -58,30 +57,35 @@ public class LayerFileImpl extends LayerFile {
     }
 
     @Override
-    public void setStringValueAttribute(final String name, final String value) {
-        final Optional<LayerFileAttribute> found = getAttributes().stream()
-                .filter(a -> a.getName().equals(name))
-                .findAny();
-        if (found.isPresent()) {
-            found.get().setStringvalue(value);
-        } else {
-            final LayerFileAttribute a = new LayerFileAttribute(name);
-            a.setStringvalue(value);
-            getAttributes().add(a);
-        }
+    public void setAttribute(String name, String valueType, String value) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+//    @Override
+//    public void setStringValueAttribute(final String name, final String value) {
+//        final Optional<LayerFileAttribute> found = getAttributes().stream()
+//                .filter(a -> a.getName().equals(name))
+//                .findAny();
+//        if (found.isPresent()) {
+//            found.get().setStringvalue(value);
+//        } else {
+//            final LayerFileAttribute a = new LayerFileAttribute(name);
+//            a.setStringvalue(value);
+//            getAttributes().add(a);
+//        }
+//    }
+//
+//    @Override
+//    public void setMethodValueAttribute(final String name, final String value) {
+//        final Optional<LayerFileAttribute> found = getAttributes().stream()
+//                .filter(a -> a.getName().equals(name))
+//                .findAny();
+//        if (found.isPresent()) {
+//            found.get().setMethodvalue(value);
+//        } else {
+//            final LayerFileAttribute a = new LayerFileAttribute(name);
+//            a.setMethodvalue(value);
+//            getAttributes().add(a);
+//        }
+//    }
 
-    @Override
-    public void setMethodValueAttribute(final String name, final String value) {
-        final Optional<LayerFileAttribute> found = getAttributes().stream()
-                .filter(a -> a.getName().equals(name))
-                .findAny();
-        if (found.isPresent()) {
-            found.get().setMethodvalue(value);
-        } else {
-            final LayerFileAttribute a = new LayerFileAttribute(name);
-            a.setMethodvalue(value);
-            getAttributes().add(a);
-        }
-    }
 }
