@@ -139,7 +139,7 @@ public class HttpUtilities {
 
         httpPost.setEntity(entity);
 
-        try ( CloseableHttpResponse response = NetworkSettings.suppressAuthenticationDialog(() -> httpclient.execute(httpPost))) { // The underlying HTTP connection is still held by the response object
+        try (final CloseableHttpResponse response = NetworkSettings.suppressAuthenticationDialog(() -> httpclient.execute(httpPost))) { // The underlying HTTP connection is still held by the response object
             // to allow the response content to be streamed directly from the network socket.
             // In order to ensure correct deallocation of system resources
             // the user MUST call CloseableHttpResponse#close() from a finally clause.
