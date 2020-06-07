@@ -12,6 +12,9 @@
     <target name="build" depends="build-all,suite.build"/>
     <target name="clean" depends="clean-all,suite.clean"/>
     <target name="nbms" depends="nbms-all,suite.nbms,push-nbms" />
+    <target name="update-dependencies" depends="-init,branding,release,-hide-excluded-modules" description="Build all modules in the suite.">
+        <subant target="update-dependencies" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false" failonerror="false" />        
+    </target>
     <target name="build-all" depends="-init,init-cluster" if="${build-clean.all}">
         <echo>Building ${sphairas.cluster.converted}</echo>
         <subant target="build" buildpath="${sphairas.cluster.converted}">
@@ -58,5 +61,9 @@
         <exec executable="${pushnbms}" dir="${basedir}/../">
             <arg value="${nbms.target}" />
         </exec>
+    </target>
+    <target name="resolve-dependencies" depends="-init,init-cluster,update-dependencies" description="Resolves and (re)installs all maven dependencies in the application.">
+        <echo>Updating ${sphairas.cluster.converted}</echo>
+        <subant target="update-dependencies" buildpath="${sphairas.cluster.converted}" />
     </target>
 </project>

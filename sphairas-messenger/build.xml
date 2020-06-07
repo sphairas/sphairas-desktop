@@ -5,4 +5,7 @@
 <project name="Acer" basedir=".">
     <description>Builds the module suite Acer.</description>
     <import file="nbproject/build-impl.xml"/>
+    <target name="update-dependencies" depends="-init,branding,release,-hide-excluded-modules" description="Build all modules in the suite.">
+        <subant target="update-dependencies" buildpath="${modules.sorted}" inheritrefs="false" inheritall="false" failonerror="false" />        
+    </target>
 </project>

@@ -2,22 +2,6 @@
 <project name="sphairas" 
          xmlns:resolver="antlib:org.apache.maven.resolver.ant">
     <target name="sphairas-init" depends="up-to-date"/>     
-<!--    <taskdef uri="antlib:org.apache.maven.resolver.ant" resource="org/apache/maven/resolver/ant/antlib.xml">
-        <classpath>
-            <fileset dir="MAVEN/target/dependency" includes="*.jar"/>
-        </classpath>
-        /usr/share/java
-    </taskdef>    -->
-    <!--    <target name="maven-install" depends="init,sphairas-init">
-        <echo>Installing ${cluster}/${module.jar}</echo>
-        <resolver:pom id="maven" file="pom.xml"/>
-        <resolver:artifacts id="output">
-            <artifact file="${cluster}/${module.jar}"/>
-        </resolver:artifacts>
-        <resolver:install artifactsref="output">
-            <pom refid="maven"/>
-        </resolver:install>
-    </target>-->
     <target name="maven-install" depends="init,sphairas-init">
         <property name="install.file.path" location="${cluster}/${module.jar}"/>
         <echo>Installing ${install.file.path}</echo>
@@ -27,29 +11,13 @@
             <arg value="-DpomFile=${basedir}/pom.xml"/>
         </exec>
     </target>
-    <!--    <target name="maven-resolve" depends="sphairas-init" unless="is.jar.uptodate">
-        <echo>Resolving ${cluster}/${module.jar}</echo>
-        <resolver:pom id="pom" file="pom.xml"/>
-        <resolver:resolve>
-            <dependencies pomRef="pom"/>
-            <remoterepos refid="all"/>
-            <path refid="cp" classpath="compile"/>
-            <path refid="tp" classpath="test"/>
-            <files refid="files" dir="release/modules/ext"
-                   layout="{artifactId}-{classifier}-{version}.{extension}"/>
-            <files refid="src.files" attachments="sources" dir="external/sources"
-                   layout="{artifactId}-{classifier}-{version}.{extension}"/>
-            <files refid="api.files" attachments="javadoc" dir="external/javadoc"
-                   layout="{artifactId}-{classifier}-{version}.{extension}"/>           
-        </resolver:resolve>
-    </target>-->
-    <target name="maven-resolve" depends="sphairas-init" unless="is.jar.uptodate">
+    <target name="maven-resolve" depends="sphairas-init">
         <echo>Resolving ${cluster}/${module.jar}</echo>
         <exec executable="mvn" failonerror="true">
             <arg value="validate"/>
         </exec>
     </target>
-    <target name="maven-download-licenses" depends="sphairas-init" unless="is.jar.uptodate">
+    <target name="maven-download-licenses" depends="sphairas-init">
         <exec executable="mvn" failonerror="false">
             <arg value="license:download-licenses"/>
         </exec>

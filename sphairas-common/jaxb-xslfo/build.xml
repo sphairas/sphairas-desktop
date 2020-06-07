@@ -7,6 +7,5 @@
     <import file="nbproject/build-impl.xml"/>
     <!--Maven Artifact Resolver Ant Tasks--> 
     <import file="${basedir}/../../sphairas-admin-client/nbproject/sphairas.xml" />  
-    <target name="clean" depends="projectized-common.clean,remove-external-files" />
-    <target name="compile" depends="maven-resolve,projectized-common.compile,maven-download-licenses" />
+    <target name="update-dependencies" depends="remove-external-files,maven-resolve,maven-download-licenses" />
 </project>
