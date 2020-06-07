@@ -5,12 +5,14 @@
  */
 package org.thespheres.betula.services.implementation.ui.impl;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.logging.Level;
+import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.Repository.LayerProvider;
+import org.openide.filesystems.URLMapper;
 import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 import org.openide.util.lookup.ServiceProvider;
@@ -29,17 +31,15 @@ public class LayerProv extends LayerProvider {
     @Override
     protected void registerLayers(Collection<? super URL> context) {
         SyncedProviderInstance.getInstances().values().stream()
-//                .peek(spi -> spi.updater())
+                //                .peek(spi -> spi.updater())
                 .map(spi -> spi.getBaseDir().resolve("layer.xml"))
-                .filter(lp -> (Files.exists(lp)))
-                .forEachOrdered(lp -> {
-                    final URL url;
-                    try {
-                        url = lp.toUri().toURL();
-                        context.add(url);
-                        PlatformUtil.getCodeNameBaseLogger(LayerProv.class).log(Level.INFO, "Added layer {0}.", url);
-                    } catch (MalformedURLException ex) {
-                    }
+                .filter(Files::exists)
+                .map(Path::toFile)
+                .map(FileUtil::toFileObject)
+                .forEachOrdered(fo -> {
+                    final URL url = URLMapper.findURL(fo, URLMapper.EXTERNAL);
+                    context.add(url);
+                    PlatformUtil.getCodeNameBaseLogger(LayerProv.class).log(Level.INFO, "Added layer {0}.", url);
                 });
     }
 
