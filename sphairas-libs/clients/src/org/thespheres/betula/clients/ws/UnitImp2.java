@@ -74,7 +74,7 @@ import org.xml.sax.SAXException;
  * @author boris.heithecker
  */
 @NbBundle.Messages({"UnitImp2.error.title=Verbindungs-Fehler",
-    "UnitImp2.error.message=Die Gruppe „{0}“ konnte nicht vom Datenanbieter „{1}“ geladen werden.",
+    "UnitImp2.error.message=Die Gruppe „{0}“ konnte nicht vom Mandanten „{1}“ geladen werden.",
     "UnitImp2.message.noBackupEmptyStudents=Eine leere Gruppe wird nicht im Backup gespeichert.",
     "UnitImp2.message.backupDirNotWritable=Das Backup-Verzeichnis {0} kann nicht geschrieben werden"})
 class UnitImp2 implements Unit, ChangeListener {
