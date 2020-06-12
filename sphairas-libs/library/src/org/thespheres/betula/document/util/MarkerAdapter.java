@@ -7,6 +7,8 @@ package org.thespheres.betula.document.util;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +32,7 @@ public class MarkerAdapter extends TagAdapter implements Serializable {
 
     public static final long serialVersionUID = 1L;
     @XmlAttribute(name = "subset")
-    private String subset = null;
+    protected String subset = null;
 
     public MarkerAdapter() {
     }
@@ -50,14 +52,32 @@ public class MarkerAdapter extends TagAdapter implements Serializable {
     }
 
     public Marker getMarker() {
-        if (getConvention().equals("null") && getId().equals("null") && getSubset() == null) {
-            return Marker.NULL;
-        }
-        return MarkerFactory.find(getConvention(), getId(), getSubset());
+        return getMarker(false);
     }
 
     public Marker getReplacer() {
         return new AbstractMarker(getConvention(), getId(), getSubset());
+    }
+
+    public Marker getMarker(final boolean replace) {
+        if (getConvention().equals("null") && getId().equals("null") && getSubset() == null) {
+            return Marker.NULL;
+        }
+        final Marker marker;
+        try {
+            marker = MarkerFactory.find(getConvention(), getId(), getSubset());
+        } catch (final Exception ex) {
+            if (replace) {
+                final String msg = "";
+                Logger.getLogger(MarkerAdapter.class.getName()).log(Level.WARNING, msg, ex);
+                return getReplacer();
+            }
+            throw ex;
+        }
+        if (marker == null && replace) {
+            return getReplacer();
+        }
+        return marker;
     }
 
     @Override
