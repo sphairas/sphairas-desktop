@@ -46,6 +46,7 @@ public abstract class AbstractTableElement extends CloneableTopComponent impleme
     private final PopupAdapter popupListener;
     private final DefaultAction defaultAction;
     protected final UndoRedo.Manager undoRedo = new UndoRedo.Manager();
+    protected final SelectionListener selectionListener;
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     protected AbstractTableElement() {
@@ -66,7 +67,8 @@ public abstract class AbstractTableElement extends CloneableTopComponent impleme
         table.setHorizontalScrollEnabled(true);
         table.setColumnControlVisible(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getSelectionModel().addListSelectionListener(new SelectionListener());
+        selectionListener = new SelectionListener();
+        table.getSelectionModel().addListSelectionListener(selectionListener);
     }
 
     @Override
@@ -226,24 +228,6 @@ public abstract class AbstractTableElement extends CloneableTopComponent impleme
 
     }
 
-    private final class SelectionListener implements ListSelectionListener {
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            if (e.getValueIsAdjusting()) {
-                return;
-            }
-            final int sel[] = table.getSelectedRows();
-            final List<Node> nodes = Arrays.stream(sel)
-                    .map(table::convertRowIndexToModel)
-                    .mapToObj(AbstractTableElement.this::getNodeForRow)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            activatedNodes(nodes);
-        }
-
-    }
-
 //    public static Action createPasteAction(Transferable t, Node n) {
 //        final NodeTransfer.Paste paste = NodeTransfer.findPaste(t);
 //        if (paste != null) {
@@ -324,4 +308,29 @@ public abstract class AbstractTableElement extends CloneableTopComponent impleme
 //            }
 //        }
 //    }
+    protected class SelectionListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (e.getValueIsAdjusting()) {
+                return;
+            }
+            final int sel[] = table.getSelectedRows();
+            final List<Node> nodes = Arrays.stream(sel)
+                    .map(table::convertRowIndexToModel)
+                    .mapToObj(AbstractTableElement.this::getNodeForRow)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            activatedNodes(nodes);
+        }
+
+        public List<Node> currentSelection() {
+            final int sel[] = table.getSelectedRows();
+            return Arrays.stream(sel)
+                    .mapToObj(AbstractTableElement.this::getNodeForRow)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+
+    }
 }
