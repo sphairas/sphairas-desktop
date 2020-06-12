@@ -6,16 +6,22 @@
 package org.thespheres.betula.niedersachsen.admin.ui.bemerkungen;
 
 import java.awt.EventQueue;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import org.apache.commons.lang3.StringUtils;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.EditableProperties;
@@ -23,6 +29,7 @@ import org.openide.util.Mutex;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Task;
+import org.openide.util.actions.NodeAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
@@ -40,6 +47,7 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
     private final List<String> keysSorted = new ArrayList<>();
     private EditBemerkungenEnv env;
     private final Map<String, PropertyNode> nodes = new HashMap<>();
+    private final Set<String> removedKeys = new HashSet<>();
 
     static {
         NF.setMinimumIntegerDigits(4);
@@ -51,12 +59,13 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
         EventQueue.invokeLater(() -> doInitialize(rum));
     }
 
-    PropertyNode nodeForRow(int ri) {
+    PropertyNode nodeForRow(final int ri) {
         final String key = keysSorted.get(ri);
         return nodes.computeIfAbsent(key, PropertyNode::new);
     }
 
     private void doInitialize(final EditableProperties rum) {
+        removedKeys.clear();
         keysSorted.clear();
         keysSorted.addAll(rum.keySet());
         this.current = rum;
@@ -75,7 +84,12 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int ri, int ci) {
-        final PropertyNode n = nodeForRow(ri);
+        final PropertyNode n;
+        try {
+            n = nodeForRow(ri);
+        } catch (final IndexOutOfBoundsException e) {
+            return null;
+        }
         if (ci == 0) {
             return n.getKeyFormatted();
         } else if (ci == 1 && current != null) {
@@ -96,6 +110,8 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
                 current.setProperty(pn.getKey(), nv);
             }
         }
+        this.removedKeys.stream()
+                .forEach(current::remove);
     }
 
     void runAfterSave(final Task t) {
@@ -103,9 +119,10 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
             for (int i = 0; i < this.keysSorted.size(); i++) {
                 final PropertyNode pn = nodeForRow(i);
                 if (pn.isDirty()) {
-                    pn.setEditValue(null);
+                    pn.setEditValue(null, false);
                 }
             }
+            removedKeys.clear();
             fireTableDataChanged();
         });
     }
@@ -122,8 +139,18 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
         this.keysSorted.add(nn.getKey());
         this.nodes.put(nn.getKey(), nn);
         final String text = NbBundle.getMessage(EditBemerkungenPropertiesComponentTableModel.class, "EditBemerkungenPropertiesComponentTableModel.dirtyValue.default");
-        nn.setEditValue(text);
+        nn.setEditValue(text, true);
         fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
+    }
+
+    void removeProperty(final String key) {
+        EventQueue.invokeLater(() -> {
+            this.keysSorted.remove(key);
+            this.removedKeys.add(key);
+            this.nodes.remove(key);
+            env.setModified("properties");
+            this.fireTableStructureChanged();
+        });
     }
 
     class PropertyNode extends AbstractNode {
@@ -162,6 +189,7 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
             lkp.add(EditBemerkungenPropertiesComponentTableModel.this);
             this.date = date;
             this.index = index;
+            NodeAction na;
         }
 
         private void initKeys() {
@@ -184,16 +212,22 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
             return dirtyValue != null ? dirtyValue : getValueForKeyUnformatted(key);
         }
 
-        void setEditValue(String text) {
+        void setEditValue(final String text, final boolean setModified) {
             final String trim = StringUtils.trimToNull(text);
             if (!Objects.equals(trim, getValueForKeyUnformatted(key))) {
                 this.dirtyValue = trim;
-                env.setModified("properties");
+                if (setModified) {
+                    env.setModified("properties");
+                }
             }
         }
 
         boolean isDirty() {
             return this.dirtyValue != null;
+        }
+
+        boolean isTemplate() {
+            return getValueForKeyUnformatted(key) == null;
         }
 
         String getKeyFormatted() {
@@ -211,5 +245,26 @@ class EditBemerkungenPropertiesComponentTableModel extends AbstractTableModel {
             return keyFormatted;
         }
 
+        @Override
+        public boolean canDestroy() {
+            return true;
+        }
+
+        @Messages({"PropertyNode.destroy.warning.title=Hinweis",
+            "PropertyNode.destroy.warning.message=Texte sollten nur gelöscht werden, wenn sie mit absoluter Sicherheit noch für kein erstelltes Zeugnis verwendet wurden."})
+        @Override
+        public void destroy() throws IOException {
+            if (isTemplate()) {
+                removeProperty(key);
+            } else {
+                final String title = NbBundle.getMessage(PropertyNode.class, "PropertyNode.destroy.warning.title");
+                final String message = NbBundle.getMessage(PropertyNode.class, "PropertyNode.destroy.warning.message");
+                final NotifyDescriptor dd = new NotifyDescriptor(message, title, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.WARNING_MESSAGE, null, null);
+                DialogDisplayer.getDefault().notify(dd);
+                if ((int) dd.getValue() == JOptionPane.OK_OPTION) {
+                    removeProperty(key);
+                }
+            }
+        }
     }
 }

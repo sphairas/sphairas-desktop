@@ -42,6 +42,7 @@ import org.thespheres.betula.tag.TagAdapter.XmlTagAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TermReportNoteSetTemplate implements Serializable {
 
+    public static final long serialVersionUID = 1L;
     @XmlElement(name = "vorlagen-id", required = true)
     private String id;
     @XmlElement(name = "anzeigename")
@@ -82,34 +83,41 @@ public class TermReportNoteSetTemplate implements Serializable {
         return elements;
     }
 
-    public void addElement(int index, Marker[] markers, int defaultValue, String displayName) {
-        addElement(index, markers, false, defaultValue, displayName);
+    public void addElement(int index, Marker[] markers, int defaultValue, boolean nillable, String displayName) {
+        addElement(index, markers, false, nillable, defaultValue, displayName);
     }
 
     public void addElement(int index, Marker[] markers, String displayName) {
-        addElement(index, markers, true, 0, displayName);
+        addElement(index, markers, true, true, 0, displayName);
     }
 
-    private void addElement(int index, Marker[] markers, boolean multiple, int defaultValue, String displayName) {
+    private void addElement(int index, Marker[] markers, boolean multiple, boolean nillable, int defaultValue, String displayName) {
         synchronized (elements) {
-            if (index < 0 || index > elements.size() || markers == null || markers.length == 0) {
+            if (index < 0 || index > elements.size() || markers == null) {
                 throw new IllegalArgumentException();
             }
-            if (defaultValue >= markers.length) {
+            if (!multiple && defaultValue >= markers.length) {
                 throw new IllegalArgumentException();
             }
-            Element el = new Element(markers, multiple, defaultValue, displayName);
+            if (multiple && !nillable || multiple && defaultValue != 0) {
+                throw new IllegalArgumentException();
+            }
+            final Element el = new Element(markers, multiple, nillable, defaultValue, displayName);
             elements.add(index, el);
         }
     }
 
-    public void removeElement(int position) {
-
+    public void removeElement(final Element el) {
+        final int i = this.elements.indexOf(el);
+        if (i != -1) {
+            this.elements.remove(i);
+        }
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Element implements Serializable {
 
+        public static final long serialVersionUID = 1L;
         @XmlAttribute(name = "multiple")
         private boolean multiple = true;
         @XmlAttribute(name = "default")
@@ -139,33 +147,54 @@ public class TermReportNoteSetTemplate implements Serializable {
         public Element() {
         }
 
-        private Element(Marker[] m, boolean multiple, int defaultIndex, String elementDisplayName) {
+        private Element(Marker[] m, boolean multiple, boolean nillable, int defaultIndex, String elementDisplayName) {
 //            this.position = position;
             this.multiple = multiple;
             this.defaultIndex = defaultIndex;
             this.elementDisplayName = elementDisplayName;
-            if (nillable) {
-                markers.add(new MarkerItem(Marker.NULL));
-            }
+            this.nillable = nillable;
+            updateNillable();
             Arrays.stream(m)
-                    .map(MarkerItem::new)
+                    .map(ma -> new MarkerItem(ma, this))
                     .forEach(markers::add);
         }
 
+        private void updateNillable() {
+            final boolean hasNull = markers.size() > 0 && Marker.isNull(markers.get(0).getMarker());
+            if (nillable && !hasNull) {
+                markers.add(0, new MarkerItem(Marker.NULL, this));
+            } else if (hasNull) {
+                markers.remove(0);
+            }
+        }
+
         public MarkerItem addItem(final int index, final Marker m) {
-            final MarkerItem ret = new MarkerItem(m);
+            final MarkerItem ret = new MarkerItem(m, this);
             this.markers.add(index, ret);
             return ret;
         }
 
+        public MarkerItem addItem(final Marker m) {
+            final MarkerItem ret = new MarkerItem(m, this);
+            this.markers.add(ret);
+            return ret;
+        }
+
         public boolean removeItem(final MarkerItem item) {
-            return this.markers.remove(item);
+            final int i = this.markers.indexOf(item);
+            if (i != -1) {
+                if (this.defaultIndex == i) {
+                    this.defaultIndex = 0;
+                }
+                return this.markers.remove(item);
+            }
+            return false;
         }
 
         public void beforeMarshal(final Marshaller marshaller) {
             final ArrayList<MarkerItem> l = new ArrayList<>();
             for (int i = nillable ? 1 : 0; i < markers.size(); i++) {
-                l.add(new MarkerItem(markers.get(i)));
+                l.add(new MarkerItem(markers.get(i), this));
             }
             xmlMarkers = l;
         }
@@ -181,7 +210,7 @@ public class TermReportNoteSetTemplate implements Serializable {
                 xmlMarkers = null;
             }
             if (nillable && !multiple) {
-                markers.add(0, new MarkerItem(Marker.NULL));
+                markers.add(0, new MarkerItem(Marker.NULL, this));
                 selected = markers.get(0).getId();
             }
             if (!nillable && !multiple) {
@@ -198,16 +227,43 @@ public class TermReportNoteSetTemplate implements Serializable {
             return multiple;
         }
 
+        public void setMultiple(final boolean multiple) {
+            this.multiple = multiple;
+        }
+
         public boolean isNillable() {
             return nillable;
         }
 
+        public void setNillable(final boolean nillable) {
+            this.nillable = nillable;
+            this.multiple = false;
+            updateNillable();
+        }
+
+        @Deprecated
         public int getDefaultElement() {
             return defaultIndex;
         }
 
+        public int getDefaultIndex() {
+            return defaultIndex;
+        }
+
+        public MarkerItem getDefaultItem() {
+            return (this.multiple || this.markers.size() < defaultIndex) ? null : this.markers.get(defaultIndex);
+        }
+
+        void setDefaultIndex(final int index) {
+            this.defaultIndex = index;
+        }
+
         public String getElementDisplayName() {
             return elementDisplayName;
+        }
+
+        public void setElementDisplayName(final String elementDisplayName) {
+            this.elementDisplayName = elementDisplayName;
         }
 
         public boolean isHidden() {
@@ -297,21 +353,34 @@ public class TermReportNoteSetTemplate implements Serializable {
         private final List<Tag> displayHint = new ArrayList<>();
         @XmlAttribute(name = "hidden")
         private Boolean hidden;
+        @XmlTransient
+        private Element parent;
 
         public MarkerItem() {
         }
 
         @SuppressWarnings({"OverridableMethodCallInConstructor"})
-        protected MarkerItem(final MarkerItem copy) {
+        protected MarkerItem(final MarkerItem copy, final Element parent) {
             super(copy.getMarker());
+            this.parent = parent;
             setAction(copy.getAction());
             setHidden(copy.isHidden());
             copy.getDisplayHint().stream()
                     .forEach(displayHint::add);
         }
 
-        private MarkerItem(final Marker orig) {
+        private MarkerItem(final Marker orig, final Element parent) {
             super(orig);
+            this.parent = parent;
+        }
+
+        public void afterUnmarshal(final Unmarshaller u, final Object parent) {
+            this.parent = (Element) parent;
+        }
+
+        @Override
+        public Marker getMarker() {
+            return super.getMarker(true);
         }
 
         public boolean isHidden() {
@@ -324,6 +393,17 @@ public class TermReportNoteSetTemplate implements Serializable {
 
         public List<Tag> getDisplayHint() {
             return displayHint;
+        }
+
+        public boolean isDefaultItem() {
+            return !this.parent.isMultiple() && this.parent.markers.indexOf(this) == parent.defaultIndex;
+        }
+
+        public void setDefaultItem() {
+            final int i = this.parent.markers.indexOf(this);
+            if (i != -1) {
+                this.parent.setDefaultIndex(i);
+            }
         }
 
     }

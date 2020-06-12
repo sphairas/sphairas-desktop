@@ -51,7 +51,7 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
 
     @Override
     public int getColumnCount() {
-        return 5;
+        return 6;
     }
 
     EditBemerkungenSetRootChildren getChildren() {
@@ -61,6 +61,17 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
     void setEnv(EditBemerkungenEnv value) {
         env = value;
         children.setTemplate(value.getTemplate(), env);
+    }
+
+    void addCategory(final String name, final boolean multiple) {
+        final int index = env.getTemplate().getElements().size();
+        if (multiple) {
+            env.getTemplate().addElement(index, new Marker[0], name);
+        } else {
+            env.getTemplate().addElement(index, new Marker[0], 0, true, name);
+        }
+        setModified();
+        children.update();
     }
 
     void setModified() {
@@ -113,13 +124,12 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
     }
 
     private Object getValue(MarkerItem m, int column) {
-//        final ReportData2 sd = ReportContextListener.getDefault().getCurrentReportData();
         final boolean nullMarker = Marker.isNull(m.getMarker());
         switch (column) {
             case 0:
                 return null;
             case 1:
-                return nullMarker || !m.isHidden();
+                return nullMarker ? null : !m.isHidden();
             case 2:
                 return nullMarker ? Tag.NULL : getShowTerm(m.getDisplayHint());
             case 3:
@@ -150,27 +160,29 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
         if (el != null && m != null) {
             setMarkerValue(m, column, value);
         } else if (el != null) {
-            setMarkerValue(el, column, value);
+            setElementValue(el, column, value);
         }
     }
 
-    private void setMarkerValue(Element el, int column, Object value) {
-//        final ReportData2 sd = ReportContextListener.getDefault().getCurrentReportData();
+    private void setElementValue(Element el, int column, Object value) {
         final Iterator<Tag> it = el.getDisplayHints().iterator();
         switch (column) {
             case 1:
                 final boolean h = (boolean) value;
                 el.setHidden(!h);
+                setModified();
                 break;
             case 2:
                 final Tag t = (Tag) value;
                 while (it.hasNext()) {
                     if (it.next().getConvention().equals("de.halbjahre")) {
                         it.remove();
+                        setModified();
                     }
                 }
                 if (t != null) {
                     el.getDisplayHints().add(t);
+                    setModified();
                 }
                 break;
             case 3:
@@ -178,6 +190,7 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
                 while (it.hasNext()) {
                     if (it.next().getConvention().equals("de.stufen")) {
                         it.remove();
+                        setModified();
                     }
                 }
                 if (vv != null && !StringUtils.isBlank(vv)) {
@@ -185,6 +198,7 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
                         final Tag st = MarkerFactory.find("de.stufen", iv.trim());
                         if (st != null) {
                             el.getDisplayHints().add(st);
+                            setModified();
                         }
                     }
                 }
@@ -194,27 +208,30 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
                 el.getDisplayHints().removeIf(Constants.SCHLUSS_BEMERKUNG::equals);
                 if (last) {
                     el.getDisplayHints().add(Constants.SCHLUSS_BEMERKUNG);
+                    setModified();
                 }
         }
     }
 
     private void setMarkerValue(MarkerItem m, int column, Object value) {
-//        final ReportData2 sd = ReportContextListener.getDefault().getCurrentReportData();
         final Iterator<Tag> it = m.getDisplayHint().iterator();
         switch (column) {
             case 1:
                 final boolean h = (boolean) value;
                 m.setHidden(!h);
+                setModified();
                 break;
             case 2:
                 final Tag t = (Tag) value;
                 while (it.hasNext()) {
                     if (it.next().getConvention().equals("de.halbjahre")) {
                         it.remove();
+                        setModified();
                     }
                 }
                 if (t != null) {
                     m.getDisplayHint().add(t);
+                    setModified();
                 }
                 break;
             case 3:
@@ -222,6 +239,7 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
                 while (it.hasNext()) {
                     if (it.next().getConvention().equals("de.stufen")) {
                         it.remove();
+                        setModified();
                     }
                 }
                 if (vv != null && !StringUtils.isBlank(vv)) {
@@ -229,6 +247,7 @@ class EditBemerkungenSetModel extends NbSwingXTreeTableModel implements ChangeLi
                         final Tag st = MarkerFactory.find("de.stufen", iv.trim());
                         if (st != null) {
                             m.getDisplayHint().add(st);
+                            setModified();
                         }
                     }
                 }

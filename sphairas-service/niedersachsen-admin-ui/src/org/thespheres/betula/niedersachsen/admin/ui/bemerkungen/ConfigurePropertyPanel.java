@@ -99,7 +99,7 @@ public class ConfigurePropertyPanel extends javax.swing.JPanel implements Runnab
             return;
         }
         if (current != null) {
-            current.setEditValue(text);
+            EventQueue.invokeLater(() -> current.setEditValue(text, true));
         }
         final Object[] args = ReportContextListener.getDefault().getCurrentFormatArgs();
         final String res;

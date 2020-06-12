@@ -41,7 +41,7 @@ import org.thespheres.betula.services.util.AbstractReloadableMarkerConvention;
  *
  * @author boris.heithecker
  */
-@Messages("EditBemerkungenEnv.displayName=Zeungis-Bemerkungen für {0}")
+@Messages("EditBemerkungenEnv.displayName=Zeugnis-Bemerkungen ({0})")
 class EditBemerkungenEnv implements Runnable {
 
     private static final String DEFAULT_TEMPLATE_PATH = "signee/bemerkungen.xml";
@@ -133,9 +133,25 @@ class EditBemerkungenEnv implements Runnable {
         }
     }
 
+    void removeModified(final String modif) {
+        final boolean changed;
+        synchronized (modified) {
+            changed = modified.remove(modif);
+        }
+        if (changed) {
+            pSupport.firePropertyChange(PROP_MODIFIED, false, true);
+        }
+    }
+
     boolean isModified(final String modif) {
         synchronized (modified) {
             return modif != null ? modified.contains(modif) : !modified.isEmpty();
+        }
+    }
+
+    boolean isModified() {
+        synchronized (modified) {
+            return !modified.isEmpty();
         }
     }
 
@@ -153,7 +169,7 @@ class EditBemerkungenEnv implements Runnable {
     }
 
     private String getPropertiesPath() {
-        return LocalProperties.find(provider).getProperty("custon.report.notes.path", DEFAULT_PROPERTIES_PATH);
+        return LocalProperties.find(provider).getProperty("custom.report.notes.path", DEFAULT_PROPERTIES_PATH);
     }
 
     private void runImpl() throws IOException {
@@ -177,6 +193,7 @@ class EditBemerkungenEnv implements Runnable {
         try {
             HttpUtil.storeResourceBundle(service, urlBase + getPropertiesPath(), texte);
             requestUpdateCustomConvention();
+            removeModified("properties");
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -198,6 +215,7 @@ class EditBemerkungenEnv implements Runnable {
         final WebProvider service = WebProvider.find(provider, WebProvider.class);
         try {
             HttpUtil.storeTemplate(service, urlBase + getTemplatePath(), template);
+            removeModified("set");
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

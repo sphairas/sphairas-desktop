@@ -5,14 +5,15 @@
  */
 package org.thespheres.betula.niedersachsen.admin.ui.bemerkungen;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 import javax.swing.table.TableModel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.CheckBoxProvider;
@@ -36,14 +37,13 @@ import org.thespheres.betula.ui.util.WideJXComboBox;
     "EditBemerkungenSetModelColumnFactory.header.hidden=Sichtbar",
     "EditBemerkungenSetModelColumnFactory.header.term=Halbjahr",
     "EditBemerkungenSetModelColumnFactory.header.level=Jahrgänge",
-    "EditBemerkungenSetModelColumnFactory.header.lastElement=Schluss"})
+    "EditBemerkungenSetModelColumnFactory.header.lastElement=An den Schluss setzen"})
 class EditBemerkungenSetModelColumnFactory extends ColumnFactory {
 
     private final DefaultComboBoxModel<Tag> model = new DefaultComboBoxModel<>();
     private final JCheckBox hiddenBox = new JCheckBox();
     private final JTextField levelField = new JTextField();
     private final JCheckBox lastElementBox = new JCheckBox();
-    private final JLabel emptyRenderer = new JLabel();
     private final WideJXComboBox scopeBox;
     private final StringValue scopeStringValue = o -> {
         final Tag val = (Tag) o;
@@ -65,6 +65,7 @@ class EditBemerkungenSetModelColumnFactory extends ColumnFactory {
         scopeBox.setEditable(false);
         scopeBox.setBorder(BorderFactory.createEmptyBorder());
 //        AutoCompleteDecorator.decorate(scopeBox);
+        levelField.setBorder(new LineBorder(Color.black, 2));
     }
 
     @Override
@@ -118,6 +119,18 @@ class EditBemerkungenSetModelColumnFactory extends ColumnFactory {
         col.setHeaderValue(title);
         col.setToolTipText(title);
         col.setCellRenderer(new DefaultTableRenderer(new CheckBoxProvider()));
+        final DefaultTableRenderer nullRenderer = new DefaultTableRenderer();
+        col.setCellRenderer(new DefaultTableRenderer(new CheckBoxProvider()) {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                if (value == null) {
+                    return nullRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+
+        });
         col.setCellEditor(new DefaultCellEditor(hiddenBox));
     }
 
@@ -140,12 +153,13 @@ class EditBemerkungenSetModelColumnFactory extends ColumnFactory {
         final String title = NbBundle.getMessage(EditBemerkungenSetModelColumnFactory.class, "EditBemerkungenSetModelColumnFactory.header.lastElement");
         col.setHeaderValue(title);
         col.setToolTipText(title);
+        final DefaultTableRenderer nullRenderer = new DefaultTableRenderer();
         col.setCellRenderer(new DefaultTableRenderer(new CheckBoxProvider()) {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 if (value == null) {
-                    return emptyRenderer;
+                    return nullRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 }
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }

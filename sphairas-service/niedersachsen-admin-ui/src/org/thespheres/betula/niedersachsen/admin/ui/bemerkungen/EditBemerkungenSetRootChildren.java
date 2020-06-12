@@ -6,6 +6,7 @@
 package org.thespheres.betula.niedersachsen.admin.ui.bemerkungen;
 
 import com.google.common.collect.ForwardingList;
+import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.io.IOException;
@@ -18,13 +19,12 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Index;
 import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
-import org.openide.util.HelpCtx;
-import org.openide.util.NbBundle;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.actions.NodeAction;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.Lookups;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerConvention;
 import org.thespheres.betula.niedersachsen.zeugnis.TermReportNoteSetTemplate;
@@ -38,7 +38,6 @@ import org.thespheres.betula.niedersachsen.zeugnis.TermReportNoteSetTemplate.Mar
 class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
 
     private final Node root;
-//    private TermReportNoteSetTemplate2 template;
     private EditBemerkungenSetModel model;
     private EditBemerkungenEnv env;
 
@@ -62,9 +61,6 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
         update();
     }
 
-//    void refresh() {
-//        refresh(false);
-//    }
     void setModel(EditBemerkungenSetModel m) {
         model = m;
     }
@@ -82,14 +78,13 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
             synchronized (this) {
                 this.delegate = delegate;
             }
-
         }
     }
 
     static class EditBemerkungenSetRootNode extends AbstractNode {
 
         public EditBemerkungenSetRootNode(EditBemerkungenSetRootChildren ch) {
-            super(ch);
+            super(ch, Lookups.singleton(ch.getIndex()));
         }
 
     }
@@ -100,24 +95,70 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
     class ElementNode extends AbstractNode {
 
         private final ElementNodeMarkerChildren children;
+        private final EditBemerkungenEnv env;
 
         @SuppressWarnings(value = {"OverridableMethodCallInConstructor",
             "LeakingThisInConstructor"})
         private ElementNode(Element key, ElementNodeMarkerChildren ch, InstanceContent ic, EditBemerkungenEnv env) {
             super(ch, new AbstractLookup(ic));
+            this.env = env;
             setName(key.getElementDisplayName());
             ic.add(key);
             ic.add(ch.getIndex());
-            ic.add(env);
+            ic.add(this);
             children = ch;
-            final String choice = key.isMultiple() ? NbBundle.getMessage(ElementNode.class, "ElementNode.element.multiple") : NbBundle.getMessage(ElementNode.class, "ElementNode.element.single");
-            final String displayName = NbBundle.getMessage(ElementNode.class, "ElementNode.displayName", getName(), choice);
-            setDisplayName(displayName);
-            setIconBaseWithExtension("org/thespheres/betula/niedersachsen/admin/ui/resources/category.png");
+//            final String choice = key.isMultiple() ? NbBundle.getMessage(ElementNode.class, "ElementNode.element.multiple") : NbBundle.getMessage(ElementNode.class, "ElementNode.element.single");
+//            final String displayName = NbBundle.getMessage(ElementNode.class, "ElementNode.displayName", getName(), choice);
+//            setDisplayName(displayName);
+            if (key.isMultiple()) {
+                setIconBaseWithExtension("org/thespheres/betula/niedersachsen/admin/ui/resources/folders.png");
+            } else {
+                setIconBaseWithExtension("org/thespheres/betula/niedersachsen/admin/ui/resources/folder.png");
+            }
         }
 
         private ElementNode(Element key, EditBemerkungenEnv env) {
-            this(key, new ElementNodeMarkerChildren(key, env), new InstanceContent(), env);
+            this(key, new ElementNodeMarkerChildren(key, env, model), new InstanceContent(), env);
+        }
+
+//        @Override
+//        public String getDisplayName() {
+//            final String choice = getLookup().lookup(Element.class).isMultiple() ? NbBundle.getMessage(ElementNode.class, "ElementNode.element.multiple") : NbBundle.getMessage(ElementNode.class, "ElementNode.element.single");
+//            return NbBundle.getMessage(ElementNode.class, "ElementNode.displayName", getName(), choice);
+//        }
+
+        @Override
+        public Action[] getActions(boolean context) { //Actions.forID(PROP_NAME, PROP_ICON)
+            final Action up = Actions.forID("System", "org.openide.actions.MoveUpAction");
+            final Action down = Actions.forID("System", "org.openide.actions.MoveDownAction");
+            final Action del = Actions.forID("Edit", "org.openide.actions.DeleteAction");
+            final Action settings = Actions.forID("Edit", "org.thespheres.betula.niedersachsen.admin.ui.bemerkungen.ElementSettingsAction");
+            return new Action[]{up, down, del, null, settings};
+        }
+
+        @Override
+        public boolean canCut() {
+            return true;
+        }
+
+        @Override
+        public boolean canCopy() {
+            return true;
+        }
+
+        @Override
+        public boolean canDestroy() {
+            return true;
+        }
+
+        @Override
+        public void destroy() throws IOException {
+            //TODO: Warning, template change will effect order of bemerkungen in past reports
+            final Element el = getLookup().lookup(Element.class);
+            env.getTemplate().removeElement(el);
+            model.setModified();
+            final EditBemerkungenSetRootChildren ch = (EditBemerkungenSetRootChildren) getParentNode().getChildren();
+            ch.update();
         }
 
         @Override
@@ -131,7 +172,11 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
                         @Override
                         public Transferable paste() throws IOException {
                             final Element el = ElementNode.this.getLookup().lookup(Element.class);
-                            el.addItem(index, m);
+                            if (index != -1) {
+                                el.addItem(index, m);
+                            } else {
+                                el.addItem(m);
+                            }
                             children.update();
                             model.setModified();
                             return null;
@@ -147,11 +192,13 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
 
         private final Element element;
         private final EditBemerkungenEnv env;
+        private final EditBemerkungenSetModel model;
 
-        ElementNodeMarkerChildren(final Element element, EditBemerkungenEnv env) {
+        ElementNodeMarkerChildren(final Element element, final EditBemerkungenEnv env, final EditBemerkungenSetModel model) {
             super(element.getMarkers());
             this.element = element;
             this.env = env;
+            this.model = model;
         }
 
         @Override
@@ -163,21 +210,33 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
 
     static class MarkerNode extends AbstractNode {
 
+        private final EditBemerkungenEnv env;
+
         @SuppressWarnings(value = {"OverridableMethodCallInConstructor",
             "LeakingThisInConstructor"})
-        private MarkerNode(Element key, MarkerItem item, InstanceContent ic, EditBemerkungenEnv env) {
-            super(Children.LEAF, new AbstractLookup(ic)); //Lookups.fixed(key, key.getMarkers().get(pos)));
+        private MarkerNode(final Element element, final MarkerItem item, final InstanceContent ic, final EditBemerkungenEnv env) {
+            super(Children.LEAF, new AbstractLookup(ic));
+            this.env = env;
             setName(item.getMarker().toString());
-            ic.add(key);
+            ic.add(element);
             ic.add(item);
             ic.add(this);
-            ic.add(env);
             if (Marker.isNull(item.getMarker())) {
                 setDisplayName("---");
             } else {
                 setDisplayName(item.getMarker().getLongLabel(ReportContextListener.getDefault().getCurrentFormatArgs()));
             }
-            setIconBaseWithExtension("org/thespheres/betula/niedersachsen/admin/ui/resources/document-horizontal-text.png");
+//            setIconBaseWithExtension("org/thespheres/betula/niedersachsen/admin/ui/resources/document-horizontal-text.png");
+        }
+
+        @Override
+        public Image getIcon(int type) {
+            Image icon = ImageUtilities.loadImage("org/thespheres/betula/niedersachsen/admin/ui/resources/document-horizontal-text.png");
+            if (getLookup().lookup(MarkerItem.class).isDefaultItem()) {
+                final Image defaultItemBadge = ImageUtilities.loadImage("org/thespheres/betula/niedersachsen/admin/ui/resources/paper-clip-small.png");
+                icon = ImageUtilities.mergeImages(icon, defaultItemBadge, 0, 0);
+            }
+            return icon;
         }
 
         @Override
@@ -203,21 +262,22 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
             el.removeItem(im);
             final ElementNodeMarkerChildren children = (ElementNodeMarkerChildren) getParentNode().getChildren();
             children.update();
+            children.model.setModified();
         }
 
         @Override
         public Action[] getActions(boolean context) { //Actions.forID(PROP_NAME, PROP_ICON)
-            Action up = Actions.forID("System", "org.openide.actions.MoveUpAction");
-            Action down = Actions.forID("System", "org.openide.actions.MoveDownAction");
-            Action del = Actions.forID("Edit", "org.openide.actions.DeleteAction");
-            return new Action[]{up, down, del, TestA.instance};
+            final Action up = Actions.forID("System", "org.openide.actions.MoveUpAction");
+            final Action down = Actions.forID("System", "org.openide.actions.MoveDownAction");
+            final Action del = Actions.forID("Edit", "org.openide.actions.DeleteAction");
+            return new Action[]{up, down, del};
         }
 
         @Override
         public PasteType getDropType(final Transferable t, int action, int index) {
             final Node n = NodeTransfer.node(t, DnDConstants.ACTION_COPY_OR_MOVE + NodeTransfer.CLIPBOARD_CUT);
             if (n != null) {
-                final Marker m = n.getLookup().lookup(Marker.class);
+//                final Marker m = n.getLookup().lookup(Marker.class);
 //                final EditableProblem p = n.getLookup().lookup(EditableProblem.class);
 //                if (p != null && !p.isBasket() && !this.equals(n.getParentNode())) {
 //                    return new PasteType() {
@@ -232,32 +292,6 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
             }
             return null;
         }
-    }
-
-    private static class TestA extends NodeAction {
-
-        static TestA instance = new TestA();
-
-        @Override
-        protected void performAction(Node[] activatedNodes) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        protected boolean enable(Node[] activatedNodes) {
-            return true;
-        }
-
-        @Override
-        public String getName() {
-            return "test";
-        }
-
-        @Override
-        public HelpCtx getHelpCtx() {
-            return HelpCtx.DEFAULT_HELP;
-        }
-
     }
 
 }
