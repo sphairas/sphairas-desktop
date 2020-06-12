@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -95,8 +94,8 @@ public abstract class NbSwingXTreeTableElement extends CloneableTopComponent imp
         toolbar.setFloatable(false);
         scrollPane = new JScrollPane();
         nodePopupFactory = new NodePopupFactory();
-        toolbar.setRollover(true);
-        toolbar.add(Box.createHorizontalGlue()); // After this every component will be added to the right 
+//        toolbar.setRollover(true);
+//        toolbar.add(Box.createHorizontalGlue()); // After this every component will be added to the right 
         setLayout(new BorderLayout());
         setBorder(null);
         treeTable.setTreeCellRenderer(new NodeRenderer());
