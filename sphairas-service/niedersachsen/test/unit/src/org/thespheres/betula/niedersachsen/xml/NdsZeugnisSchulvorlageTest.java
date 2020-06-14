@@ -1,18 +1,19 @@
-package org.thespheres.betula.niedersachsen.xml;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package org.thespheres.betula.niedersachsen.xml;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.thespheres.betula.document.DocumentId;
+import org.thespheres.betula.niedersachsen.xml.NdsZeugnisSchulvorlage.Property;
 import org.thespheres.betula.services.ws.CommonDocuments;
 
 /**
@@ -22,22 +23,6 @@ import org.thespheres.betula.services.ws.CommonDocuments;
 public class NdsZeugnisSchulvorlageTest {
 
     public NdsZeugnisSchulvorlageTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -58,9 +43,38 @@ public class NdsZeugnisSchulvorlageTest {
         final DocumentId SUBJECTS_DOCID = new DocumentId(AUTHORITY, "base-target-assessment-entity-subjects", DocumentId.Version.LATEST);
         i.documents().put(CommonDocuments.SUBJECT_NAMES_DOCID, SUBJECTS_DOCID);
 
+        i.setProperty("property.key", "property-value");
+        String v = i.getProperty("property.key")
+                .map(Property::getValue)
+                .orElse(null);
+        assertEquals("property-value", v);
+        String v2 = i.getProperty("property2.key")
+                .map(Property::getValue)
+                .orElse(null);
+        assertNull(v2);
+
         Marshaller m = ctx.createMarshaller();
         m.setProperty("jaxb.formatted.output", Boolean.TRUE);
         m.marshal(i, System.out);
+
+        final byte[] res;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            m.marshal(i, baos);
+            res = baos.toByteArray();
+        }
+        final NdsZeugnisSchulvorlage p;
+        try (ByteArrayInputStream is = new ByteArrayInputStream(res)) {
+            p = (NdsZeugnisSchulvorlage) ctx.createUnmarshaller().unmarshal(is);
+        }
+
+        String vv = p.getProperty("property.key")
+                .map(Property::getValue)
+                .orElse(null);
+        assertEquals("property-value", vv);
+        String vv2 = p.getProperty("property2.key")
+                .map(Property::getValue)
+                .orElse(null);
+        assertNull(vv2);
     }
 
 }

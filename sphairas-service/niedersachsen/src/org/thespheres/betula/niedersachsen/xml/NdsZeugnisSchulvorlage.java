@@ -7,7 +7,11 @@ package org.thespheres.betula.niedersachsen.xml;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -19,6 +23,7 @@ import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.ProviderRegistry;
 import org.thespheres.betula.services.ws.CommonDocuments;
+import org.thespheres.betula.util.CollectionUtil;
 
 /**
  *
@@ -28,6 +33,7 @@ import org.thespheres.betula.services.ws.CommonDocuments;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
+    public static final String PROP_SIGNEES_NO_BACKGROUND = "Unterzeicher.ohne.Probedruck";
     @XmlAttribute(name = "provider")
     private String provider;
     @XmlElement(name = "XSL-FO-Datei")
@@ -50,6 +56,8 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
     @XmlElement(name = "Listen")
     @XmlJavaTypeAdapter(DocumentsMapAdapter.class)
     private final Map<String, DocumentId> documents = new HashMap<>();
+    @XmlElement(name = "Eigenschaft")
+    private final List<Property> properties = new CopyOnWriteArrayList<>();
 
     //JAXB only
     public NdsZeugnisSchulvorlage() {
@@ -125,6 +133,24 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
         return template;
     }
 
+    public Optional<Property> getProperty(final String name) {
+        return properties.stream()
+                .filter(p -> p.getName().equals(name))
+                .collect(CollectionUtil.requireSingleton());
+    }
+
+    public void setProperty(final String name, final String value) {
+        final Optional<Property> p = getProperty(name);
+        if (value != null) {
+            p.ifPresentOrElse(prop -> prop.setValue(value), () -> {
+                final Property prop = new Property(name, value);
+                properties.add(prop);
+            });
+        } else {
+            p.ifPresent(properties::remove);
+        }
+    }
+
     @Override
     public DocumentId forName(final String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -135,6 +161,57 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
     public Map<String, DocumentId> documents() {
         return documents;
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Property implements Serializable {
+
+        @XmlAttribute(name = "Name")
+        private String name;
+        @XmlAttribute(name = "Wert")
+        private String value;
+
+        public Property() {
+        }
+
+        public Property(final String name, final String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            return 17 * hash + Objects.hashCode(this.name);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Property other = (Property) obj;
+            return Objects.equals(this.name, other.name);
+        }
+
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
