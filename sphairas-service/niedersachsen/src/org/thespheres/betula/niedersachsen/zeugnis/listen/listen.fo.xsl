@@ -99,15 +99,25 @@
                                                     <xsl:sort select="@tier" data-type="number" order="ascending"/>
                                                     <xsl:sort select="@order" data-type="number" order="ascending"/>
                                                     <fo:table-cell number-columns-spanned="1">
-                                                        <fo:block  font-size="10pt" font-family="SansSerif" color="#000000" text-align="center">
+                                                        <fo:block  font-size="10pt" font-family="SansSerif" text-align="center">                                                            
+                                                            <xsl:choose>
+                                                                <xsl:when test="@color">
+                                                                    <xsl:attribute name="color">
+                                                                        <xsl:value-of select="@color"/>
+                                                                    </xsl:attribute>
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    <xsl:attribute name="color">#000000</xsl:attribute>
+                                                                </xsl:otherwise>
+                                                            </xsl:choose>                                                            
                                                             <xsl:if test="@subject-level">
-                                                                <fo:inline font-size="7" space-end="0.5pt" baseline-shift="super">
+                                                                <fo:inline font-size="7" space-end="0.5pt" baseline-shift="super" color="#000000" >
                                                                     <xsl:value-of select="@subject-level"/>
                                                                 </fo:inline>
                                                             </xsl:if>                                                     
                                                             <xsl:value-of select="normalize-space(.)"/>      
                                                             <xsl:if test="@label">
-                                                                <fo:inline font-size="5" font-style="italic" space-start="0.5pt" baseline-shift="super">
+                                                                <fo:inline font-size="5" font-style="italic" space-start="0.5pt" baseline-shift="super" color="#000000" >
                                                                     <xsl:value-of select="@label"/>
                                                                 </fo:inline>
                                                             </xsl:if>                          

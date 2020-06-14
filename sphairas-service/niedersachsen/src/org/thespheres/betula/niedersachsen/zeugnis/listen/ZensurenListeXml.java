@@ -281,6 +281,8 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
         private String value;
         @XmlAttribute(name = "font-size", required = false)
         private String fontSize;
+        @XmlAttribute(name = "color", required = false)
+        private String color;
 
         private ColumnXml(String longLabel, int tier, int order) {
             this.value = longLabel;
@@ -314,6 +316,14 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
 
         public void setFontSize(String fontSize) {
             this.fontSize = fontSize;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
         }
 
     }
