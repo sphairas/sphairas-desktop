@@ -23,9 +23,9 @@ public class StundentafelVorlagen {
             position = 50000,
             iconBase = "org/thespheres/betula/niedersachsen/admin/ui/resources/books.png",
             requireProject = false,
-            displayName = "#stundentafel.displayName",
+            displayName = "#StundentafelVorlagen.ndsDefault.displayName",
             description = "stundentafel-template.html")
-    @NbBundle.Messages({"stundentafel.displayName=Stundentafel für Niedersachsen"})
+    @NbBundle.Messages({"StundentafelVorlagen.ndsDefault.displayName=Stundentafel für Niedersachsen"})
     public static CreateCurriculumWizardIterator createNdsDefault() {
         return new CreateCurriculumWizardIterator();
     }

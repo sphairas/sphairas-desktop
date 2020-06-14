@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <f:curriculum-file xmlns:f="http://www.thespheres.org/xsd/betula/curriculum-file.xsd">
     <fi:file-info xmlns:fi="http://www.thespheres.org/xsd/betula/file-info.xsd">
-        <file-display-name>Dateiname</file-display-name>
+        <file-display-name>Stundentafel für Niedersachsen</file-display-name>
     </fi:file-info>
     <c:curriculum xmlns:c="http://www.thespheres.org/xsd/betula/curriculum.xsd" xmlns:ns3="http://www.thespheres.org/xsd/betula/betula.xsd">
         <general>
