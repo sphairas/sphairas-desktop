@@ -50,7 +50,7 @@
                                                 <fo:table-cell number-columns-spanned="1" display-align="after">
                                                     <!--width muss! gesetzt sein wie oben height!-->
                                                     <fo:block-container reference-orientation="90" font-family="SansSerif" display-align="center" width="2.2cm" >                                                                                                 
-                                                        <fo:block line-height="8pt" padding-before="1pt" padding-after="2pt" wrap-option="wrap" hyphenate="false" hyphenation-remain-character-count="11" hyphenation-push-character-count="3">
+                                                        <fo:block line-height="8pt" padding-before="1pt" padding-after="2pt" wrap-option="wrap" hyphenate="false" hyphenation-remain-character-count="11" hyphenation-push-character-count="3">   
                                                             <xsl:attribute name="font-size">
                                                                 <xsl:value-of select="@font-size"/>
                                                             </xsl:attribute>     
@@ -102,15 +102,25 @@
                                                     <xsl:sort select="@tier" data-type="number" order="ascending"/>
                                                     <xsl:sort select="@order" data-type="number" order="ascending"/>
                                                     <fo:table-cell number-columns-spanned="1">
-                                                        <fo:block  font-size="10pt" font-family="SansSerif" color="#000000" text-align="center">
+                                                        <fo:block font-size="10pt" font-family="SansSerif" text-align="center">
+                                                            <xsl:choose>
+                                                                <xsl:when test="@color">
+                                                                    <xsl:attribute name="color">
+                                                                        <xsl:value-of select="@color"/>
+                                                                    </xsl:attribute>
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    <xsl:attribute name="color">#000000</xsl:attribute>
+                                                                </xsl:otherwise>
+                                                            </xsl:choose>  
                                                             <xsl:if test="@label-left">
-                                                                <fo:inline font-size="7" space-end="0.5pt" baseline-shift="super">
+                                                                <fo:inline font-size="7" space-end="0.5pt" baseline-shift="super" color="#000000">
                                                                     <xsl:value-of select="@label-left"/>
                                                                 </fo:inline>
                                                             </xsl:if>                                                     
                                                             <xsl:value-of select="normalize-space(.)"/>      
                                                             <xsl:if test="@label-right">
-                                                                <fo:inline font-size="5" font-style="italic" space-start="0.5pt" baseline-shift="super">
+                                                                <fo:inline font-size="5" font-style="italic" space-start="0.5pt" baseline-shift="super" color="#000000">
                                                                     <xsl:value-of select="@label-right"/>
                                                                 </fo:inline>
                                                             </xsl:if>                          

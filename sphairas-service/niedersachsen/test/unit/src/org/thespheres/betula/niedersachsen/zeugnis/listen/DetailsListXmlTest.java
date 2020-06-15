@@ -5,10 +5,10 @@
  */
 package org.thespheres.betula.niedersachsen.zeugnis.listen;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -23,10 +23,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.thespheres.betula.assess.AbstractGrade;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.Marker;
@@ -62,7 +62,7 @@ public class DetailsListXmlTest {
     }
 
     @Test
-    public void testSetFooterCenter() {
+    public void testSetFooterCenter() throws Exception {
         System.out.println("setFooterCenter");
         DetailsListXml instance = new DetailsListXml();
         instance.setFooterCenter("Fuß");
@@ -88,33 +88,37 @@ public class DetailsListXmlTest {
             Grade g = new AbstractGrade("conv", Integer.toString(i));
             final Set<Marker> hs = new HashSet<>();
             hs.add(pp.getAllMarkers()[i]);
-            details.setValue(l, 2, hs, g, "gn");
+            StudentDetailsXml.ColumnValue cv = details.setValue(l, 2, hs, g, "gn");
+            cv.setLabelLeft("lbl");
+            cv.setColor("red");
         }
-        details.addText("Header", 1000).setValue("jdhsfkladhsf iouehrw");
+        details.addText("Header", 1000).setValue("text");
         TransformerFactory tf = TransformerFactory.newInstance();
         final InputStream is = DetailsListXml.class.getResourceAsStream("details.fo.xsl");
-        Templates t = null;
+        Templates t;
         try {
             t = tf.newTemplates(new StreamSource(is));
         } catch (TransformerConfigurationException ex) {
-            fail("The test case is a prototype.");
+            throw ex;
         }
-        DOMResult r = null;
+        DOMResult r;
         try {
             JAXBContext jaxb = JAXBContext.newInstance(DetailsListXml.class);
             r = new DOMResult();
             jaxb.createMarshaller().marshal(instance, r);
-        } catch (JAXBException jAXBException) {
-            fail("The test case is a prototype.");
+        } catch (JAXBException ex) {
+            throw ex;
         }
-        Path p = Paths.get(System.getProperty("user.home") + "/output.pdf");
         Formatter f = createFormatter();
-        try {
-            f.transform(new DOMSource(r.getNode()), t, Files.newOutputStream(p), "application/pdf");
+        final byte[] out;
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            f.transform(new DOMSource(r.getNode()), t, baos, "application/pdf");
+            out = baos.toByteArray();
         } catch (IOException ex) {
-            System.out.println(ex);
-            fail("The test case is a prototype.");
+            throw ex;
         }
+        System.out.println("Out length: " + out.length);
+        assertTrue(out.length == 7036);
     }
 
     private static Formatter createFormatter() {

@@ -198,6 +198,8 @@ public class StudentDetailsXml {
         private String value;
         @XmlAttribute(name = "font-size", required = false)
         private String fontSize;
+        @XmlAttribute(name = "color", required = false)
+        private String color;
 
         private ColumnValue(String value) {
             this.value = value;
@@ -227,6 +229,13 @@ public class StudentDetailsXml {
             this.fontSize = fontSize;
         }
 
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -303,6 +312,7 @@ public class StudentDetailsXml {
             final Column ret = new Column(value.value, key.tier, ORDER.positionOf(key.comparingMarker(ORDER)));
             ret.setLabelLeft(value.getLabelLeft());
             ret.setLabelRight(value.getLabelRight());
+            ret.setColor(value.getColor());
             return ret;
         }
     }
