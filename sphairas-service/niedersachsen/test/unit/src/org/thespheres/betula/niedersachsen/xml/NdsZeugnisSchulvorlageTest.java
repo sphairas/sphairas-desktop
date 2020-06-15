@@ -12,7 +12,9 @@ import javax.xml.bind.Marshaller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
+import org.thespheres.betula.assess.AbstractGrade;
 import org.thespheres.betula.document.DocumentId;
+import org.thespheres.betula.niedersachsen.xml.NdsZeugnisSchulvorlage.Coloring;
 import org.thespheres.betula.niedersachsen.xml.NdsZeugnisSchulvorlage.Property;
 import org.thespheres.betula.services.ws.CommonDocuments;
 
@@ -53,6 +55,11 @@ public class NdsZeugnisSchulvorlageTest {
                 .orElse(null);
         assertNull(v2);
 
+        final Coloring col1 = new Coloring("red", "cnv", new String[]{"a", "b"});
+        i.getColorings().add(col1);
+        final Coloring col2 = new Coloring("blue", "cnv2", null);
+        i.getColorings().add(col2);
+
         Marshaller m = ctx.createMarshaller();
         m.setProperty("jaxb.formatted.output", Boolean.TRUE);
         m.marshal(i, System.out);
@@ -75,6 +82,13 @@ public class NdsZeugnisSchulvorlageTest {
                 .map(Property::getValue)
                 .orElse(null);
         assertNull(vv2);
+
+        String c1 = p.getColoring(new AbstractGrade("cnv", "a"));
+        assertEquals("red", c1);
+        String c2 = p.getColoring(new AbstractGrade("cnv", "c"));
+        assertNull(c2);
+        String c3 = p.getColoring(new AbstractGrade("cnv2", "b"));
+        assertEquals("blue", c3);
     }
 
 }

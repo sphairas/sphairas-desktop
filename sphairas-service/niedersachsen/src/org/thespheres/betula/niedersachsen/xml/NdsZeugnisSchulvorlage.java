@@ -6,6 +6,7 @@
 package org.thespheres.betula.niedersachsen.xml;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.ProviderRegistry;
@@ -53,6 +57,9 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
     private final Template template = new Template();
     @XmlElement(name = "Logos")
     private final Logos logos = new Logos();
+    @XmlElementWrapper(name = "Listen-Eintragsfarben")
+    @XmlElement(name = "Listen-Eintragsfarbe")
+    private List<Coloring> colorings = new CopyOnWriteArrayList<>();
     @XmlElement(name = "Listen")
     @XmlJavaTypeAdapter(DocumentsMapAdapter.class)
     private final Map<String, DocumentId> documents = new HashMap<>();
@@ -133,6 +140,19 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
         return template;
     }
 
+    public List<Coloring> getColorings() {
+        return colorings;
+    }
+
+    public String getColoring(final Grade g) {
+        return g == null ? null : colorings.stream()
+                .filter(c -> c.getConvention().equals(g.getConvention()))
+                .filter(c -> c.getIds() == null || c.getIds().contains(g.getId()))
+                .findFirst()
+                .map(Coloring::getColor)
+                .orElse(null);
+    }
+
     public Optional<Property> getProperty(final String name) {
         return properties.stream()
                 .filter(p -> p.getName().equals(name))
@@ -161,6 +181,44 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
     public Map<String, DocumentId> documents() {
         return documents;
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Coloring implements Serializable {
+
+        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+        @XmlAttribute(name = "html-Farbname", required = true)
+        private String color;
+        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+        @XmlAttribute(name = "Konvention", required = true)
+        private String convention;
+        @XmlList
+        @XmlElement(name = "Werte")
+        private String[] ids = null;
+
+        public Coloring() {
+        }
+
+        public Coloring(final String color, final String convention, final String[] ids) {
+            this.color = color;
+            this.convention = convention;
+            this.ids = ids;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public String getConvention() {
+            return convention;
+        }
+
+        public List<String> getIds() {
+            return Optional.ofNullable(ids)
+                    .map(Arrays::asList)
+                    .orElse(null);
+        }
+
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
