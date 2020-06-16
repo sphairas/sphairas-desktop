@@ -5,7 +5,6 @@
  */
 package org.thespheres.betula.curriculumimport.action;
 
-import org.thespheres.betula.curriculumimport.StundentafelImportTargetsItem;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.util.Set;
 import org.openide.WizardDescriptor;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
-import org.thespheres.betula.TermId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
 import org.thespheres.betula.curriculum.CourseSelection;
@@ -44,9 +42,10 @@ public class ContextStundentafelImportSettings extends StundentafelImportSetting
 
     @SuppressWarnings({"LeakingThisInConstructor",
         "OverridableMethodCallInConstructor"})
-    private ContextStundentafelImportSettings(final List<PrimaryUnitOpenSupport> context, final ConfigurableImportTarget config, final TermSchedule termSchedule) {
+    private ContextStundentafelImportSettings(final List<PrimaryUnitOpenSupport> context, final ConfigurableImportTarget config) {
         this.context = context;
         putProperty(AbstractFileImportAction.IMPORT_TARGET, config);
+        final TermSchedule termSchedule = config.getTermSchemeProvider().getScheme(config.getTermSchemeId(), TermSchedule.class);
         final WorkingDate wd = Lookup.getDefault().lookup(WorkingDate.class);
         putProperty(AbstractFileImportAction.TERM, termSchedule.getTerm(wd.getCurrentWorkingDate()));
         addPropertyChangeListener(this);
@@ -65,8 +64,7 @@ public class ContextStundentafelImportSettings extends StundentafelImportSetting
             ImportUtil.getIO().getErr().println(msg);
             return null;
         }
-        final TermSchedule ts = config.getTermSchemeProvider().getScheme(config.getTermSchemeId(), TermSchedule.class);
-        return new ContextStundentafelImportSettings(ctx, config, ts);
+        return new ContextStundentafelImportSettings(ctx, config);
     }
 
     private static ConfigurableImportTarget findCommonImportTarget(final List<PrimaryUnitOpenSupport> l) throws IOException {
@@ -98,14 +96,14 @@ public class ContextStundentafelImportSettings extends StundentafelImportSetting
         }
     }
 
-    @NbBundle.Messages({"ContextStundentafelImportSettings.initialize.termIdmismatch=Konflikt bei der Auflösung des Halbjahrs; {0} kann nicht importiert werden."})
+//    @NbBundle.Messages({"ContextStundentafelImportSettings.initialize.termIdmismatch=Konflikt bei der Auflösung des Halbjahrs; {0} kann nicht importiert werden."})
     public void initialize() throws IOException {
-        final TermId configTid = ((Term) getProperty(AbstractFileImportAction.TERM)).getScheduledItemId();
+        final Term term = ((Term) getProperty(AbstractFileImportAction.TERM));
         final ConfigurableImportTarget config = (ConfigurableImportTarget) getProperty(AbstractFileImportAction.IMPORT_TARGET);
         for (final PrimaryUnitOpenSupport uos : context) {
             final UnitId pu = uos.getUnitId();
-            final WorkingDate wd = Lookup.getDefault().lookup(WorkingDate.class);
-            final Term term = uos.findTermSchedule().getTerm(wd.getCurrentWorkingDate());
+//            final WorkingDate wd = Lookup.getDefault().lookup(WorkingDate.class);
+//            final Term term = uos.findTermSchedule().getTerm(wd.getCurrentWorkingDate());
             NamingResolver.Result nr = null;
             NamingResolver.Result r = null;
             try {
@@ -115,11 +113,11 @@ public class ContextStundentafelImportSettings extends StundentafelImportSetting
             } catch (IllegalAuthorityException iaex) {
                 throw new IOException(iaex);
             }
-            if (!term.getScheduledItemId().equals(configTid)) {
-                final String msg = NbBundle.getMessage(ContextStundentafelImportSettings.class, "ContextStundentafelImportSettings.initialize.termIdmismatch", nr.getResolvedName());
-                ImportUtil.getIO().getErr().println(msg);
-                continue;
-            }
+//            if (!term.getScheduledItemId().equals(uos.findTermSchedule())) {
+//                final String msg = NbBundle.getMessage(ContextStundentafelImportSettings.class, "ContextStundentafelImportSettings.initialize.termIdmismatch", nr.getResolvedName());
+//                ImportUtil.getIO().getErr().println(msg);
+//                continue;
+//            }
             final String se = r.getResolvedName(term);
             final Object he = term.getParameter("halbjahr");
             if (se != null && he instanceof Integer) {

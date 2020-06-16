@@ -169,7 +169,7 @@ public class StundentafelImportConfigVisualPanel extends JPanel {
             providerModel.setSelectedTarget(p);
         }
         termsModel.init(settings);
-        final List<UnitId> units = settings.getProperty(StundentafelImportAction.SELECTED_UNITS, List.class);
+//        final List<UnitId> units = settings.getProperty(StundentafelImportAction.SELECTED_UNITS, List.class);
         //
         final Boolean b = settings.getProperty(StundentafelImportAction.ALLOW_SELECT_UNITS, Boolean.class);
         final boolean ue = b != null && b;

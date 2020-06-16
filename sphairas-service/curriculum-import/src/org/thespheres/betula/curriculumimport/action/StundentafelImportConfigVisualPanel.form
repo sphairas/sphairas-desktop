@@ -41,7 +41,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="selectUnitsButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="providerComboBox" pref="547" max="32767" attributes="0"/>
+                          <Component id="providerComboBox" max="32767" attributes="0"/>
                           <Component id="termsComboBox" max="32767" attributes="0"/>
                       </Group>
                   </Group>
