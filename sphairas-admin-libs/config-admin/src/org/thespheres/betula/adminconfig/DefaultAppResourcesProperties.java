@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openide.awt.StatusDisplayer;
@@ -31,6 +30,7 @@ import org.thespheres.betula.services.jms.AppResourceEvent;
 import org.thespheres.betula.services.jms.JMSTopic;
 import org.thespheres.betula.services.ui.util.HttpUtilities;
 import org.thespheres.betula.services.ui.util.dav.URLs;
+import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.util.CollectionUtil;
 
 /**
@@ -41,13 +41,13 @@ public class DefaultAppResourcesProperties extends AppResourcesProperties<Defaul
 
     public static final String SEPARATOR = "=";
     private IOException lastException;
-    protected final SortedMap<String, List<String>> versions = new TreeMap<>();
     private final RequestProcessor.Task loadTask;
     private final WebProvider service;
     private final URI uri;
     private final Listener listener = new Listener();
     private final String resource;
     private boolean dirty = false;
+    private List<String> lastLines;
 
     @SuppressWarnings({"LeakingThisInConstructor"})
     public DefaultAppResourcesProperties(final String provider, final String resource) {
@@ -74,7 +74,7 @@ public class DefaultAppResourcesProperties extends AppResourcesProperties<Defaul
 
     @Override
     public boolean isReadOnly() {
-        return versions.isEmpty();
+        return this.lastLines != null;
     }
 
     boolean markedDirty() {
@@ -83,14 +83,16 @@ public class DefaultAppResourcesProperties extends AppResourcesProperties<Defaul
 
     @Override
     public void run() {
+        final List<String> l;
         try {
-            this.lastException = load();
-        } catch (IOException ex) {
-            this.lastException = ex;
+            l = load();
+        } catch (final IOException ex) {
+            PlatformUtil.getCodeNameBaseLogger(DefaultAppResourcesProperties.class).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+            return;
         }
-        if (this.lastException == null && !versions.isEmpty()) {
+        if (this.lastException == null) {
+            this.lastLines = l;
             final List<DefaultAppResourcesProperty> result = new ArrayList<>();
-            final List<String> l = versions.get(versions.lastKey());
             for (int i = 0; i < l.size(); i++) {
                 final String line = l.get(i);
                 final DefaultAppResourcesProperty parsed = parse(line, i);
@@ -123,19 +125,17 @@ public class DefaultAppResourcesProperties extends AppResourcesProperties<Defaul
         return new DefaultAppResourcesProperty(key, value, index, line);
     }
 
-    protected IOException load() throws IOException {
+    protected List<String> load() throws IOException {
         return HttpUtilities.get(service, uri, this::read, null, false);
     }
 
-    protected IOException read(final String lastMod, final InputStream is) {
-        List<String> lines = Collections.EMPTY_LIST;
+    protected List<String> read(final String lastMod, final InputStream is) {
         try {
-            lines = IOUtils.readLines(is, StandardCharsets.ISO_8859_1);
-            return null;
+            return IOUtils.readLines(is, StandardCharsets.ISO_8859_1);
         } catch (IOException ex) {
-            return ex;
-        } finally {
-            this.versions.put(lastMod, lines);
+            PlatformUtil.getCodeNameBaseLogger(DefaultAppResourcesProperties.class).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+            this.lastException = ex;
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -149,16 +149,22 @@ public class DefaultAppResourcesProperties extends AppResourcesProperties<Defaul
 
     @Messages("DefaultAppResourcesProperties.save.success=Die aktualisierte Resource {0} wurde erfolgreich hochgeladen.")
     @Override
-    public void save() throws IOException {
-        if (this.lastException == null && !versions.isEmpty()) {
+    public void save() throws IOException  {
+        RP.submit(() -> {
+            doSave();
+            return null;
+        });
+    }
+
+    private void doSave() throws IOException {
+        if (this.lastException == null && this.lastLines != null) {
             final List<DefaultAppResourcesProperty> snapshot = new ArrayList<>();
             synchronized (items) {
                 snapshot.addAll(items);
             }
-            final List<String> orig = versions.get(versions.lastKey());
             final List<String> update = new ArrayList<>();
-            for (int i = 0; i < orig.size(); i++) {
-                final String origLine = orig.get(i);
+            for (int i = 0; i < lastLines.size(); i++) {
+                final String origLine = lastLines.get(i);
                 final int current = i;
                 final DefaultAppResourcesProperty found = snapshot.stream()
                         .filter(p -> p.getIndex() == current)
@@ -190,7 +196,6 @@ public class DefaultAppResourcesProperties extends AppResourcesProperties<Defaul
             StatusDisplayer.getDefault().setStatusText(msg);
             cSupport.fireChange();
         }
-
     }
 
     private class Listener implements JMSListener<AppResourceEvent> {
