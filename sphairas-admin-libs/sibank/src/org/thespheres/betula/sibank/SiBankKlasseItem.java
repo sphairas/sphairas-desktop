@@ -115,7 +115,7 @@ public class SiBankKlasseItem extends ImportTargetsItem implements OutlineModelN
     public void addStudentFromSatz(DatenExportXml.Satz s) throws IOException {
         final String stud = s.getInferredDirectoryName(DatenExportXml.File.SCHUELER);
         final String dob = s.gebdatum;
-        if (stud != null && dob != null) {
+        if (stud != null && !StringUtils.isBlank(dob)) {
             final ImportStudentKey key = new ImportStudentKey(stud, dob, LocalDate.parse(dob, SiBankImportData.SIBANK_DATUM));
             final boolean aktiv = s.status != null && s.status.equalsIgnoreCase("aktiv");
 //            if ((aktiv) || ignoreStatus) {
