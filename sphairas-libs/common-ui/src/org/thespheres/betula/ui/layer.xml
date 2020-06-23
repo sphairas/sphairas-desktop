@@ -73,14 +73,9 @@
         <folder name="Window">
             <file name="Debug_hidden"/>
             <file name="SwitchToRecentDocumentAction.shadow_hidden"/>
-            <folder name="Tools">
-                <file name="JavadocAction.shadow_hidden"/>
-                <file name="ReporterResultAction.shadow_hidden"/>
-                <file name="ShowPaletteAction.shadow_hidden"/>
-                <file name="org-netbeans-core-windows-actions-GlobalPropertiesAction.shadow_hidden"/>
-                <file name="org-netbeans-modules-gsf-testrunner-ui-ResultWindowOpenAction.shadow_hidden"/>
-            </folder>
+            <file name="Tools_hidden"/>
             <file name="Web_hidden"/>
+            <file name="org-netbeans-modules-favorites-View.shadow_hidden"/>
         </folder>
         <folder name="Help">
             <file name="netbeans-kb.url_hidden"/>
@@ -92,6 +87,7 @@
     </folder>    
     <folder name="OptionsDialog">
         <folder name="Advanced">
+            <file name="OutputSettings.instance_hidden"/>
             <file name="TermAdvancedOption.instance_hidden"/>
             <file name="org-netbeans-core-ui-options-filetypes-FileAssociationsOptionsPanelController.instance_hidden"/>
         </folder>
