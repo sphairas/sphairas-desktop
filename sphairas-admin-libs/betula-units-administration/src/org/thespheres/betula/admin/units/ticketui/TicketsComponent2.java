@@ -22,6 +22,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 import org.openide.util.Utilities;
 import org.thespheres.betula.admin.units.AbstractUnitOpenSupport;
+import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.util.CollectionUtil;
 
@@ -44,8 +45,9 @@ import org.thespheres.betula.util.CollectionUtil;
         displayName = "#TicketsComponent2.openAction.displayName",
         preferredID = "TicketsComponent2")
 @Messages({
-    "TicketsComponent2.openAction.displayName=Berechtigungsfenster",
+    "TicketsComponent2.openAction.displayName=Berechtigungen",
     "TicketsComponent2.displayName=Berechtigungen",
+    "TicketsComponent2.contextDisplayName=Berechtigungen - {0}",
     "TicketsComponent2.hint=Das ist das Berechtigungs-Fenster."})
 public final class TicketsComponent2 extends TopComponent implements LookupListener, PropertyChangeListener {
 
@@ -97,19 +99,21 @@ public final class TicketsComponent2 extends TopComponent implements LookupListe
                 .map(AbstractUnitOpenSupport.class::cast)
                 .collect(CollectionUtil.singleOrNull());
         try {
-            final String url = selection != null ? selection.findWebServiceProvider().getInfo().getURL() : null;
-            final RemoteTicketModel2 m2 = url != null ? RemoteTicketModel2.get(url) : null;
-            if (m2 != null) { // && (remoteModel == null || !remoteModel.getProvider().equals(url))) {
-                if (remoteModel == null || !remoteModel.getProvider().equals(url)) {
+            final ProviderInfo pi = selection == null ? null : selection.findWebServiceProvider().getInfo();
+            final RemoteTicketModel2 m = pi != null ? RemoteTicketModel2.get(pi.getURL()) : null;
+            if (m != null) {
+                if (remoteModel == null || !remoteModel.getProvider().equals(pi.getURL())) {
                     if (remoteModel != null) {
                         remoteModel.removeChangeListener(model);
                     }
-                    remoteModel = m2;
+                    remoteModel = m;
                     if (remoteModel != null) {
                         remoteModel.addChangeListener(model);
                     }
                 }
                 model.initialize(remoteModel, selection.getLookup());
+                final String name = NbBundle.getMessage(RemoteTicketModel2.class, "TicketsComponent2.contextDisplayName", selection.getNodeDelegate().getDisplayName());
+                setName(name);
             }
         } catch (IOException ex) {
             PlatformUtil.getCodeNameBaseLogger(TicketsComponent2.class).log(Level.WARNING, ex.getMessage(), ex);
