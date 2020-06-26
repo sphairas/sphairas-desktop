@@ -45,10 +45,10 @@ import org.thespheres.betula.util.CollectionUtil;
         displayName = "#TicketsComponent2.openAction.displayName",
         preferredID = "TicketsComponent2")
 @Messages({
-    "TicketsComponent2.openAction.displayName=Berechtigungen",
-    "TicketsComponent2.displayName=Berechtigungen",
-    "TicketsComponent2.contextDisplayName=Berechtigungen - {0}",
-    "TicketsComponent2.hint=Das ist das Berechtigungs-Fenster."})
+    "TicketsComponent2.openAction.displayName=Eingabeberechtigungen",
+    "TicketsComponent2.displayName=Eingabeberechtigungen",
+    "TicketsComponent2.contextDisplayName=Eingabeberechtigungen - {0}",
+    "TicketsComponent2.hint=Dies ist das Fenster zur Ansicht der Eingabeberechtigungen."})
 public final class TicketsComponent2 extends TopComponent implements LookupListener, PropertyChangeListener {
 
     private final TicketsComponentTableModel2 model;
