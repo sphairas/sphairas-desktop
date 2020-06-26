@@ -40,24 +40,24 @@ import org.thespheres.betula.services.util.Signees;
  */
 @TopComponent.Description(
         preferredID = "SigneesTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        iconBase = "org/thespheres/betula/admin/units/resources/user-business-boss.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-@TopComponent.Registration(mode = "leftSlidingSide", openAtStartup = true)
+@TopComponent.Registration(mode = "leftSlidingSide", position = 16200, openAtStartup = true)
 @ActionID(category = "Window", id = "org.thespheres.betula.admin.units.configui.SigneesTopComponent")
-@ActionReference(path = "Menu/Window/betula-beans-services-windows" /*, position = 333 */)
+@ActionReference(path = "Menu/Window", position = 16200)
 @TopComponent.OpenActionRegistration(displayName = "#SigneesTopComponent.openAction.displayName",
         preferredID = "SigneesTopComponent")
 @NbBundle.Messages({"SigneesTopComponent.openAction.displayName=Unterzeichner",
     "SigneesTopComponent.name=Unterzeichener"})
 public class SigneesTopComponent extends CloneableTopComponent implements ExplorerManager.Provider, LookupListener {
-    
+
     private final ExplorerManager manager;
     private final Node modelRoot;
     private final ModelChildren modelChildren;
     private final Lookup.Result<SigneesTopComponentModel.Provider> result;
     protected final UndoRedo.Manager undoRedo = new UndoRedo.Manager();
-    
+
     @SuppressWarnings({"LeakingThisInConstructor",
         "OverridableMethodCallInConstructor"})
     public SigneesTopComponent() {
@@ -76,12 +76,12 @@ public class SigneesTopComponent extends CloneableTopComponent implements Explor
         result.addLookupListener(this);
         resultChanged(null);
     }
-    
+
     @Override
     public ExplorerManager getExplorerManager() {
         return manager;
     }
-    
+
     @Override
     public void resultChanged(final LookupEvent ev) {
         final List<SigneesTopComponentModel> l = result.allInstances().stream()
@@ -97,12 +97,12 @@ public class SigneesTopComponent extends CloneableTopComponent implements Explor
             modelChildren.update();
         }
     }
-    
+
     @Override
     protected void componentActivated() {
         modelChildren.update();
     }
-    
+
     @Override
     public UndoRedo getUndoRedo() {
         return undoRedo;
@@ -130,7 +130,7 @@ public class SigneesTopComponent extends CloneableTopComponent implements Explor
     // End of variables declaration//GEN-END:variables
 
     private class ModelChildren extends ChildFactory<SigneesTopComponentModel> {
-        
+
         @Override
         protected boolean createKeys(final List<SigneesTopComponentModel> toPopulate) {
             result.allInstances().stream()
@@ -139,36 +139,36 @@ public class SigneesTopComponent extends CloneableTopComponent implements Explor
                     .forEach(toPopulate::add);
             return true;
         }
-        
+
         @Override
         protected Node createNodeForKey(final SigneesTopComponentModel key) {
             return new FilterNode(new ProviderNode(key.getProvider()), Children.create(new SigneeChildren(key), true));
         }
-        
+
         private void update() {
             refresh(false);
         }
-        
+
     }
-    
+
     private class SigneeChildren extends ChildFactory.Detachable<Signee> {
-        
+
         private final SigneesTopComponentModel model;
-        
+
         SigneeChildren(SigneesTopComponentModel model) {
             this.model = model;
         }
-        
+
         @Override
         protected void addNotify() {
             model.addUndoableEditListener(undoRedo);
         }
-        
+
         @Override
         protected void removeNotify() {
             model.removeUndoableEditListener(undoRedo);
         }
-        
+
         @Override
         protected boolean createKeys(final List<Signee> toPopulate) {
             if (model != null) {
@@ -184,19 +184,19 @@ public class SigneesTopComponent extends CloneableTopComponent implements Explor
             }
             return true;
         }
-        
+
         @Override
         protected Node createNodeForKey(Signee key) {
             synchronized (this) {
                 return model.nodeForKey(key);
             }
         }
-        
+
         protected String getComparingKey(Signees signees, Signee s) {
             RemoteSignee rs = RemoteSignees.find(signees, s);
             return rs.getCommonName();
         }
-        
+
     }
-    
+
 }

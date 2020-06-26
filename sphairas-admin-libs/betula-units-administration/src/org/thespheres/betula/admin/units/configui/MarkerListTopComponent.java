@@ -35,6 +35,7 @@ import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerConvention;
 import org.thespheres.betula.document.MarkerFactory;
 import org.thespheres.betula.document.model.MarkerDecoration;
+import org.thespheres.betula.util.CollectionUtil;
 
 /**
  *
@@ -57,39 +58,20 @@ import org.thespheres.betula.document.model.MarkerDecoration;
         preferredID = "MarkerListTopComponent")
 @NbBundle.Messages({
     "MarkerListTopComponent.action.displayName=Listenmarkierungen",
-    "MarkerListTopComponent.displayName=Markierungen",
+    "MarkerListTopComponent.displayName=Listenmarkierungen",
+    "MarkerListTopComponent.contextDisplayName=Listenmarkierungen - {0}",
+    "MarkerListTopComponent.numDisplayName=Listenmarkierungen - {0} Listen",
     "MarkerListTopComponent.toolTip=Dies ist das Fenster zur Ansicht der Listenmarkierungen."})
 public class MarkerListTopComponent extends TopComponent {
 
-//    private final JToolBar toolbar;
-//    private final JXComboBox markerBox;
     private final List<ListPanel> panels = new ArrayList<>(10);
     private final Listener listener = new Listener();
     private RemoteTargetAssessmentDocument[] current;
     private ListPanel selectedPanel;
-//    private final AddMarkerAction addMarkerAction;
-//    private final DeleteMarkerAction deleteMarkerAction;
-//    private final MarkerComboBoxModel mcbm = new MarkerComboBoxModel();
 
     @SuppressWarnings(value = {"OverridableMethodCallInConstructor"})
     public MarkerListTopComponent() {
-//        addMarkerAction = new AddMarkerAction();
-//        deleteMarkerAction = new DeleteMarkerAction();
         setLayout(new org.jdesktop.swingx.VerticalLayout());
-//        toolbar = new javax.swing.JToolBar();//Add-Marker, Copy Insert Delete Selection
-//        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-//        toolbar.setFloatable(false);
-//        markerBox = new JXComboBox();
-//        markerBox.setMaximumSize(new java.awt.Dimension(250, 32767));
-//        markerBox.setPreferredSize(new java.awt.Dimension(250, 25));
-//        markerBox.setEditable(false);
-//        markerBox.setRenderer(new DefaultListRenderer(mcbm));
-//        markerBox.setModel(mcbm);
-//        toolbar.add(addMarkerAction);
-//        toolbar.add(markerBox);
-//        toolbar.addSeparator();
-//        toolbar.add(deleteMarkerAction);
-//        add(toolbar);
         addPanels(5);
         setName(NbBundle.getMessage(MarkerListTopComponent.class, "MarkerListTopComponent.displayName"));
         setToolTipText(NbBundle.getMessage(MarkerListTopComponent.class, "MarkerListTopComponent.toolTip"));
@@ -133,6 +115,19 @@ public class MarkerListTopComponent extends TopComponent {
         updatePanels();
         Arrays.stream(current)
                 .forEach(rtad -> rtad.addPropertyChangeListener(listener));
+        if (current != null && current.length != 0) {
+            final String dn = Arrays.stream(current)
+                    .map(rtad -> rtad.getName().getDisplayName(null))
+                    .distinct()
+                    .collect(CollectionUtil.singleOrNull());
+            if (dn != null) {
+                setName(NbBundle.getMessage(MarkerListTopComponent.class, "MarkerListTopComponent.contextDisplayName", dn));
+            } else {
+                setName(NbBundle.getMessage(MarkerListTopComponent.class, "MarkerListTopComponent.numDisplayName", current.length));
+            }
+        } else {
+            setName(NbBundle.getMessage(MarkerListTopComponent.class, "MarkerListTopComponent.displayName"));
+        }
     }
 
     private void updatePanels() {

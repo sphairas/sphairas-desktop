@@ -9,6 +9,8 @@ import java.awt.FlowLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JToolBar;
@@ -24,7 +26,10 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.util.NbBundle;
+import org.openide.util.Utilities;
 import org.openide.windows.TopComponent;
+import org.thespheres.betula.admin.units.RemoteTargetAssessmentDocument;
+import org.thespheres.betula.util.CollectionUtil;
 
 /**
  *
@@ -46,7 +51,9 @@ import org.openide.windows.TopComponent;
 )
 @NbBundle.Messages({
     "TargetSigneesTopComponent.action.displayName=Listenunterzeichner",
-    "TargetSigneesTopComponent.displayName=Unterzeichner",
+    "TargetSigneesTopComponent.displayName=Listenunterzeichner",
+    "TargetSigneesTopComponent.contextDisplayName=Listenunterzeichner - {0}",
+    "TargetSigneesTopComponent.numDisplayName=Listenunterzeichner - {0} Listen",
     "TargetSigneesTopComponent.toolTip=Dies ist das Fenster zur Ansicht der Listenunterzeichner."
 })
 public class TargetSigneesTopComponent extends TopComponent {
@@ -122,6 +129,22 @@ public class TargetSigneesTopComponent extends TopComponent {
         return pool;
     }
 
+    private void updateName() {
+        final Collection<? extends RemoteTargetAssessmentDocument> all = Utilities.actionsGlobalContext().lookupAll(RemoteTargetAssessmentDocument.class);
+        final String dn = all.stream()
+                .map(rtad -> rtad.getName().getDisplayName(null))
+                .distinct()
+                .collect(CollectionUtil.singleOrNull());
+
+        if (dn != null) {
+            setName(NbBundle.getMessage(MarkerListTopComponent.class, "MarkerListTopComponent.contextDisplayName", dn));
+        } else if (!all.isEmpty()) {
+            setName(NbBundle.getMessage(MarkerListTopComponent.class, "MarkerListTopComponent.numDisplayName", all.size()));
+        } else {
+            setName(NbBundle.getMessage(MarkerListTopComponent.class, "TargetSigneesTopComponent.displayName"));
+        }
+    }
+
     private final class Listener implements PropertyChangeListener {
 
         @Override
@@ -135,11 +158,12 @@ public class TargetSigneesTopComponent extends TopComponent {
 //                        if (changed) {
 //                            setCurrentList(new RemoteTargetAssessmentDocument[0]);
 //                        }
-//                        break;
-//                    }
+                    break;
+                case TopComponent.Registry.PROP_ACTIVATED:
+                    updateName();
+                    break;
             }
         }
-
     }
 
     private final class TitledToolbarPanel extends JXTitledPanel {

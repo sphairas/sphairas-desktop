@@ -25,7 +25,7 @@ public class RemoteSigneeNode extends AbstractNode {
         super(Children.create(new RemoteSigneeChildren(signee, model), true), Lookups.fixed(signee, model));
         setName(signee.toString());
         setDisplayName(signee.getCommonName());
-        setIconBaseWithExtension("org/thespheres/betula/admin/units/resources/table-medium.png");
+        setIconBaseWithExtension("org/thespheres/betula/admin/units/resources/user-business-boss.png");
     }
 
     @Override
