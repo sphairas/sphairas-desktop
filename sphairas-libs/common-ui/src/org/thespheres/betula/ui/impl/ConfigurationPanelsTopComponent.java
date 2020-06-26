@@ -47,7 +47,7 @@ import org.thespheres.betula.ui.util.UIUtilities;
 )
 @TopComponent.Description(
         preferredID = "ConfigurationPanelsTopComponent",
-        iconBase = "org/thespheres/betula/ui/resources/property-blue.png",
+        iconBase = "org/thespheres/betula/ui/resources/application-sidebar-list.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "rightSlidingSide", openAtStartup = true)
 @ActionID(category = "Window", id = "org.thespheres.betula.ui.impl.ConfigurationPanelsTopComponent")
@@ -83,7 +83,7 @@ public class ConfigurationPanelsTopComponent extends TopComponent {
         empty = new JLabel(NbBundle.getMessage(ConfigurationPanelsTopComponent.class, "ConfigurationPanelsTopComponent.empty.label"));
         empty.setHorizontalAlignment(SwingConstants.CENTER);
         empty.setFont(empty.getFont().deriveFont(Font.ITALIC));
-        Image icon = ImageUtilities.loadImage("org/thespheres/betula/ui/resources/property-blue.png", true);
+        final Image icon = ImageUtilities.loadImage("org/thespheres/betula/ui/resources/application-sidebar-list.png", true);
         setIcon(icon);
         setEmpty();
 
