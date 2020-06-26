@@ -44,7 +44,7 @@ import org.thespheres.betula.xmlimport.uiutil.ImportTableColumn;
  *
  * @author boris.heithecker
  */
-@NbBundle.Messages({"UntisSigneesDefaultColumns.columnName.signee=Kennung/iserv-Email",
+@NbBundle.Messages({"UntisSigneesDefaultColumns.columnName.signee=Kennung/IServ-E-Mail",
     "UntisSigneesDefaultColumns.columnName.name=Name",
     "UntisSigneesDefaultColumns.columnName.status=Status"})
 public abstract class UntisSigneesDefaultColumns extends ImportTableColumn<UntisImportSigneeItem, UntisImportConfiguration, UntisImportData, UntisSigneeImportTableModel> {
