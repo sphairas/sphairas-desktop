@@ -26,7 +26,6 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -40,11 +39,11 @@ import org.thespheres.betula.admin.units.ProviderNode;
  * Top component which displays something.
  */
 @TopComponent.Description(preferredID = "ConfigTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        iconBase="org/thespheres/betula/adminconfig/resources/gear.png", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "leftSlidingSide", openAtStartup = true, position = 10000)
+@TopComponent.Registration(mode = "leftSlidingSide", position = 17000, openAtStartup = true)
 @ActionID(category = "Window", id = "org.thespheres.betula.admin.units.configui.ConfigTopComponent")
-@ActionReference(path = "Menu/Window/betula-beans-services-windows" /*, position = 333 */)
+@ActionReference(path = "Menu/Window", position = 17000)
 @TopComponent.OpenActionRegistration(displayName = "#ConfigTopComponent.openAction.displayName",
         preferredID = "ConfigTopComponent")
 @NbBundle.Messages({"ConfigTopComponent.openAction.displayName=Konfigurationen",
