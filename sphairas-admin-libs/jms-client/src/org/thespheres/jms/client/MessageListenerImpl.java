@@ -26,7 +26,7 @@ class MessageListenerImpl implements MessageListener {
     }
 
     @Override
-    public void onMessage(Message msg) {
+    public void onMessage(final Message msg) {
         JMSEvent evt = null;
         try {
             if (msg.isBodyAssignableTo(JMSEvent.class)) {

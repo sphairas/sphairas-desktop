@@ -6,11 +6,13 @@
 package org.thespheres.jms.client;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
 import javax.jms.TopicSession;
+import org.openide.util.NbPreferences;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.ProviderRegistry;
 import org.thespheres.betula.services.client.jms.JMSTopicListenerService;
@@ -49,14 +51,12 @@ public class WsJMSTopicListenerService extends JMSTopicListenerService {
     }
 
     @Override
-    protected void initListener() {//mqws://xxxxxxxx.xxxxxx.xxxxxxx.net: 7681/wsjms
+    protected void initListener() {
         try {
             CERT_NAME.set(certificateName);
             SSL.set(addressList.startsWith("mqwss"));
             final com.sun.messaging.TopicConnectionFactory qFactory = new com.sun.messaging.TopicConnectionFactory();
             qFactory.setProperty(com.sun.messaging.ConnectionConfiguration.imqAddressList, addressList);
-//                        qFactory.setProperty(com.sun.messaging.ConnectionConfiguration.imqDefaultUsername, addressList);
-//                                 qFactory.setProperty(com.sun.messaging.ConnectionConfiguration.imqDefaultPassword, addressList);
             qFactory.setProperty(com.sun.messaging.ConnectionConfiguration.imqAddressList, addressList);
             final TopicConnection connection = qFactory.createTopicConnection();
             final TopicSession session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -67,10 +67,12 @@ public class WsJMSTopicListenerService extends JMSTopicListenerService {
             listener = l;
             initialized = true;
             connection.start();
-//            
-//            TextMessage tm = session.createTextMessage();
-//            tm.setText("Hallo!");
-//            session.createPublisher(queue).publish(tm);
+            //Ping the broker
+            boolean doPing = NbPreferences.forModule(JMSTopicListenerService.class).getBoolean("ping-jms-on-connection-start", false);
+            if (doPing) {
+                final Message ping = session.createMessage();
+                session.createPublisher(queue).send(ping);
+            }
         } catch (JMSException ex) {
             listener = null;
             parent.onInitialisationException(ex, this);
