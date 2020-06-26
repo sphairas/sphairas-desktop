@@ -49,6 +49,7 @@ import org.thespheres.betula.niedersachsen.admin.ui.ReportData2.ReportNote;
 import org.thespheres.betula.niedersachsen.admin.ui.zgnimpl.CreateCustomNoteVisualPanel.CreateCustomNoteWizardPanel;
 import org.thespheres.betula.niedersachsen.zeugnis.TermReportNoteSetTemplate;
 import org.thespheres.betula.niedersachsen.zeugnis.TermReportNoteSetTemplate.MarkerItem;
+import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.ui.util.ButtonEditor;
 import org.thespheres.betula.util.CollectionUtil;
@@ -67,10 +68,9 @@ import org.thespheres.betula.util.CollectionUtil;
 @ActionReference(path = "Menu/Window/betula-beans-services-windows", position = 1000)
 @TopComponent.OpenActionRegistration(displayName = "#ZeugnisBemerkungTopComponent.action",
         preferredID = "ZeugnisBemerkungTopComponent")
-@Messages({"ZeugnisBemerkungTopComponent.action=ZeugnisBemerkung",
-    "ZeugnisBemerkungTopComponent.name=Zeugnis-Bemerkungen",
-    "ZeugnisBemerkungTopComponent=Zeugnis-Bemerkungen für {0} (Klasse {1}, Schul-Halbjahr {2})",
-    "HINT_ZeugnisBemerkungTopComponent=This is a ZeugnisBemerkung window"})
+@Messages({"ZeugnisBemerkungTopComponent.action=Zeugnisbemerkungen",
+    "ZeugnisBemerkungTopComponent.name=Zeugnisbemerkungen",
+    "ZeugnisBemerkungTopComponent=Zeugnisbemerkungen - {0} {1} {2})"})
 public final class ZeugnisBemerkungTopComponent extends TopComponent {
 
     private final ColFactory columnFactory = new ColFactory();
@@ -98,7 +98,6 @@ public final class ZeugnisBemerkungTopComponent extends TopComponent {
         addMouseListener(defaultAction);
         table.setModel(model);
         setName(NbBundle.getMessage(ZeugnisBemerkungTopComponent.class, "ZeugnisBemerkungTopComponent.name"));
-//        setToolTipText(Bundle.HINT_ZeugnisBemerkungTopComponent());
     }
 
     private synchronized void onChange() {
@@ -217,9 +216,9 @@ public final class ZeugnisBemerkungTopComponent extends TopComponent {
             final Term term;
             try {
                 term = currentZeungisSettingsModel.getCurrentTerm();
-                String unit = currentZeungisSettingsModel.getUnitOpenSupport().findNamingResolverResult().getResolvedName(currentZeungisSettingsModel.getCurrentTerm());
+                final String unit = currentZeungisSettingsModel.getUnitOpenSupport().findNamingResolver().resolveDisplayName(currentZeungisSettingsModel.getUnitOpenSupport().getUnitId(), currentZeungisSettingsModel.getCurrentTerm());
                 n = NbBundle.getMessage(ZeugnisBemerkungTopComponent.class, "ZeugnisBemerkungTopComponent", sd.getRemoteStudent().getFullName(), unit, term.getDisplayName());
-            } catch (IOException ex) {
+            } catch (IOException | IllegalAuthorityException ex) {
             }
         }
         if (n == null) {
