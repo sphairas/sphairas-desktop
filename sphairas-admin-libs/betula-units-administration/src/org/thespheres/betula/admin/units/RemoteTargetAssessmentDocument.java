@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -67,10 +66,11 @@ import org.thespheres.betula.util.CollectionUtil;
  */
 public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAssessmentDocument implements GradeTermTargetAssessment, TargetDocument, UnitsModelDocument {
 
+    public static final String PROP_VALUES = "values";
     public static final String PROP_SIGNEES = "signees";
     private final Listener listener = new Listener();
     protected final Set<TermId> termsLoaded = new HashSet<>();//TODO: use this to keep track of loaded term. Provide an option to load an empty RTAD in inital phase. 
-    protected final ConcurrentMap<StudentId, Map<TermId, RemoteGradeEntry>> values; // = new HashMap<>();
+    protected final Map<StudentId, Map<TermId, RemoteGradeEntry>> values; // = new HashMap<>();
     private final EventListenerList listeners = new EventListenerList();
     private String prefConDN;
     final static int[] UPDATE_DELAY = new int[]{500, 1500, 5000};
@@ -81,7 +81,7 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
     protected final RequestProcessor submitRP;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    protected RemoteTargetAssessmentDocument(DocumentId d, String provider, final ConcurrentMap<StudentId, Map<TermId, RemoteGradeEntry>> values, final JMSTopicListenerService jms, NamingResolver nr) {
+    protected RemoteTargetAssessmentDocument(DocumentId d, String provider, final Map<StudentId, Map<TermId, RemoteGradeEntry>> values, final JMSTopicListenerService jms, NamingResolver nr) {
         super(d, provider, jms, nr);
         this.submitRP = new RequestProcessor(d.toString());
         this.values = values;
@@ -224,6 +224,12 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
 
     protected abstract void updateTerm(final TermId term, final int numTrial);
 
+    public void refresh() {
+        Util.RP(provider).post(() -> refresh(0));
+    }
+
+    protected abstract void refresh(final int numTrial);
+
     protected void logMessage(Exception pex, String message, StudentId student, TermId term, Grade grade) {
         final String g = grade != null ? grade.toString() : "";
         final String pexType = pex.getClass().getCanonicalName();
@@ -256,7 +262,7 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
 
     }
 
-    private void fireValueForStudentChanged(StudentId sid, TermId term, Grade old, Grade g, Timestamp ts) {
+    protected void fireValueForStudentChanged(final StudentId sid, final TermId term, final Grade old, final Grade g, final Timestamp ts) {
         if (!Objects.equals(old, g)) {
             //TODO: really dispach in AWT?
             Mutex.EVENT.writeAccess(() -> {

@@ -13,7 +13,7 @@
             </file>-->
             <folder name="betula-beans-services-windows">
                 <attr name="displayName" bundlevalue="org.thespheres.betula.admin.units.Bundle#Menu/Window/betula-beans-services-windows"/>
-                <attr intvalue="15100" name="position"/>
+                <attr intvalue="19500" name="position"/>
             </folder>
         </folder>   
     </folder>

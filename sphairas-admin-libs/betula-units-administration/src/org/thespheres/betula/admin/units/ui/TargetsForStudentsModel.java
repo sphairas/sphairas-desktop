@@ -428,6 +428,8 @@ public class TargetsForStudentsModel extends AbstractTableModel implements ItemL
                 case RemoteTargetAssessmentDocumentName.PROP_DISPLAYNAME:
 //                    col.setHeaderValue("X"); //name.getDisplayName(true));
                     break;
+                case RemoteTargetAssessmentDocument.PROP_VALUES:
+                    EventQueue.invokeLater(() -> fireStructureChanged());
             }
         }
     }

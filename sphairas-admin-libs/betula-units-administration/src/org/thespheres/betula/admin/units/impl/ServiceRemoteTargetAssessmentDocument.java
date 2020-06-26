@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +54,7 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
     private final TargetAssessmentEntry<TermId> entry;
     private final Map<String, Signee> signees = new HashMap<>();
 
-    private ServiceRemoteTargetAssessmentDocument(DocumentId d, TargetAssessmentEntry<TermId> e, final ConcurrentMap<StudentId, Map<TermId, RemoteGradeEntry>> values, String provider, JMSTopicListenerService jmsprovider, NamingResolver nr) {
+    private ServiceRemoteTargetAssessmentDocument(DocumentId d, TargetAssessmentEntry<TermId> e, final Map<StudentId, Map<TermId, RemoteGradeEntry>> values, String provider, JMSTopicListenerService jmsprovider, NamingResolver nr) {
         super(d, provider, values, jmsprovider, nr);
         this.entry = e;
         final Set<Marker> m = entry.getValue().getMarkerSet();
@@ -68,23 +66,24 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
         signees.putAll(sm);
     }
 
-    static ServiceRemoteTargetAssessmentDocument create(DocumentId d, TargetAssessmentEntry<TermId> e, String provider) {
-        final ConcurrentMap<StudentId, Map<TermId, RemoteGradeEntry>> values = new ConcurrentHashMap<>();
-        e.getChildren().stream()
-                .filter(tch -> (tch instanceof org.thespheres.betula.document.Entry && ((org.thespheres.betula.document.Entry<?, ?>) tch).getIdentity() instanceof TermId))
-                .forEachOrdered(tch -> {
-                    final TermId tid = ((org.thespheres.betula.document.Entry<TermId, ?>) tch).getIdentity();
-                    tch.getChildren().stream()
-                            .filter(sch -> (sch instanceof org.thespheres.betula.document.Entry && ((org.thespheres.betula.document.Entry<?, ?>) sch).getIdentity() instanceof StudentId && ((org.thespheres.betula.document.Entry<?, ?>) sch).getValue() instanceof GradeAdapter)).map((sch) -> (org.thespheres.betula.document.Entry<StudentId, GradeAdapter>) sch)
-                            .forEachOrdered(ve -> {
-                                final RemoteGradeEntry rge = new RemoteGradeEntry(ve.getValue().getConvention(), ve.getValue().getId(), ve.getTimestamp().getDate().getTime(), tid, ve.getIdentity());
-                                values.computeIfAbsent(ve.getIdentity(), k -> new ConcurrentHashMap<>())
-                                        .put(tid, rge);
-                            });
-                });
+    static ServiceRemoteTargetAssessmentDocument create(final DocumentId d, final TargetAssessmentEntry<TermId> e, final String provider) {
+        final Map<StudentId, Map<TermId, RemoteGradeEntry>> values = new HashMap<>();
+        readEntry(e, values);
         final NamingResolver nr = ServiceTargetAssessmentDocumentFactory.findNamingResolver(provider);
         final JMSTopicListenerService jms = ServiceTargetAssessmentDocumentFactory.findJMSTopicListenerService(provider);
         return new ServiceRemoteTargetAssessmentDocument(d, e, values, provider, jms, nr);
+    }
+
+    static void readEntry(final TargetAssessmentEntry<TermId> e, final Map<StudentId, Map<TermId, RemoteGradeEntry>> values) {
+        e.getChildren().stream()
+                .filter(tch -> (tch instanceof org.thespheres.betula.document.Entry && ((org.thespheres.betula.document.Entry<?, ?>) tch).getIdentity() instanceof TermId)).forEachOrdered(tch -> {
+            final TermId tid = ((org.thespheres.betula.document.Entry<TermId, ?>) tch).getIdentity();
+            tch.getChildren().stream()
+                    .filter(sch -> (sch instanceof org.thespheres.betula.document.Entry && ((org.thespheres.betula.document.Entry<?, ?>) sch).getIdentity() instanceof StudentId && ((org.thespheres.betula.document.Entry<?, ?>) sch).getValue() instanceof GradeAdapter)).map((sch) -> (org.thespheres.betula.document.Entry<StudentId, GradeAdapter>) sch).forEachOrdered(ve -> {
+                final RemoteGradeEntry rge = new RemoteGradeEntry(ve.getValue().getConvention(), ve.getValue().getId(), ve.getTimestamp().getDate().getTime(), tid, ve.getIdentity());
+                values.computeIfAbsent(ve.getIdentity(), k -> new HashMap<>()).put(tid, rge);
+            });
+        });
     }
 
     @Override
@@ -215,23 +214,32 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
         return ret;
     }
 
-    @NbBundle.Messages({"ServiceRemoteTargetAssessmentDocument.listener.updateTerm.retry=Enqueuing {0}. retry to update {1}."})
-    @Override
-    protected void updateTerm(final TermId term, final int numTrial) {
+    @NbBundle.Messages({"ServiceRemoteTargetAssessmentDocument.listener.tryFetchEntry.retry=Enqueuing {0}. retry to update {1}."})
+    private TargetAssessmentEntry<TermId> tryFetchEntry(final int numTrial, final Runnable update) throws IOException {
         final TargetAssessmentEntry<TermId> ret;
         try {
-            ret = fetchEntry(false);
+            return fetchEntry(false);
         } catch (Exception ex) {
             if (Util.isServiceException(ex) && numTrial < Config.getInstance().getRetryTimes().length) {
                 final int wait = Config.getInstance().getRetryTimes()[numTrial];
                 final int num = numTrial + 1;
-                final String message = NbBundle.getMessage(ServiceRemoteTargetAssessmentDocument.class, "ServiceRemoteTargetAssessmentDocument.listener.updateTerm.retry", num, getName().getDisplayName(null));
+                final String message = NbBundle.getMessage(ServiceRemoteTargetAssessmentDocument.class, "ServiceRemoteTargetAssessmentDocument.listener.tryFetchEntry.retry", num, getName().getDisplayName(null));
                 RemoteUnitsModel.LOGGER.log(LogLevel.INFO, message);
-                Util.RP(provider).post(() -> updateTerm(term, num), wait);
-                return;
+                Util.RP(provider).post(update, wait);
+                throw new IOException();
             }
             Logger.getLogger(ServiceRemoteTargetAssessmentDocument.class
                     .getCanonicalName()).log(Level.SEVERE, "An error occurred updating document " + document.toString() + ".", ex);
+            throw new IOException();
+        }
+    }
+
+    @Override
+    protected void updateTerm(final TermId term, final int numTrial) {
+        final TargetAssessmentEntry<TermId> ret;
+        try {
+            ret = tryFetchEntry(numTrial, () -> updateTerm(term, numTrial));
+        } catch (final IOException ex) {
             return;
         }
         final Map<StudentId, Entry<StudentId, GradeAdapter>> nv = ret.getChildren().stream()
@@ -252,6 +260,23 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
             }
         });
         updateSignees(ret);
+    }
+
+    @Override
+    protected void refresh(final int numTrial) {
+        final TargetAssessmentEntry<TermId> ret;
+        try {
+            ret = tryFetchEntry(numTrial, () -> refresh(numTrial));
+        } catch (final IOException ex) {
+            return;
+        }
+        synchronized (values) {
+            values.clear();
+            readEntry(ret, values);
+        }
+        pSupport.firePropertyChange(PROP_VALUES, null, values);
+        updateSignees(ret);
+        updateMarkers(ret);
     }
 
     @Override

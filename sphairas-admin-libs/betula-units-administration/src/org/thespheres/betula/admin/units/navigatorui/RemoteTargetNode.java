@@ -21,6 +21,9 @@ import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.editor.mimelookup.MimeLookup;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
@@ -42,6 +45,9 @@ import org.thespheres.betula.ui.util.IconAnnotatorFactory;
  *
  * @author boris.heithecker
  */
+@ActionReferences({
+    @ActionReference(id = @ActionID(category = "Betula", id = "org.thespheres.betula.admin.units.actions.RefreshAction"),
+            path = "Loaders/" + RemoteTargetNode.MIME + "/Actions", position = 130000, separatorBefore = 100000)})
 public class RemoteTargetNode extends AbstractNode {
 
     private final List<RemoteTargetAssessmentDocument> target;

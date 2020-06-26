@@ -41,12 +41,12 @@ import org.thespheres.betula.services.util.Units;
  */
 @TopComponent.Description(
         preferredID = "UnitsTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        iconBase = "org/thespheres/betula/admin/units/resources/table-medium.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-@TopComponent.Registration(mode = "leftSlidingSide", openAtStartup = true)
+@TopComponent.Registration(mode = "leftSlidingSide", position = 16000, openAtStartup = true)
 @ActionID(category = "Window", id = "org.thespheres.betula.admin.units.configui.UnitsTopComponent")
-@ActionReference(path = "Menu/Window/betula-beans-services-windows" /*, position = 333 */)
+@ActionReference(path = "Menu/Window", position = 16000)
 @TopComponent.OpenActionRegistration(displayName = "#UnitsTopComponent.openAction.displayName",
         preferredID = "UnitsTopComponent")
 @NbBundle.Messages({"UnitsTopComponent.openAction.displayName=Lerngruppen",
