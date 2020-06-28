@@ -7,9 +7,11 @@ package org.thespheres.betula.xmlimport.utilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -17,7 +19,6 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -51,9 +52,11 @@ public abstract class AbstractLink<S> extends XmlTargetItem {
     protected UnitId unitOverridden;
     @XmlElement(name = "target-suffix")
     protected String targetSuffix;
-    @XmlElementWrapper(name = "properties")
-    @XmlElementRef
-    protected List<ColumnProperty> properties;
+//    @XmlElementWrapper(name = "properties")
+//    @XmlElementRef
+//    protected List<ColumnProperty> properties;
+    @XmlElement(name = "properties")
+    private ColumnProperties linkProperties;
     //The value that has thrown a SourceValueNotEqualToOverridenException
     @XmlTransient
     private Marker sourceSubjectExceptionValue;
@@ -64,7 +67,7 @@ public abstract class AbstractLink<S> extends XmlTargetItem {
     //This is necessary to catch all unknown elements during unmarshalling, 
     //so they will be marshalled again back into the document and don't get lost.
     //Loss might otherwise occur if the user unmarshals the document 
-    //with specific modules disenabled that would add additional ColumnProperty classes.
+    //with specific modules disabled that would add additional ColumnProperty classes.
     @XmlAnyElement
     public org.w3c.dom.Element[] otherElements;
 
@@ -229,47 +232,71 @@ public abstract class AbstractLink<S> extends XmlTargetItem {
         return getNonDefaultProperty(column) != null;
     }
 
+    private List<ColumnProperty> properties() {
+        return Optional.ofNullable(linkProperties)
+                .map(lp -> lp.properties)
+                .orElse(Collections.EMPTY_LIST);
+    }
+
     public ColumnProperty getNonDefaultProperty(final String colId) {
-        if (properties != null) {
-            return properties.stream()
-                    .filter(cp -> cp.getColumnId().equals(colId))
-                    .collect(CollectionUtil.requireSingleOrNull());
-        }
-        return null;
+        return properties().stream()
+                .filter(cp -> cp.getColumnId().equals(colId))
+                .collect(CollectionUtil.requireSingleOrNull());
     }
 
     public Map<String, ColumnProperty> getNonDefaultProperties() {
-        if (properties != null) {
-            return properties.stream()
-                    .collect(Collectors.toMap(ColumnProperty::getColumnId, cp -> cp));
-        }
-        return Collections.EMPTY_MAP;
+        return properties().stream()
+                .collect(Collectors.toMap(ColumnProperty::getColumnId, cp -> cp));
     }
 
-    public void setNonDefaultProperty(ColumnProperty prop) {
-        if (properties != null) {
+    public void setNonDefaultProperty(final ColumnProperty prop) {
+        if (linkProperties == null) {
+            linkProperties = new ColumnProperties();
+        }
+        linkProperties.setProperty(prop);
+    }
+
+    public void removeNonDefaultProperty(final String prop) {
+        if (linkProperties != null) {
+            linkProperties.remove(prop);
+        }
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class ColumnProperties {
+
+        @XmlElementRef
+        protected List<ColumnProperty> properties;
+        //This is necessary to catch all unknown elements during unmarshalling, 
+        //so they will be marshalled again back into the document and don't get lost.
+        //Loss might otherwise occur if the user unmarshals the document 
+        //with specific modules disabled that would add additional ColumnProperty classes.
+        @XmlAnyElement
+        public org.w3c.dom.Element[] otherElements;
+
+        public ColumnProperties() {
+        }
+
+        private void setProperty(final ColumnProperty prop) {
+            if (properties == null) {
+                properties = new ArrayList<>();
+            }
             final String cid = prop.getColumnId();
-            removeProperty(cid);
-        } else {
-            properties = new ArrayList<>();
+            remove(cid);
+            properties.add(prop);
         }
-        properties.add(prop);
-    }
 
-    public void removeNonDefaultProperty(String prop) {
-        if (properties != null) {
-            removeProperty(prop);
-            if (properties.isEmpty()) {
-                properties = null;
+        private void remove(final String cid) {
+            if (properties != null) {
+                final Iterator<ColumnProperty> it = properties.iterator();
+                while (it.hasNext()) {
+                    if (it.next().getColumnId().equals(cid)) {
+                        it.remove();
+                    }
+                }
             }
         }
-    }
 
-    private void removeProperty(final String cid) {
-        properties.stream()
-                .filter(cp -> cp.getColumnId().equals(cid))
-                .collect(CollectionUtil.requireSingleton())
-                .ifPresent(cp -> properties.remove(cp));
     }
 
     public static final class SourceValueNotEqualToOverridenException extends SourceTargetLinkException {
