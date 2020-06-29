@@ -15,9 +15,6 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
-import org.thespheres.betula.services.WebProvider;
-import org.thespheres.betula.services.ws.BetulaWebService;
-import org.thespheres.betula.services.ws.WebServiceProvider;
 import org.thespheres.dev.timetable.DevStudenplanUpdater;
 
 @ActionID(
@@ -46,13 +43,6 @@ public final class DevAction1 implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             DevStudenplanUpdater.update();
-//        try {
-////            WebServiceProvider service = WebProvider.find("demo/1", WebServiceProvider.class);
-////            BetulaWebService p = service.createServicePort();
-////            p.solicit(null);
-//        } catch (IOException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

@@ -23,14 +23,12 @@ import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerFactory;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.niedersachsen.Faecher;
-import org.thespheres.betula.services.AppPropertyNames;
 import org.thespheres.betula.services.calendar.LessonData;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.WebProvider;
 import org.thespheres.betula.services.calendar.LessonTimeData;
 import org.thespheres.betula.services.scheme.spi.LessonId;
 import org.thespheres.betula.services.scheme.spi.PeriodId;
-import org.thespheres.betula.services.ui.util.AppProperties;
 import org.thespheres.betula.services.ui.util.dav.URLs;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 
@@ -80,8 +78,8 @@ public class DevStudenplanUpdater {
         timeDi.setUntil(LocalDate.of(2020, Month.MAY, 25));
 
         final LessonTimeData timeDo = new LessonTimeData(start, end, DayOfWeek.THURSDAY, period);
-        timeDo.setSince(LocalDate.of(2020, Month.APRIL, 22));
-        timeDo.setUntil(LocalDate.of(2020, Month.MAY, 25));
+        timeDo.setSince(LocalDate.of(2020, Month.JULY, 31));
+        timeDo.setUntil(LocalDate.of(2020, Month.JULY, 31));
 
         DevStudenplanUpdater su = new DevStudenplanUpdater(provider, sig, unit, new Marker[]{subject}, lid);
 //        su.effectiveBegin = LocalDate.of(2020, Month.FEBRUARY, 1);
