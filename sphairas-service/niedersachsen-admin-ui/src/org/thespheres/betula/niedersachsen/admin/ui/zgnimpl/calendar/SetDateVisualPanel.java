@@ -21,16 +21,16 @@ import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
-@Messages("SetZeugniskonfDateVisualPanel.step=Zeugniskonferenz")
-public final class SetZeugniskonfDateVisualPanel extends JPanel {
+@Messages("SetDateVisualPanel.step=Kalendereintrag")
+public final class SetDateVisualPanel extends JPanel {
 
-    public SetZeugniskonfDateVisualPanel() {
+    public SetDateVisualPanel() {
         initComponents();
     }
 
     @Override
     public String getName() {
-        return NbBundle.getMessage(SetZeugniskonfDateVisualPanel.class, "SetZeugniskonfDateVisualPanel.step");
+        return NbBundle.getMessage(SetDateVisualPanel.class, "SetDateVisualPanel.step");
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -48,26 +48,26 @@ public final class SetZeugniskonfDateVisualPanel extends JPanel {
         locationTextField = new javax.swing.JTextField();
 
         timeLabel.setLabelFor(timeSpinner);
-        org.openide.awt.Mnemonics.setLocalizedText(timeLabel, org.openide.util.NbBundle.getMessage(SetZeugniskonfDateVisualPanel.class, "SetZeugniskonfDateVisualPanel.timeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(timeLabel, org.openide.util.NbBundle.getMessage(SetDateVisualPanel.class, "SetDateVisualPanel.timeLabel.text")); // NOI18N
 
         summaryLabel.setLabelFor(summaryTextField);
-        org.openide.awt.Mnemonics.setLocalizedText(summaryLabel, org.openide.util.NbBundle.getMessage(SetZeugniskonfDateVisualPanel.class, "SetZeugniskonfDateVisualPanel.summaryLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(summaryLabel, org.openide.util.NbBundle.getMessage(SetDateVisualPanel.class, "SetDateVisualPanel.summaryLabel.text")); // NOI18N
 
         datePicker.setDate(new Date());
 
-        org.openide.awt.Mnemonics.setLocalizedText(dateLabel, org.openide.util.NbBundle.getMessage(SetZeugniskonfDateVisualPanel.class, "SetZeugniskonfDateVisualPanel.dateLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(dateLabel, org.openide.util.NbBundle.getMessage(SetDateVisualPanel.class, "SetDateVisualPanel.dateLabel.text")); // NOI18N
 
         durationSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(-2400000L), null, null, java.util.Calendar.MINUTE));
         durationSpinner.setEditor(new javax.swing.JSpinner.DateEditor(durationSpinner, "HH:mm"));
 
         durationLabel.setLabelFor(durationSpinner);
-        org.openide.awt.Mnemonics.setLocalizedText(durationLabel, org.openide.util.NbBundle.getMessage(SetZeugniskonfDateVisualPanel.class, "SetZeugniskonfDateVisualPanel.durationLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(durationLabel, org.openide.util.NbBundle.getMessage(SetDateVisualPanel.class, "SetDateVisualPanel.durationLabel.text")); // NOI18N
 
         timeSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR));
         timeSpinner.setEditor(new javax.swing.JSpinner.DateEditor(timeSpinner, "HH:mm"));
 
         locationLabel.setLabelFor(locationTextField);
-        org.openide.awt.Mnemonics.setLocalizedText(locationLabel, org.openide.util.NbBundle.getMessage(SetZeugniskonfDateVisualPanel.class, "SetZeugniskonfDateVisualPanel.locationLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(locationLabel, org.openide.util.NbBundle.getMessage(SetDateVisualPanel.class, "SetDateVisualPanel.locationLabel.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -139,13 +139,13 @@ public final class SetZeugniskonfDateVisualPanel extends JPanel {
     javax.swing.JSpinner timeSpinner;
     // End of variables declaration//GEN-END:variables
 
-    static class SetZeugniskonfDateWizardPanel implements WizardDescriptor.Panel<WizardDescriptor>, DocumentListener { //, ActionListener {
+    static class SetDateWizardPanel implements WizardDescriptor.Panel<WizardDescriptor>, DocumentListener { //, ActionListener {
 
         /**
          * The visual component that displays this panel. If you need to access
          * the component from this class, just use getComponent().
          */
-        private SetZeugniskonfDateVisualPanel component;
+        private SetDateVisualPanel component;
 //    private final DateFormat df = new SimpleDateFormat("EE, d.M. HH:mm");
         private final ChangeSupport cSupport = new ChangeSupport(this);
         private boolean valid = false;
@@ -155,9 +155,9 @@ public final class SetZeugniskonfDateVisualPanel extends JPanel {
         // but never displayed, or not all panels are displayed, it is better to
         // create only those which really need to be visible.
         @Override
-        public SetZeugniskonfDateVisualPanel getComponent() {
+        public SetDateVisualPanel getComponent() {
             if (component == null) {
-                component = new SetZeugniskonfDateVisualPanel();
+                component = new SetDateVisualPanel();
             }
             return component;
         }
@@ -181,7 +181,7 @@ public final class SetZeugniskonfDateVisualPanel extends JPanel {
         }
 
         private String getSummary() {
-            SetZeugniskonfDateVisualPanel panel = getComponent();
+            SetDateVisualPanel panel = getComponent();
             return StringUtils.trimToNull(panel.summaryTextField.getText());
         }
 
@@ -206,11 +206,11 @@ public final class SetZeugniskonfDateVisualPanel extends JPanel {
 
         @Override
         public void readSettings(WizardDescriptor wiz) {
-            SetZeugniskonfDateVisualPanel panel = getComponent();
+            SetDateVisualPanel panel = getComponent();
             String sum = (String) wiz.getProperty(SetZeugniskonfDateAction.PROP_NEWSUMMARY);
             if (sum != null) {
                 panel.summaryTextField.setText(sum);
-            } 
+            }
             final LocalDateTime ldt = (LocalDateTime) wiz.getProperty(SetZeugniskonfDateAction.PROP_NEWDATETIME);
             if (ldt != null) {
                 final Date date = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
@@ -219,13 +219,23 @@ public final class SetZeugniskonfDateVisualPanel extends JPanel {
             } else {
                 panel.datePicker.setDate(new Date());
             }
+            final Boolean dateOnly = (Boolean) wiz.getProperty(SetZeugniskonfDateAction.PROP_DATEONLY);
+            if (dateOnly != null && dateOnly) {
+                panel.timeSpinner.setEnabled(false);
+                panel.durationSpinner.setEnabled(false);
+                panel.locationTextField.setEnabled(false);
+            } else {
+                panel.timeSpinner.setEnabled(true);
+                panel.durationSpinner.setEnabled(true);
+                panel.locationTextField.setEnabled(true);
+            }
             panel.summaryTextField.getDocument().addDocumentListener(this);
             validate();
         }
 
         @Override
         public void storeSettings(WizardDescriptor wiz) {
-            SetZeugniskonfDateVisualPanel panel = getComponent();
+            SetDateVisualPanel panel = getComponent();
             panel.summaryTextField.getDocument().removeDocumentListener(this);
             if (isValid()) {
                 wiz.putProperty(SetZeugniskonfDateAction.PROP_NEWSUMMARY, getSummary());
