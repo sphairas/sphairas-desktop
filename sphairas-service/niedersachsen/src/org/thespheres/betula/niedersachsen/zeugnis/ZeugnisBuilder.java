@@ -35,6 +35,7 @@ import org.thespheres.betula.services.scheme.spi.Term;
  *
  * @author boris.heithecker
  */
+@Deprecated
 public class ZeugnisBuilder {
 
     private final ZeugnisData data = new ZeugnisData();
