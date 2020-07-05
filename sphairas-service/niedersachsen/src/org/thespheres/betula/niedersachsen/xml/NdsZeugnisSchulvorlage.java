@@ -38,6 +38,7 @@ import org.thespheres.betula.util.CollectionUtil;
 public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
     public static final String PROP_SIGNEES_NO_BACKGROUND = "Unterzeicher.ohne.Probedruck";
+    public static final String PROP_FEHLTAGE_ZERO_STRING = "Fehltage.Null";
     @XmlAttribute(name = "provider")
     private String provider;
     @XmlElement(name = "XSL-FO-Datei")
