@@ -148,6 +148,8 @@ public class DownloadTargetFolders {
                 if (userfile != null) {
                     file = userfile;
                     fileName = userfile.getName(userfile.getNameCount() - 1).toString();
+                } else {
+                    return;
                 }
             }
         }

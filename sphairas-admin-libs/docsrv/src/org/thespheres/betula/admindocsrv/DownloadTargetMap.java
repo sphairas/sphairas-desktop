@@ -37,18 +37,19 @@ public class DownloadTargetMap {
 
     Item find(final String fileName) {
         return items.stream()
-                .filter(i -> fileName.equals(i.getFile()))
+                .filter(i -> Objects.equals(i.getFile(), fileName))
                 .collect(CollectionUtil.requireSingleOrNull());
     }
 
     List<String> forOwner(final String owner) {
         return items.stream()
-                .filter(i -> owner.equals(i.getOwner()))
+                .filter(i -> Objects.equals(i.getOwner(), owner))
                 .map(Item::getFile)
                 .collect(Collectors.toList());
     }
 
-    boolean set(String fileName, String owner, LocalDateTime lfdt) {
+    //owner is null allowed
+    boolean set(final String fileName, final String owner, final LocalDateTime lfdt) {
         final Item existing = find(fileName);
         boolean changed = false;
         if (existing != null) {
@@ -85,10 +86,17 @@ public class DownloadTargetMap {
         @XmlAttribute(name = "time")
         private String time;
 
+        //JAXB only
         public Item() {
         }
 
-        Item(String file, String owner, LocalDateTime lfdt) {
+        Item(final String file, final String owner, final LocalDateTime lfdt) {
+            if (file == null) {
+                throw new IllegalArgumentException("DownloadTargetMap.Item.file cannot be null.");
+            }
+            if (lfdt == null) {
+                throw new IllegalArgumentException("DownloadTargetMap.Item.lfdt cannot be null.");
+            }
             this.file = file;
             this.owner = owner;
             this.time = lfdt.format(DTF);
