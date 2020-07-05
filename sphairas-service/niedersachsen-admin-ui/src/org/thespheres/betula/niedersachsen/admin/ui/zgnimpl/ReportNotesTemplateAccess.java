@@ -8,7 +8,6 @@ package org.thespheres.betula.niedersachsen.admin.ui.zgnimpl;
 import java.awt.EventQueue;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +44,7 @@ class ReportNotesTemplateAccess implements Runnable {
     private final RequestProcessor RP = new RequestProcessor(ReportNotesTemplateAccess.class.getName());
     private final String url;
     private final RequestProcessor.Task task;
-    private WeakReference<TermReportNoteSetTemplate> ref = null;
+    private TermReportNoteSetTemplate ref = null;
     private static JAXBContext ctx2;
     private final RemoteReportsModel2Impl history;
     private WebProvider.SSL webService;
@@ -77,26 +76,18 @@ class ReportNotesTemplateAccess implements Runnable {
                 access.task.waitFinished();
             }
         }
-        return access.get();
-    }
-
-    private synchronized TermReportNoteSetTemplate get() {
-        return ref == null ? null : ref.get();
-    }
-
-    private synchronized void set(TermReportNoteSetTemplate value) {
-        ref = new WeakReference<>(value);
+        return access.ref;
     }
 
     @Override
     public void run() {
         try {
             final TermReportNoteSetTemplate found = findReportNotesTemplate();
-            set(found);
+            ref = found;
             checkLM.schedule(CHECK_INTERVAL);
         } catch (IOException ex) {
             RemoteReportsModel2Impl.notifyError(ex, ex.getLocalizedMessage());
-            set(null);
+            ref = null;
         }
     }
 
