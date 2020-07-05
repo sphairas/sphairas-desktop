@@ -110,18 +110,18 @@ public class IntegerEditor extends DefaultCellEditor {
 
     @Override
     public Object getCellEditorValue() {
-        Object o = ftf.getValue();
+        final Object o = ftf.getValue();
         if (o instanceof Integer) {
             return o;
         } else if (o instanceof Number) {
             return ((Number) o).intValue();
-        } else {
+        } else if (o != null) {
             try {
                 return nf.parseObject(o.toString());
-            } catch (ParseException exc) {
-                return null;
+            } catch (final ParseException ex) {
             }
         }
+        return null;
     }
 
     @Override
