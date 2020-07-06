@@ -20,6 +20,18 @@ and open the template in the editor.
     <fach position="2400" >
         <marker convention="niedersachsen.unterricht.faecher" id="spanisch" />
     </fach>
+    <fach position="2500" >
+        <marker convention="niedersachsen.unterricht.faecher" id="niederländisch" />
+    </fach>
+    <fach position="2600" >
+        <marker convention="niedersachsen.unterricht.faecher" id="latein" />
+    </fach>
+    <fach position="2650" >
+        <marker convention="niedersachsen.unterricht.faecher" id="griechisch" />
+    </fach>
+    <fach position="2700" >
+        <marker convention="niedersachsen.unterricht.faecher" id="russisch" />
+    </fach>
     <fach position="3000" >
         <marker convention="niedersachsen.unterricht.faecher" id="geschichte" />
     </fach>
@@ -31,6 +43,12 @@ and open the template in the editor.
     </fach>
     <fach position="4200" >
         <marker convention="niedersachsen.unterricht.faecher" id="wirtschaft" />
+    </fach>
+    <fach position="4300" >
+        <marker convention="niedersachsen.unterricht.faecher" id="arbeitwirtschafttechnik" />
+    </fach>
+    <fach position="4400" >
+        <marker convention="niedersachsen.unterricht.faecher" id="gesellschaftslehre" />
     </fach>
     <fach position="5000" >
         <marker convention="niedersachsen.unterricht.faecher" id="erdkunde" />
@@ -44,6 +62,9 @@ and open the template in the editor.
     <fach position="12000" >
         <marker convention="niedersachsen.unterricht.faecher" id="chemie" />
     </fach>
+    <fach position="13000" >
+        <marker convention="niedersachsen.unterricht.faecher" id="informatik" />
+    </fach>
     <fach position="60000" >
         <marker convention="niedersachsen.unterricht.faecher" id="technik" />
     </fach>
@@ -55,6 +76,12 @@ and open the template in the editor.
     </fach>
     <fach position="20020" >
         <marker convention="niedersachsen.unterricht.faecher" id="evangelischereligion" />
+    </fach>
+    <fach position="20040" >
+        <marker convention="niedersachsen.unterricht.faecher" id="islamischereligion" />
+    </fach>
+    <fach position="20060" >
+        <marker convention="niedersachsen.unterricht.faecher" id="katholischereligion" />
     </fach>
     <fach position="21000" >
         <marker convention="niedersachsen.unterricht.faecher" id="wertenormen" />
