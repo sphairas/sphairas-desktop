@@ -25,7 +25,7 @@ public abstract class DayColumn extends ZeugnisAngabenColumn {
 
     protected final IntegerEditor daysEditor = new IntegerEditor(0, 365);
     protected final AlignmentHighlighter centerHighlighter = new AlignmentHighlighter(SwingConstants.CENTER);
-    private final StringValue intStringValue = v -> (v == null || (int) v == 0) ? "---" : v.toString();
+    private final StringValue intStringValue = v -> v == null ? "---" : v.toString();
 
     protected DayColumn(String id, int position, boolean editable, int width) {
         super(id, position, editable, width);
