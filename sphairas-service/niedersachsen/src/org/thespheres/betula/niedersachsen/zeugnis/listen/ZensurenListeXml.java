@@ -28,8 +28,8 @@ import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.niedersachsen.NdsTerms;
 import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
+import org.thespheres.betula.niedersachsen.zeugnis.NdsReportConstants;
 import org.thespheres.betula.niedersachsen.zeugnis.SubjectOrderDefinition;
-import org.thespheres.betula.niedersachsen.zeugnis.ZeugnisBuilder;
 import org.thespheres.betula.niedersachsen.zeugnis.listen.ColumnKey.MarkerColumnKey;
 import org.thespheres.betula.niedersachsen.zeugnis.listen.ColumnKey.TermColumnKey;
 import org.thespheres.betula.niedersachsen.zeugnis.listen.ZensurenListeXml.ColumnXml;
@@ -64,7 +64,7 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
     private final List<FootnoteXml> footnotes = new ArrayList<>();
     private transient String sortString;
     final static Collator COLLATOR = Collator.getInstance(Locale.GERMANY);
-    private final SubjectOrderDefinition ORDER = ZeugnisBuilder.FACH_COMPARATOR;
+    private final SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
 //    @XmlTransient
 //    private final Map<Integer, Set> colset = new HashMap<>();
     @XmlTransient

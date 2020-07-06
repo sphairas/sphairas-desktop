@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlValue;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
+import org.thespheres.betula.niedersachsen.zeugnis.NdsReportConstants;
 import org.thespheres.betula.niedersachsen.zeugnis.SubjectOrderDefinition;
-import org.thespheres.betula.niedersachsen.zeugnis.ZeugnisBuilder;
 
 /**
  *
@@ -53,7 +53,7 @@ public class StudentDetailsXml {
     private List<Text> texts = new ArrayList<>();
     private transient String sortString;
 //    private final static Collator COLLATOR = Collator.getInstance(Locale.GERMANY);
-    private final static SubjectOrderDefinition ORDER = ZeugnisBuilder.FACH_COMPARATOR;
+    private final static SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
 //    @XmlTransient
 //    private final Map<ColumnKey, ColumnValue> colmap = new HashMap<>();
 

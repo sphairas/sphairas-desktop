@@ -53,7 +53,7 @@ import org.thespheres.betula.niedersachsen.admin.ui.zgnimpl.calendar.ZeugnisCale
 import org.thespheres.betula.niedersachsen.zeugnis.ZeugnisArt;
 import org.thespheres.betula.niedersachsen.xml.NdsZeugnisAngaben;
 import org.thespheres.betula.niedersachsen.xml.NdsZeugnisAngaben.FreieBemerkung;
-import org.thespheres.betula.niedersachsen.zeugnis.ZeugnisBuilder;
+import org.thespheres.betula.niedersachsen.zeugnis.NdsReportConstants;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.NamingResolver;
@@ -614,9 +614,9 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
             } catch (IllegalAuthorityException | NumberFormatException | IOException ex) {
             }
             final Long g = "F".equals(remoteStudent.getGender()) ? 1l : 0l;
-            final String gen = ZeugnisBuilder.getGenitiv(remoteStudent.getGivenNames());
-            final String possesiv = ZeugnisBuilder.getPossessivPronomen(remoteStudent.getGender());
-            final String possesivGen = ZeugnisBuilder.getPossessivPronomenGenitiv(remoteStudent.getGender());
+            final String gen = NdsReportConstants.getGenitiv(remoteStudent.getGivenNames());
+            final String possesiv = NdsReportConstants.getPossessivPronomen(remoteStudent.getGender());
+            final String possesivGen = NdsReportConstants.getPossessivPronomenGenitiv(remoteStudent.getGender());
             final ZeugnisCalendarLookup2 calendar = history.support.getLookup().lookup(ZeugnisCalendarLookup2.class);
             Date zkDate = null;
             try {

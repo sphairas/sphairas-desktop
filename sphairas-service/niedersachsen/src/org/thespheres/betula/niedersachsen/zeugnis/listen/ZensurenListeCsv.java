@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
+import org.thespheres.betula.niedersachsen.zeugnis.NdsReportConstants;
 import org.thespheres.betula.niedersachsen.zeugnis.SubjectOrderDefinition;
-import org.thespheres.betula.niedersachsen.zeugnis.ZeugnisBuilder;
 import org.thespheres.betula.niedersachsen.zeugnis.listen.ColumnKey.MarkerColumnKey;
 import org.thespheres.betula.niedersachsen.zeugnis.listen.ZensurenListe.Column;
 import org.thespheres.betula.niedersachsen.zeugnis.listen.ZensurenListe.Footnote;
@@ -39,7 +39,7 @@ public class ZensurenListeCsv implements ZensurenListe<DataLineCsv, FootnoteCsv,
     private String ldate;
     private final List<DataLineCsv> lines = new ArrayList<>();
     private final List<FootnoteCsv> footnotes = new ArrayList<>();
-    private final SubjectOrderDefinition ORDER = ZeugnisBuilder.FACH_COMPARATOR;
+    private final SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
 
     public ZensurenListeCsv(String name) {
         this.name = name;
