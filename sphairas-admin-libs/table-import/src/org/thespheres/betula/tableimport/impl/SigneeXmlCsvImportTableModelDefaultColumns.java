@@ -41,7 +41,7 @@ import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
  *
  * @author boris.heithecker
  */
-@NbBundle.Messages({"SigneeXmlCsvImportTableModelDefaultColumns.columnName.signee=Kennung/iserv-Email",
+@NbBundle.Messages({"SigneeXmlCsvImportTableModelDefaultColumns.columnName.signee=Kennung/IServ-E-Mail",
     "SigneeXmlCsvImportTableModelDefaultColumns.columnName.name=Name",
     "SigneeXmlCsvImportTableModelDefaultColumns.columnName.status=Status"})
 public abstract class SigneeXmlCsvImportTableModelDefaultColumns extends ImportTableColumn<SigneeXmlCsvItem, ConfigurableImportTarget, SigneeXmlCsvSettings, SigneeXmlCsvImportTableModel> {

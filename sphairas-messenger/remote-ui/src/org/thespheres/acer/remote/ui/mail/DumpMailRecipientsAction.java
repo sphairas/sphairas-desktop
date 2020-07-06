@@ -47,7 +47,7 @@ import org.thespheres.betula.util.ContainerBuilder;
 @ActionReferences({
     @ActionReference(path = "Loaders/application/betula-remote-students/Actions", position = 9120, separatorBefore = 9000)
 })
-@Messages({"DumpMailRecipientsAction.displayName=Email-Adressaten",
+@Messages({"DumpMailRecipientsAction.displayName=E-Mail-Adressaten",
     "DumpMailRecipientsAction.message=Die Liste wurde in die Zwischenablage geladen."})
 public final class DumpMailRecipientsAction implements ActionListener {
 

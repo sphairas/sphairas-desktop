@@ -29,7 +29,7 @@ import org.thespheres.betula.services.ProviderInfo;
     @ActionReference(path = "Editors/text/acer-edit-message/Popup", position = 1100, separatorBefore = 1000)
     ,
     @ActionReference(path = "Editors/text/acer-edit-message/Toolbars/Default", position = 1100, separatorBefore = 1000)})
-@Messages("MailMessageAction.displayName=@ Email")
+@Messages("MailMessageAction.displayName=@ E-Mail")
 public final class MailMessageAction implements ActionListener {
 
     private final RemoteMessage message;
