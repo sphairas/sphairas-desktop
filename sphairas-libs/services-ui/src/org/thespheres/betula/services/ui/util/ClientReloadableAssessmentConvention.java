@@ -22,7 +22,7 @@ import org.thespheres.betula.xmldefinitions.XmlAssessmentConventionDefintion;
  *
  * @author boris.heithecker
  */
-public class ClientAbstractReloadableAssessmentConvention extends AbstractReloadableAssessmentConvention {
+public class ClientReloadableAssessmentConvention extends AbstractReloadableAssessmentConvention {
 
     static final int DEFAULT_CHECK_INTERVAL = 1000 * 60;
     static final int WAIT_TIME = 12000;
@@ -36,7 +36,7 @@ public class ClientAbstractReloadableAssessmentConvention extends AbstractReload
     private final XmlAssessmentConventionDefintion[] definition = new XmlAssessmentConventionDefintion[]{null};
     private String lastModified = null;
 
-    ClientAbstractReloadableAssessmentConvention(final String provider, final String name, final String resource, final int interval) {
+    ClientReloadableAssessmentConvention(final String provider, final String name, final String resource, final int interval) {
         super(provider, name);
         service = WebProvider.find(provider, WebProvider.class);
         this.resource = resource;
@@ -102,7 +102,7 @@ public class ClientAbstractReloadableAssessmentConvention extends AbstractReload
     }
 
     @ServiceProvider(service = AbstractReloadableAssessmentConvention.Factory.class)
-    public static class AbstractReloadableAssessmentConventionFactory extends AbstractReloadableAssessmentConvention.Factory {
+    public static class ClientReloadableAssessmentConventionFactory extends AbstractReloadableAssessmentConvention.Factory {
 
         @Override
         protected AbstractReloadableAssessmentConvention create(final String provider, final String name, final String resource, final Map<String, String> arg) throws IllegalStateException {
@@ -116,7 +116,7 @@ public class ClientAbstractReloadableAssessmentConvention extends AbstractReload
                         }
                     })
                     .orElse(DEFAULT_CHECK_INTERVAL);
-            return new ClientAbstractReloadableAssessmentConvention(provider, name, resource, i);
+            return new ClientReloadableAssessmentConvention(provider, name, resource, i);
         }
 
     }
