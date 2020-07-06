@@ -65,7 +65,7 @@ final class DownloadTargetWatch implements Runnable {
                     })
                     .forEach(e -> {
                         final WatchEvent.Kind<?> kind = e.kind();
-                        LOGGER.log(Level.INFO, "Detected layer file change: {0}", kind.name());
+                        LOGGER.log(Level.INFO, "Detected file deletion: {0}", kind.name());
                         parent.removed(((Path) e.context()).toString());
                     });
             // IMPORTANT: The key must be reset after processed

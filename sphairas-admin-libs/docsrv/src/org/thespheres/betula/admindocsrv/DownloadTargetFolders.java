@@ -5,7 +5,6 @@
  */
 package org.thespheres.betula.admindocsrv;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,9 +21,6 @@ import javax.swing.event.ChangeListener;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
-import org.openide.filesystems.FileChooserBuilder;
 import org.openide.util.ChangeSupport;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -33,7 +29,6 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.openide.util.lookup.ServiceProvider;
-import org.thespheres.betula.ui.util.FileChooserBuilderWithHint;
 
 /**
  *
@@ -126,8 +121,34 @@ public class DownloadTargetFolders {
                 .collect(Collectors.toList());
     }
 
-    public synchronized void copy(final Path source, String fileName, final String owner) throws IOException {
-        Path file = archives.resolve(fileName);
+    private String findFreeFileName(final String baseFileName) throws IOException {
+        String fileName = baseFileName;
+        int count = 2;
+        while (true) {
+            final Path file = archives.resolve(fileName);
+            final DownloadTargetMap.Item fi = map.find(fileName);
+            if (Files.exists(file)) {
+                final FileTime ft = Files.getLastModifiedTime(file);
+                final LocalDateTime lfdt = LocalDateTime.ofInstant(ft.toInstant(), ZoneId.systemDefault());
+                if (fi == null || !lfdt.equals(fi.getTime())) {
+                    //File exists, but no entry found or file modified externally
+                    final String addToFileName = " (" + count++ + ")";
+                    final int i = fileName.lastIndexOf('.');
+                    if (i != -1) {
+                        fileName = fileName.substring(0, i) + addToFileName + fileName.substring(i);
+                    } else {
+                        fileName = fileName + addToFileName;
+                    }
+                    continue;
+                }
+            }
+            return fileName;
+        }
+    }
+
+    public synchronized void copy(final Path source, String baseFileName, final String owner) throws IOException {
+        final String fileName = findFreeFileName(baseFileName);
+        final Path file = archives.resolve(fileName);
         final DownloadTargetMap.Item fi = map.find(fileName);
         if (Files.exists(file)) {
             final FileTime ft = Files.getLastModifiedTime(file);
@@ -137,20 +158,10 @@ public class DownloadTargetFolders {
                 if (!Files.isDirectory(backup)) {
                     Files.createDirectories(backup);
                 }
-//                final DosFileAttributeView attrs = Files.getFileAttributeView(backup, DosFileAttributeView.class);
-//                if (attrs != null) {
-//                    attrs.setHidden(true);
-//                }
                 final Path backupFile = backup.resolve(fileName + ".bak");
                 Files.copy(file, backupFile, StandardCopyOption.REPLACE_EXISTING);
             } else {
-                final Path userfile = userFilename(fileName);
-                if (userfile != null) {
-                    file = userfile;
-                    fileName = userfile.getName(userfile.getNameCount() - 1).toString();
-                } else {
-                    return;
-                }
+                throw new RuntimeException("File " + fileName + " cannot exist.");
             }
         }
 
@@ -165,39 +176,9 @@ public class DownloadTargetFolders {
         }
     }
 
-    private Path userFilename(final String filename) {
-        final String ending = filename.substring(filename.lastIndexOf('.'));
-        final File home = new File(System.getProperty("user.home"));
-        final String title = NbBundle.getMessage(DownloadTargetFolders.class, "DownloadTargetFolders.FileChooser.Title");
-        final FileChooserBuilder fcb = new FileChooserBuilderWithHint(DownloadTargetFolders.class, filename);
-        fcb.setTitle(title).setDefaultWorkingDirectory(home).setFileHiding(true);
-        File ret = fcb.showSaveDialog();
-        if (ret != null && !ret.getName().endsWith(ending)) {
-            ret = new File(ret.getParentFile(), ret.getName() + ending);
-        }
-        if (ret != null && ret.exists()) {
-            final String dt = NbBundle.getMessage(DownloadTargetFolders.class, "DownloadTargetFolders.action.overwriteFile.title");
-            final String text = NbBundle.getMessage(DownloadTargetFolders.class, "DownloadTargetFolders.action.overwriteFile.text", ret.toString());
-            final DialogDescriptor dd = new DialogDescriptor(text, dt);
-            final Object res = DialogDisplayer.getDefault().notify(dd);
-            if (!res.equals(DialogDescriptor.OK_OPTION)) {
-                return null;
-            }
-        }
-        return ret != null ? ret.toPath() : null;
-    }
-
     private synchronized void writeMap() {
         final JAXBContext ctx = getJAXB();
         final Path mapPath = archives.resolve(FILES_FILE);
-//        final DosFileAttributeView attrs = Files.getFileAttributeView(mapPath, DosFileAttributeView.class);
-//        if (attrs != null) {
-//            try {
-//                attrs.setHidden(false);
-//            } catch (IOException ex) {
-//                throw new IllegalStateException(ex);
-//            }
-//        }
         try {
             final Marshaller m = ctx.createMarshaller();
             m.setProperty("jaxb.formatted.output", Boolean.TRUE);
@@ -205,13 +186,6 @@ public class DownloadTargetFolders {
         } catch (JAXBException ex) {
             throw new IllegalStateException(ex);
         }
-//        if (attrs != null) {
-//            try {
-//                attrs.setHidden(true);
-//            } catch (IOException ex) {
-//                throw new IllegalStateException(ex);
-//            }
-//        }
     }
 
     void removed(final String file) {
