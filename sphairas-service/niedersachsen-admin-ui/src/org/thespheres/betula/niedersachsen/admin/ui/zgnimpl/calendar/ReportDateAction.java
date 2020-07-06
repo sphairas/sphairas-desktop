@@ -55,14 +55,14 @@ class ReportDateAction extends MultiContextSensitiveAction {
         final Collection<? extends ReportData2> rs = currentContext.lookupAll(ReportData2.class);
         if (enabled) {
             final int s = rs.size();
-//            switch (s) {
-//                case 0:
-//                    return abschlussZeugnis ? NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.unitTermAbschluss") : NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.unitTerm");
-//                case 1:
-//                    return NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.student", rs.iterator().next().getRemoteStudent().getDisplayName());
-//                default:
-//                    return NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.multiple", Integer.toString(s));
-//            }
+            switch (s) {
+                case 0:
+                    return abschlussZeugnis ? NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.unitTermAbschluss") : NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.unitTerm");
+                case 1:
+                    return NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.student", rs.iterator().next().getRemoteStudent().getDisplayName());
+                default:
+                    return NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display.context.multiple", Integer.toString(s));
+            }
         }
         return NbBundle.getMessage(ReportDateActions.class, "ReportDateActions.display");
     }
