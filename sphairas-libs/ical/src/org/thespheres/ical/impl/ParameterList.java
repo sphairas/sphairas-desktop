@@ -11,10 +11,9 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import org.thespheres.ical.Parameter;
-import org.thespheres.ical.builder.ICalendarBuilder;
 
 /**
  *
@@ -64,6 +63,20 @@ public class ParameterList implements Externalizable {
         }
     }
 
+    public boolean remove(final String name) {
+        boolean ret = false;
+        synchronized (list) {
+            final ListIterator<ParameterImpl> it = list.listIterator();
+            while (it.hasNext()) {
+                if (it.next().getName().equals(name)) {
+                    it.remove();
+                    ret = true;
+                }
+            }
+        }
+        return ret;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -88,10 +101,9 @@ public class ParameterList implements Externalizable {
         }
     }
 
-    public void toString(StringBuilder sb) {
-        list.stream().forEach((p) -> {
-            p.toString(sb);
-        });
+    public void toString(final StringBuilder sb) {
+        list.stream()
+                .forEach(p -> p.toString(sb));
     }
 
     private static class ParameterImpl extends Parameter implements Externalizable {
@@ -112,37 +124,4 @@ public class ParameterList implements Externalizable {
 
     }
 
-    class ParameterIteratorImpl implements ICalendarBuilder.ParameterIterator {
-
-        private final Iterator<ParameterImpl> delegate;
-        private ParameterImpl last;
-
-        private ParameterIteratorImpl() {
-            delegate = list.iterator();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return delegate.hasNext();
-        }
-
-        @Override
-        public Parameter next() {
-            last = delegate.next();
-            return last;
-        }
-
-        @Override
-        public void setValue(String value) {
-            if (last == null) {
-                throw new IllegalStateException();
-            }
-            last.setValue(value);
-        }
-
-        @Override
-        public void remove() {
-            delegate.remove();
-        }
-    }
 }
