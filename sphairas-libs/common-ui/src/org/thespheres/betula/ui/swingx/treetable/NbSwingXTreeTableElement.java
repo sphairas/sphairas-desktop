@@ -220,7 +220,7 @@ public abstract class NbSwingXTreeTableElement extends CloneableTopComponent imp
     }
 
     protected void activatedNodes(final List<Node> sel) {
-        final List<Node> selection = new ArrayList<>(sel);
+        final List<Node> selection = sel != null ? new ArrayList<>(sel) : new ArrayList<>();
         final Node n = getNodeDelegate();
         if (n != null && addNodeDelegateToActivatedNodes) {
             selection.add(n);
