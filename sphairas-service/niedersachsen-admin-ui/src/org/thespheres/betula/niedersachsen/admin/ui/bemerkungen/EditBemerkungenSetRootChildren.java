@@ -51,6 +51,12 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
         return new ElementNode[]{new ElementNode(key, env)};
     }
 
+    @Override
+    protected void reorder(final int[] perm) {
+        super.reorder(perm);
+        env.setModified("set");
+    }
+
     Node getRoot() {
         return root;
     }
@@ -96,36 +102,35 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
 
         private final ElementNodeMarkerChildren children;
         private final EditBemerkungenEnv env;
+        private final Element element;
 
         @SuppressWarnings(value = {"OverridableMethodCallInConstructor",
             "LeakingThisInConstructor"})
         private ElementNode(Element key, ElementNodeMarkerChildren ch, InstanceContent ic, EditBemerkungenEnv env) {
             super(ch, new AbstractLookup(ic));
             this.env = env;
+            this.element = key;
             setName(key.getElementDisplayName());
             ic.add(key);
+            ic.add(env);
             ic.add(ch.getIndex());
             ic.add(this);
             children = ch;
-//            final String choice = key.isMultiple() ? NbBundle.getMessage(ElementNode.class, "ElementNode.element.multiple") : NbBundle.getMessage(ElementNode.class, "ElementNode.element.single");
-//            final String displayName = NbBundle.getMessage(ElementNode.class, "ElementNode.displayName", getName(), choice);
-//            setDisplayName(displayName);
-            if (key.isMultiple()) {
+            updateIcon();
+        }
+
+        void updateIcon() {
+            if (element.isMultiple()) {
                 setIconBaseWithExtension("org/thespheres/betula/niedersachsen/admin/ui/resources/folders.png");
             } else {
                 setIconBaseWithExtension("org/thespheres/betula/niedersachsen/admin/ui/resources/folder.png");
             }
+            fireIconChange();
         }
 
         private ElementNode(Element key, EditBemerkungenEnv env) {
             this(key, new ElementNodeMarkerChildren(key, env, model), new InstanceContent(), env);
         }
-
-//        @Override
-//        public String getDisplayName() {
-//            final String choice = getLookup().lookup(Element.class).isMultiple() ? NbBundle.getMessage(ElementNode.class, "ElementNode.element.multiple") : NbBundle.getMessage(ElementNode.class, "ElementNode.element.single");
-//            return NbBundle.getMessage(ElementNode.class, "ElementNode.displayName", getName(), choice);
-//        }
 
         @Override
         public Action[] getActions(boolean context) { //Actions.forID(PROP_NAME, PROP_ICON)
@@ -186,6 +191,7 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
             }
             return null;
         }
+
     }
 
     static class ElementNodeMarkerChildren extends Index.KeysChildren<MarkerItem> {
@@ -206,6 +212,11 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
             return new MarkerNode[]{new MarkerNode(element, key, new InstanceContent(), env)};
         }
 
+        @Override
+        protected void reorder(final int[] perm) {
+            super.reorder(perm);
+            env.setModified("set");
+        }
     }
 
     static class MarkerNode extends AbstractNode {
@@ -220,6 +231,7 @@ class EditBemerkungenSetRootChildren extends Index.KeysChildren<Element> {
             setName(item.getMarker().toString());
             ic.add(element);
             ic.add(item);
+            ic.add(env);
             ic.add(this);
             if (Marker.isNull(item.getMarker())) {
                 setDisplayName("---");

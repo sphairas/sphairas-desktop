@@ -41,13 +41,16 @@ public final class ElementSettingsAction implements ActionListener {
                 this.context.setElementDisplayName(name);
             }
             this.context.setMultiple(panel.isMultipleSelection());
-            this.context.setNillable(panel.isNillable());
+            if (panel.isRequired() != null) {
+                this.context.setNillable(!panel.isRequired());
+            }
             final EditBemerkungenEnv env = Utilities.actionsGlobalContext().lookup(EditBemerkungenEnv.class);
             if (env != null) {
                 env.setModified("set");
             }
             final ElementNode node = Utilities.actionsGlobalContext().lookup(ElementNode.class);
             if (node != null) {
+                node.updateIcon();
                 final EditBemerkungenSetRootChildren ch = (EditBemerkungenSetRootChildren) node.getParentNode().getChildren();
                 ch.update();
             }

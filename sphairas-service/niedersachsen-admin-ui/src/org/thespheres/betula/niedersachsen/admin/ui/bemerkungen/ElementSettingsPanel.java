@@ -18,7 +18,7 @@ class ElementSettingsPanel extends javax.swing.JPanel {
         initComponents();
         this.nameTextField.setText(source.getElementDisplayName());
         this.multipleSelectionCheckBox.setSelected(source.isMultiple());
-        this.nillableCheckBox.setSelected(!source.isNillable());
+        this.requiredCheckBox.setSelected(!source.isNillable());
         multipleSelectionChanged(null);
     }
 
@@ -26,8 +26,8 @@ class ElementSettingsPanel extends javax.swing.JPanel {
         return multipleSelectionCheckBox.isSelected();
     }
 
-    public boolean isNillable() {
-        return nillableCheckBox.isSelected();
+    public Boolean isRequired() {
+        return requiredCheckBox.isEnabled() ? requiredCheckBox.isSelected() : null;
     }
 
     public String getNameValue() {
@@ -46,7 +46,7 @@ class ElementSettingsPanel extends javax.swing.JPanel {
         nameTextField = new org.jdesktop.swingx.JXTextField();
         nameLabel = new org.jdesktop.swingx.JXLabel();
         multipleSelectionCheckBox = new javax.swing.JCheckBox();
-        nillableCheckBox = new javax.swing.JCheckBox();
+        requiredCheckBox = new javax.swing.JCheckBox();
 
         nameTextField.setColumns(100);
 
@@ -59,7 +59,7 @@ class ElementSettingsPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(nillableCheckBox, org.openide.util.NbBundle.getMessage(ElementSettingsPanel.class, "ElementSettingsPanel.nillableCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(requiredCheckBox, org.openide.util.NbBundle.getMessage(ElementSettingsPanel.class, "ElementSettingsPanel.requiredCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -74,7 +74,7 @@ class ElementSettingsPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(nillableCheckBox)
+                                .addComponent(requiredCheckBox)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -92,13 +92,13 @@ class ElementSettingsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(multipleSelectionCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nillableCheckBox)
+                .addComponent(requiredCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void multipleSelectionChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_multipleSelectionChanged
-        nillableCheckBox.setEnabled(!isMultipleSelection());
+        requiredCheckBox.setEnabled(!isMultipleSelection());
     }//GEN-LAST:event_multipleSelectionChanged
 
 
@@ -106,6 +106,6 @@ class ElementSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox multipleSelectionCheckBox;
     private org.jdesktop.swingx.JXLabel nameLabel;
     private org.jdesktop.swingx.JXTextField nameTextField;
-    private javax.swing.JCheckBox nillableCheckBox;
+    private javax.swing.JCheckBox requiredCheckBox;
     // End of variables declaration//GEN-END:variables
 }

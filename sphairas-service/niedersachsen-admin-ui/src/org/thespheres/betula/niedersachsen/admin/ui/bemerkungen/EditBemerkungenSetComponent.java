@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -75,6 +76,7 @@ public class EditBemerkungenSetComponent extends NbSwingXTreeTableElement implem
         env.RP.post(() -> children.setEnv(env));
         setModel(children);
         env.addPropertyChangeListener(listener);
+        setActivatedNodes(new Node[]{env.getNodeDelegate()});
         updateName(getNodeDelegate());
     }
 
@@ -90,6 +92,13 @@ public class EditBemerkungenSetComponent extends NbSwingXTreeTableElement implem
         super.componentHidden();
         WindowManager.getDefault().findTopComponent("EditBemerkungenPaletteTopComponent").close();
         ReportContextListener.getDefault().removeChangeListener(children);
+    }
+
+    @Override
+    protected void activatedNodes(final List<Node> sel) {
+        //MoveUpAction, MoveDownAction accept only one activated node
+        addNodeDelegateToActivatedNodes = sel == null || sel.isEmpty();
+        super.activatedNodes(sel);
     }
 
     @Override

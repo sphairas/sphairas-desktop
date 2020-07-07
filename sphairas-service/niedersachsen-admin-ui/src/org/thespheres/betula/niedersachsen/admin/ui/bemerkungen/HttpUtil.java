@@ -119,11 +119,8 @@ class HttpUtil {
         }
         final HttpEntity entity = response.getEntity();
         try (final InputStream is = entity.getContent()) {
-            final EditableProperties ret;
-            try (final BufferedInputStream bis = new BufferedInputStream(is)) { //? BufferedEntity?{
-                ret = new EditableProperties(false);
-                ret.load(bis);
-            }
+            final EditableProperties ret = new EditableProperties(false);
+            ret.load(is);
             EntityUtils.consume(entity);
             return ret;
         } finally {
