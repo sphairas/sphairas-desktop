@@ -116,7 +116,7 @@ public class TermReportNoteSetTemplate implements Serializable {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Element implements Serializable {
-
+        
         public static final long serialVersionUID = 1L;
         @XmlAttribute(name = "multiple")
         private boolean multiple = true;
@@ -153,17 +153,17 @@ public class TermReportNoteSetTemplate implements Serializable {
             this.defaultIndex = defaultIndex;
             this.elementDisplayName = elementDisplayName;
             this.nillable = nillable;
-            updateNillable();
             Arrays.stream(m)
                     .map(ma -> new MarkerItem(ma, this))
                     .forEach(markers::add);
+            updateNillable();
         }
 
         private void updateNillable() {
             final boolean hasNull = markers.size() > 0 && Marker.isNull(markers.get(0).getMarker());
             if (nillable && !hasNull) {
                 markers.add(0, new MarkerItem(Marker.NULL, this));
-            } else if (hasNull) {
+            } else if (!nillable && hasNull) {
                 markers.remove(0);
             }
         }
@@ -237,7 +237,7 @@ public class TermReportNoteSetTemplate implements Serializable {
 
         public void setNillable(final boolean nillable) {
             this.nillable = nillable;
-            this.multiple = false;
+//            this.multiple = false;
             updateNillable();
         }
 
