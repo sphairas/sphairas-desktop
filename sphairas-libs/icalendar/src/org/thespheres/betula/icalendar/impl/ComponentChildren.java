@@ -38,18 +38,20 @@ class ComponentChildren extends ChildFactory.Detachable<Key> implements LookupLi
     }
 
     @Override
-    protected boolean createKeys(List<Key> toPopulate) {
+    protected boolean createKeys(final List<Key> toPopulate) {
+        final List<Key> l = new ArrayList<>();
         synchronized (providers) {
             providers.stream().forEach(cp -> {
                 cp.getCalendars().stream()
                         .map(ICalendar::getComponents)
                         .flatMap(List::stream)
-//                        .filter(cc -> cc.getName().equals(CalendarComponent.VTODO))
                         .map(cc -> new Key(cc.getUID(), cc, cp))
-                        .sorted()
-                        .forEach(toPopulate::add);
+                        .forEach(l::add);
             });
         }
+        l.stream()
+                .sorted()
+                .forEachOrdered(toPopulate::add);
         return true;
     }
 
@@ -69,29 +71,15 @@ class ComponentChildren extends ChildFactory.Detachable<Key> implements LookupLi
         if (key.provider instanceof CalendarProvider.Decorator) {
             return ((CalendarProvider.Decorator) key.provider).decorate(key.comp);
         }
-//        } else {
-//            return new EventNode(key.comp);
-//        }
         return null;
     }
 
     @Override
-    public void resultChanged(LookupEvent ev) {
-//        ICalendar[] arr = lkpResult.allInstances().stream().map(CalendarProvider::getCalendar).toArray(ICalendar[]::new);
-//        ICalendarBuilder builder = new ICalendarBuilder();
-//        for (ICalendar ics : arr) {
-//            try {
-//                builder.merge(ics, new DefaultResolver(DefaultResolver.ResolverType.ILLEGAL_ARGUMENT_EXCEPTION));
-//            } catch (InvalidComponentException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//        }
-//        calendar = builder.toICalendar();
+    public void resultChanged(final LookupEvent ev) {
         synchronized (providers) {
             providers.stream().forEach(cp -> cp.removeChangeListener(this));
             providers.clear();
             lkpResult.allInstances().stream()
-                    //                    .sorted()
                     .forEach(cp -> {
                         providers.add(cp);
                         cp.addChangeListener(this);
