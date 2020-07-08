@@ -18,6 +18,7 @@ public class NdsTerms {
 
     public static final String JAHR = "jahr";
     public static final String HALBJAHR = "halbjahr";
+    public static final String SCHULJAHR = "schuljahr";
 
     private final static SimpleTermSchedule IMPL = new SimpleTermSchedule("niedersachsen");
 

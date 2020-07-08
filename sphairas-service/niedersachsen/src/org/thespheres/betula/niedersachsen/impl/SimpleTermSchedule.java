@@ -100,8 +100,8 @@ public class SimpleTermSchedule implements TermSchedule, UserRepresentation<Term
         return Integer.toString(yearF, 10) + "/" + Integer.toString(yearF + 1, 10);
     }
 
-    public static String buildYearShort(int y) {
-        return Integer.toString(y, 10).substring(2) + Integer.toString(y + 1, 10).substring(2);
+    public static String buildYearDNShort(int y) {
+        return Integer.toString(y, 10)  + "/" + Integer.toString(y + 1, 10).substring(2);
     }
 
     public static int getYearFromShort(String s) throws IllegalArgumentException {
@@ -145,7 +145,6 @@ public class SimpleTermSchedule implements TermSchedule, UserRepresentation<Term
         private final TermId termId;
         private LocalDate begin = null;
         private LocalDate end = null;
-//        private Object exs = null;
         private String displayName = null;
         private String schuljahr;
 
@@ -176,8 +175,6 @@ public class SimpleTermSchedule implements TermSchedule, UserRepresentation<Term
         @Override
         public LocalDate getBeginDate() {
             if (begin == null) {
-//                begin = Calendar.getInstance();
-//                setNullFields(begin);
                 if (hj == 1) {
                     begin = LocalDate.of(jahr, Month.AUGUST, 1);
                 } else {
@@ -190,7 +187,6 @@ public class SimpleTermSchedule implements TermSchedule, UserRepresentation<Term
         @Override
         public LocalDate getEndDate() {
             if (end == null) {
-//                end = Calendar.getInstance();
                 final LocalDate ld = LocalDate.from(getBeginDate())
                         .plusMonths(6l)
                         .minusDays(1l);
@@ -199,23 +195,6 @@ public class SimpleTermSchedule implements TermSchedule, UserRepresentation<Term
             return end;
         }
 
-//        @Override
-//        public ExScheme getExScheme(String type) {
-//            if (type.equals(ExScheme.HOLIDAYS)) {
-//                if (this.exs == null) {
-//                    try {
-//                        this.exs = new SimpleExScheme("http://127.0.0.100/caldav.php/test.user/schulferien/", this);
-//                    } catch (IOException ex) {
-//                        this.exs = ex;
-//                    }
-//                }
-//                if (this.exs instanceof ExScheme) {
-//                    return (ExScheme) exs;
-//                }
-//
-//            }
-//            return null;
-//        }
         @Override
         public String getDisplayName() {
             if (displayName == null) {
@@ -239,13 +218,16 @@ public class SimpleTermSchedule implements TermSchedule, UserRepresentation<Term
         }
 
         @Override
-        public Object getParameter(String parameterName) {
+        public Object getParameter(final String parameterName) {
             switch (parameterName) {
                 case NdsTerms.JAHR:
                     return jahr;
                 case NdsTerms.HALBJAHR:
                     return hj;
-                default:
+                case NdsTerms.SCHULJAHR:
+                    return buildYearDNShort(jahr);
+                default
+                    :
                     return null;
             }
         }
