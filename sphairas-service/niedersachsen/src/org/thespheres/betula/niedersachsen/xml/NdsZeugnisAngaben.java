@@ -118,7 +118,7 @@ public class NdsZeugnisAngaben {
         this.custom = custom;
     }
 
-    @Deprecated
+    @Deprecated //Use Text
     public static class FreieBemerkung extends ValueElement<String> {
 
         @XmlAttribute
