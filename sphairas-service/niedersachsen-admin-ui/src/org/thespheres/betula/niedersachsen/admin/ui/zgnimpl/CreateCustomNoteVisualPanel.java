@@ -145,10 +145,10 @@ final class CreateCustomNoteVisualPanel extends JPanel {
         final Object sel = cbm.getSelectedItem();
         if (sel instanceof Element && cbm.template != null) {
             final int i = cbm.template.getElements().indexOf(sel);
-            if (i != -1) {
+            if (i != -1 && positionTextField.isEnabled()) {
                 positionTextField.setValue(i);
             }
-        } else if (sel == START) {
+        } else if (sel == START && positionTextField.isEnabled()) {
             positionTextField.setValue(-1);
         }
     }//GEN-LAST:event_positionSelected
@@ -167,15 +167,18 @@ final class CreateCustomNoteVisualPanel extends JPanel {
 
         void setTemplate(TermReportNoteSetTemplate t) {
             template = t;
-            init();
         }
 
-        protected void init() {
+        protected void init(final Integer selected) {
             addElement(START);
             removeAllElements();
             if (template != null) {
-                for (final Element e : template.getElements()) {
-                    addElement(e);
+                template.getElements().forEach(this::addElement);
+            }
+            if (selected != null) {
+                try {
+                    setSelectedItem(template.getElements().get(selected));
+                } catch (final Exception e) {
                 }
             }
             fireContentsChanged(this, 0, getSize() - 1);
@@ -273,8 +276,8 @@ final class CreateCustomNoteVisualPanel extends JPanel {
                 panel.positionTextField.setValue(Integer.MAX_VALUE);
             }
             final ReportData2 s = (ReportData2) wiz.getProperty(PROP_STUDENT);
-//            panel.history = s.getHistory();
             panel.cbm.setTemplate(s.getHistory().getTermReportNoteSetTemplate());
+            panel.cbm.init(pos);
         }
 
         @Override

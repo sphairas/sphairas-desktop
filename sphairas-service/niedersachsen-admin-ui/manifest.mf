@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: false
 OpenIDE-Module: org.thespheres.betula.niedersachsen.admin.ui
-OpenIDE-Module-Implementation-Version: 17
+OpenIDE-Module-Implementation-Version: 19
 OpenIDE-Module-Layer: org/thespheres/betula/niedersachsen/admin/ui/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/niedersachsen/admin/ui/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager,org.thespheres.betula.curriculum
