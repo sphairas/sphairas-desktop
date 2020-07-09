@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.thespheres.app.branding
-OpenIDE-Module-Implementation-Version: 37
+OpenIDE-Module-Implementation-Version: 40
 OpenIDE-Module-Layer: org/thespheres/app/branding/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/thespheres/app/branding/Bundle.properties
 

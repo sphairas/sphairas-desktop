@@ -3,24 +3,20 @@
 <filesystem>
     <folder name="Services">
         <folder name="AutoupdateType">
-            
-<!--            <file name="org_thespheres_app_branding_update_center.instance">
-                <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_app_branding_update_center.instance"/>
-                <attr name="enabled" boolvalue="true"/>
+            <file name="apache_netbeans_distribution_update_center.instance">
+                <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/apache_netbeans_distribution_update_center.instance"/>
+                <attr name="enabled" boolvalue="false"/>
                 <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
                 <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
-                <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_app_branding_update_center"/>
-            </file>-->
-
+                <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#apache_netbeans_distribution_update_center.instance"/>
+            </file>   
             <file name="org_thespheres_client_update_center.instance">
                 <attr name="displayName" bundlevalue="org.thespheres.app.branding.Bundle#Services/AutoupdateType/org_thespheres_client_update_center.instance"/>
                 <attr name="enabled" boolvalue="true"/>
                 <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
                 <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
                 <attr name="url" bundlevalue="org.thespheres.app.branding.Bundle#org_thespheres_client_update_center.instance"/>
-            </file>
-            
-            
+            </file>            
         </folder>
     </folder>
 </filesystem>
