@@ -89,7 +89,7 @@ public class RemoteReportsModel2Impl extends RemoteReportsModel2 {
 
     private final Set<TermId> loading = new HashSet<>();
 
-    RemoteReportsModel2Impl(PrimaryUnitOpenSupport uos) throws IOException {
+    RemoteReportsModel2Impl(PrimaryUnitOpenSupport uos) {
         super(uos);
     }
 
@@ -230,7 +230,7 @@ public class RemoteReportsModel2Impl extends RemoteReportsModel2 {
             if (puos != null) {
                 try {
                     return Lookups.singleton(new RemoteReportsModel2Impl(puos));
-                } catch (IllegalStateException | IOException e) {
+                } catch (final IllegalStateException e) {
                     Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Could not initialize RemoteReportsModel.", e);
                 }
             }

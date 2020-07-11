@@ -52,9 +52,8 @@ public abstract class RemoteReportsModel2 implements History<RemoteStudent, Repo
     private LocalProperties properties;
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
-    protected RemoteReportsModel2(final PrimaryUnitOpenSupport uos) throws IOException {
+    protected RemoteReportsModel2(final PrimaryUnitOpenSupport uos) {
         this.support = uos;
-//        this.reportNoteSetUrl = reportNoteSetTemplateUrl();
     }
 
     public EventBus getEventBus() {

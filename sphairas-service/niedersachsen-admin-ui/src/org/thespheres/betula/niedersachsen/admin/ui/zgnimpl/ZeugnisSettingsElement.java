@@ -272,8 +272,7 @@ public class ZeugnisSettingsElement extends AbstractTableElement implements Mult
                 final boolean open = TC_TRACKER.isEmpty();
                 TC_TRACKER.add(this);
                 if (open) {
-//                    FileObject fo = FileUtil.getConfigFile("Windows2/Groups/ZeugnisGroup/TargetSigneesTopComponent.wstcgrp");
-//                    Object configObject = FileUtil.getConfigObject("Windows2/Groups/ZeugnisGroup/TargetSigneesTopComponent.wstcgrp", Object.class);
+                    ZeugnisBemerkungenEnv.getInstance().open();
                     WindowManager.getDefault().findTopComponentGroup("ZeugnisGroup").open();
                 }
             }
@@ -287,6 +286,7 @@ public class ZeugnisSettingsElement extends AbstractTableElement implements Mult
             synchronized (TC_TRACKER) {
                 TC_TRACKER.remove(this);
                 if (TC_TRACKER.isEmpty()) {
+                    ZeugnisBemerkungenEnv.getInstance().close();
                     WindowManager.getDefault().findTopComponentGroup("ZeugnisGroup").close();
                 }
             }

@@ -46,7 +46,7 @@ public class ReportData2Edit<V> extends AbstractUndoableEdit {
     private final WebServiceProvider service;
     private final RequestProcessor rp;
 
-    public ReportData2Edit(NdsZeugnisAngaben update, V newValue, NdsZeugnisAngaben undo, V oldValue, ReportData2 report, Consumer<V> setter) throws IOException {
+    public ReportData2Edit(NdsZeugnisAngaben update, V newValue, NdsZeugnisAngaben undo, V oldValue, ReportData2 report, Consumer<V> setter) {
         this.update = update;
         this.undo = undo;
         this.report = report;

@@ -6,6 +6,6 @@
 
 <tc-group version="2.0">
     <module name="org.thespheres.betula.niedersachsen.admin.ui" spec="0.2.0" />
-    <tc-id id="ZeugnisBemerkungTopComponent" />
+    <tc-id id="ZeugnisMarkerTopComponent" />
     <open-close-behavior open="true" close="true" />
 </tc-group>

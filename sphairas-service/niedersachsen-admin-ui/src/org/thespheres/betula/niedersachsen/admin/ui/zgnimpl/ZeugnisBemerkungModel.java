@@ -31,9 +31,9 @@ class ZeugnisBemerkungModel extends AbstractTableModel {
 
     ReportData2 currentStudent;
     private final NumberFormat nf = NumberFormat.getIntegerInstance(Locale.GERMANY);
-    private final ZeugnisBemerkungTopComponent outer;
+    private final ZeugnisMarkerTopComponent outer;
 
-    ZeugnisBemerkungModel(final ZeugnisBemerkungTopComponent outer) {
+    ZeugnisBemerkungModel(final ZeugnisMarkerTopComponent outer) {
         this.outer = outer;
         nf.setGroupingUsed(false);
     }
@@ -125,7 +125,7 @@ class ZeugnisBemerkungModel extends AbstractTableModel {
                     s.removeMarker(m);
                     //TODO: fireTableDataChanged ????
                 } catch (IOException ex) {
-                    PlatformUtil.getCodeNameBaseLogger(ZeugnisBemerkungTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                    PlatformUtil.getCodeNameBaseLogger(ZeugnisMarkerTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
                     Toolkit.getDefaultToolkit().beep();
                 }
             });
@@ -137,7 +137,7 @@ class ZeugnisBemerkungModel extends AbstractTableModel {
             try {
                 s.addMarker(m);
             } catch (IOException ex) {
-                PlatformUtil.getCodeNameBaseLogger(ZeugnisBemerkungTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                PlatformUtil.getCodeNameBaseLogger(ZeugnisMarkerTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
                 Toolkit.getDefaultToolkit().beep();
             }
         });
@@ -148,7 +148,7 @@ class ZeugnisBemerkungModel extends AbstractTableModel {
             try {
                 s.addFreieBemerkung(position, text);
             } catch (IOException ex) {
-                PlatformUtil.getCodeNameBaseLogger(ZeugnisBemerkungTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                PlatformUtil.getCodeNameBaseLogger(ZeugnisMarkerTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
                 Toolkit.getDefaultToolkit().beep();
             }
         });
@@ -160,7 +160,7 @@ class ZeugnisBemerkungModel extends AbstractTableModel {
                 try {
                     s.removeFreieBemerkung(pos, before);
                 } catch (IOException ex) {
-                    PlatformUtil.getCodeNameBaseLogger(ZeugnisBemerkungTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                    PlatformUtil.getCodeNameBaseLogger(ZeugnisMarkerTopComponent.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
                     Toolkit.getDefaultToolkit().beep();
                 }
             });

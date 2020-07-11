@@ -77,6 +77,7 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
     private Grade sozialverhalten;
     private final DocumentId document;
     private final TermId term;
+    private final List<TextNote> textNotes = new ArrayList<>();
     private final List<ReportNote> reportNotes = new ArrayList<>();
     private boolean updateNotes = true;
     private final Comparator<ReportNote> rncomp = Comparator.comparing(ReportNote::getPosition);
@@ -161,6 +162,22 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
             }
             final PropertyChangeEvent evt = new PropertyChangeEvent(this, PROP_MARKERS, null, markers());
             history.getEventBus().post(evt);
+            final PropertyChangeEvent evt2 = new PropertyChangeEvent(this, PROP_REPORT_NOTES, null, reportNotes);
+            history.getEventBus().post(evt2);
+        }
+        final NdsZeugnisAngaben.Text[] t = angaben.getText();
+        if (t != null) {
+            synchronized (reportNotes) {
+                Arrays.stream(t)
+                        .forEach(b -> {
+                            final Action ac = b.getAction();
+                            if (ac != null && ac.equals(Action.ANNUL)) {
+                                setTextNote(b.getKey(), null);
+                            } else {
+                                setTextNote(b.getKey(), b.getValue());
+                            }
+                        });
+            }
             final PropertyChangeEvent evt2 = new PropertyChangeEvent(this, PROP_REPORT_NOTES, null, reportNotes);
             history.getEventBus().post(evt2);
         }
@@ -437,6 +454,41 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
         }
     }
 
+    public void putTextNote(final String key, final String text, final String before) {
+        if (StringUtils.isBlank(text) || StringUtils.isBlank(key)) {
+            throw new IllegalArgumentException();
+        }
+        final NdsZeugnisAngaben update = new NdsZeugnisAngaben();
+        update.setText(new NdsZeugnisAngaben.Text[]{new NdsZeugnisAngaben.Text(key, text, text == null ? Action.ANNUL : Action.FILE)});
+        final NdsZeugnisAngaben undo = new NdsZeugnisAngaben();
+        undo.setText(new NdsZeugnisAngaben.Text[]{new NdsZeugnisAngaben.Text(key, before, before == null ? Action.ANNUL : Action.FILE)});
+        final ReportData2Edit<String> edit = new ReportData2Edit<>(update, text, undo, null, this, t -> setTextNote(key, t));
+        edit.post();
+        history.getUndoSupport().postEdit(edit);
+    }
+
+    private void setTextNote(final String key, final String text) {
+        synchronized (textNotes) {
+            if (text != null) {
+                final Iterator<TextNote> it = textNotes.iterator();
+                while (it.hasNext()) {
+                    if (it.next().getKey().equals(key)) {
+                        it.remove();
+                    }
+                }
+                final TextNote rn = new TextNote(key, text);
+                textNotes.add(rn);
+            } else {
+                final Iterator<TextNote> it = textNotes.iterator();
+                while (it.hasNext()) {
+                    if (it.next().getKey().equals(key)) {
+                        it.remove();
+                    }
+                }
+            }
+        }
+    }
+
     public void addFreieBemerkung(final int position, final String text) throws IOException {
         if (StringUtils.isBlank(text)) {
             throw new IllegalArgumentException();
@@ -576,6 +628,10 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
         return ret;
     }
 
+    public List<TextNote> getTextNotes() {
+        return textNotes;
+    }
+
     public List<ReportNote> getBemerkungen() {
         synchronized (reportNotes) {
             if (updateNotes) {
@@ -690,6 +746,26 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
             return Utilities.actionsForPath("Loaders/application/betula-unit-context/Actions").stream()
                     .map(javax.swing.Action.class::cast)
                     .toArray(javax.swing.Action[]::new);
+        }
+
+    }
+
+    public static class TextNote {
+
+        protected String key;
+        protected String value;
+
+        protected TextNote(final String key, final String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
         }
 
     }
