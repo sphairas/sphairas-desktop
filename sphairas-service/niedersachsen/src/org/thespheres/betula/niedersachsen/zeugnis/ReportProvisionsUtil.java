@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.niedersachsen.zeugnis;
 
+import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.NbBundle;
@@ -44,8 +45,11 @@ public class ReportProvisionsUtil {
 
     public static String getTextFieldLabel(final String id) {
         final String key = "primaryUnits.textfield.label." + id;
-        final String ret = NbBundle.getMessage(ReportProvisionsUtil.class, key);
-        return ret != null ? ret : id;
+        try {
+            return NbBundle.getMessage(ReportProvisionsUtil.class, key);
+        } catch (final MissingResourceException mrex) {
+            return id;
+        }
     }
 
     public static int getTextFieldPosition(final String id) {
