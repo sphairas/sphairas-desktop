@@ -10,6 +10,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.logging.Level;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -43,8 +44,6 @@ public class DevStudenplanUpdater {
     final UnitId unit;
     final Marker[] fach;
     final LessonId lid; // = new LessonId(imp.getTargetDocumentIdBase().getAuthority(), imp.getTargetDocumentIdBase().getId());
-    LocalDate effectiveBegin;
-    LocalDate effectiveEnd;
     final DocumentId calendar = null;
 
     public DevStudenplanUpdater(String provider, Signee signee, UnitId unit, Marker[] fach, LessonId lid) {
@@ -60,36 +59,39 @@ public class DevStudenplanUpdater {
         LocalProperties lp = LocalProperties.find(provider);
         ConfigurableImportTarget cit = ConfigurableImportTarget.find(provider);
         String sigSuffix = cit.getDefaultSigneeSuffix();
-        Marker subject = MarkerFactory.find(Faecher.CONVENTION_NAME, "deutsch", null);
+        Marker subject = MarkerFactory.find(Faecher.CONVENTION_NAME, "geschichte", null);
         String authority = lp.getProperty("authority");//AppProperties.provider(lp);
 
         Signee sig = new Signee("iserv.nutzer", sigSuffix, true);
-        UnitId unit = new UnitId(authority, "deutsch-2016-a");
+        UnitId unit = new UnitId(authority, "geschichte-2015-b");
 
         LessonId lid = new LessonId(unit.getAuthority(), unit.getId());
 
         final LocalTime start = LocalTime.of(8, 0);
         final LocalTime end = LocalTime.of(8, 45);
 
+        final LocalTime start2 = LocalTime.of(9, 45);
+        final LocalTime end2 = LocalTime.of(10, 30);
+
         final PeriodId period = new PeriodId(provider, 1, PeriodId.Version.UNSPECIFIED);
+        final PeriodId period2 = new PeriodId(provider, 3, PeriodId.Version.UNSPECIFIED);
 
         final LessonTimeData timeDi = new LessonTimeData(start, end, DayOfWeek.TUESDAY, period);
-        timeDi.setSince(LocalDate.of(2020, Month.APRIL, 22));
-        timeDi.setUntil(LocalDate.of(2020, Month.MAY, 25));
+        timeDi.setSince(LocalDate.of(2020, Month.AUGUST, 25));
+        timeDi.setUntil(LocalDate.of(2020, Month.SEPTEMBER, 25));
 
-        final LessonTimeData timeDo = new LessonTimeData(start, end, DayOfWeek.THURSDAY, period);
-        timeDo.setSince(LocalDate.of(2020, Month.JULY, 31));
-        timeDo.setUntil(LocalDate.of(2020, Month.JULY, 31));
+        final LessonTimeData timeDo = new LessonTimeData(start2, end2, DayOfWeek.THURSDAY, period2);
+        timeDo.setSince(LocalDate.of(2020, Month.AUGUST, 27));
+        timeDo.setUntil(LocalDate.of(2020, Month.SEPTEMBER, 27));
 
         DevStudenplanUpdater su = new DevStudenplanUpdater(provider, sig, unit, new Marker[]{subject}, lid);
-//        su.effectiveBegin = LocalDate.of(2020, Month.FEBRUARY, 1);
-//        su.effectiveEnd = LocalDate.of(2020, Month.JULY, 31);
+        
         su.doUpdate(new LessonTimeData[]{timeDi, timeDo});
     }
 
     void doUpdate(final LessonTimeData[] times) throws IOException {
         //
-        final LessonData ld = new LessonData(lid, LessonData.METHOD_PUBLISH, new UnitId[]{unit}, signee, fach, effectiveBegin, effectiveEnd, times);
+        final LessonData ld = new LessonData(lid, LessonData.METHOD_PUBLISH, new UnitId[]{unit}, signee, fach, times);
 
         final WebProvider wp = WebProvider.find(provider, WebProvider.class);
         final String base = URLs.adminBase(LocalProperties.find(provider));
@@ -111,6 +113,7 @@ public class DevStudenplanUpdater {
                     .request()
                     .put(Entity.entity(ld, MediaType.APPLICATION_XML), Response.class);
         } catch (final Exception e) {
+            Exceptions.attachSeverity(e, Level.INFO);
             Exceptions.printStackTrace(e);
             return;
         }

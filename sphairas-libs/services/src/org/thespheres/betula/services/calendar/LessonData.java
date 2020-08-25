@@ -6,7 +6,6 @@
 package org.thespheres.betula.services.calendar;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -19,7 +18,6 @@ import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.document.util.MarkerAdapter.XmlMarkerAdapter;
 import org.thespheres.betula.services.scheme.spi.LessonId;
-import org.thespheres.betula.util.LocalDateAdapter;
 
 /**
  *
@@ -42,13 +40,6 @@ public class LessonData implements Serializable {
     @XmlElementWrapper(name = "subject")
     @XmlJavaTypeAdapter(XmlMarkerAdapter.class)
     private Marker[] definition;
-    @XmlElement(name = "course-begin")
-    @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private LocalDate beginDate;
-    @XmlElement(name = "course-end")
-    @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private LocalDate endDate;
-    private String message;
     @XmlElementWrapper(name = "course-times")
     @XmlElement(name = "course-times")
     private LessonTimeData[] times;
@@ -58,14 +49,12 @@ public class LessonData implements Serializable {
     public LessonData() {
     }
 
-    public LessonData(final LessonId lesson, final String method, final UnitId[] units, final Signee signee, final Marker[] subject, final LocalDate effectiveBegin, final LocalDate effectiveEnd, final LessonTimeData[] times) {
+    public LessonData(final LessonId lesson, final String method, final UnitId[] units, final Signee signee, final Marker[] subject, final LessonTimeData[] times) {
         this.lesson = lesson;
         this.method = method;
         this.units = units;
         this.signee = signee;
         this.definition = subject;
-        this.beginDate = effectiveBegin;
-        this.endDate = effectiveEnd;
         this.times = times;
     }
 
@@ -89,24 +78,8 @@ public class LessonData implements Serializable {
         return definition;
     }
 
-    public LocalDate getCourseBegin() {
-        return beginDate;
-    }
-
-    public LocalDate getCourseEnd() {
-        return endDate;
-    }
-
     public LessonTimeData[] getTimes() {
         return times;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public VendorData getVendorData() {

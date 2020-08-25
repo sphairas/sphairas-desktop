@@ -6,13 +6,11 @@
 package org.thespheres.betula.services.calendar;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -33,9 +31,6 @@ public class VendorData implements Serializable {
     @XmlElement(name = "signee-name")
     @XmlJavaTypeAdapter(value = CollapsedStringAdapter.class)
     private String signeeName;
-    @XmlElementWrapper(name = "joined-vendor-lessons")
-    @XmlElement(name = "vendor-lesson")
-    private final Set<LessonId> joinedVendorLessons = new HashSet<>();
 
     public VendorData() {
     }
@@ -56,10 +51,6 @@ public class VendorData implements Serializable {
 
     public String getSigneeName() {
         return signeeName;
-    }
-
-    public Set<LessonId> getJoinedVendorLessons() {
-        return joinedVendorLessons;
     }
 
 }

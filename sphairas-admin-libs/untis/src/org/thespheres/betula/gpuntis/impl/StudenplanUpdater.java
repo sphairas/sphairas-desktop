@@ -10,8 +10,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -29,10 +31,10 @@ import org.thespheres.betula.gpuntis.xml.General;
 import org.thespheres.betula.gpuntis.xml.Lesson;
 import org.thespheres.betula.gpuntis.xml.Time;
 import org.thespheres.betula.services.calendar.LessonData;
-import org.thespheres.betula.services.calendar.VendorData;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.WebProvider;
 import org.thespheres.betula.services.calendar.LessonTimeData;
+import org.thespheres.betula.services.calendar.VendorData;
 import org.thespheres.betula.services.scheme.spi.LessonId;
 import org.thespheres.betula.services.scheme.spi.PeriodId;
 import org.thespheres.betula.services.ui.util.dav.URLs;
@@ -66,47 +68,37 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
 
         final DocumentId calendar = null; //ub.getCurrentCalendarId();
 
-        Arrays.stream(items)
+        final Map<LessonDataKey, List<ImportedLesson>> m = Arrays.stream(items)
                 .filter(ImportedLesson::doImportTimetable)
-                .filter(il -> doUpdate(calendar, il))
+                .collect(Collectors.groupingBy(LessonDataKey::new));
+
+        m.entrySet().stream()
+                .filter(e -> doUpdate(calendar, e.getKey(), e.getValue()))
                 .forEach(il -> ++numImport[0]);
+
+//        Arrays.stream(items)
+//                .filter(ImportedLesson::doImportTimetable)
+//                .filter(il -> doUpdate(calendar, il))
+//                .forEach(il -> ++numImport[0]);
         final long dur = System.currentTimeMillis() - timeStart;
         final String msg2 = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.finish", numImport[0], dur);
         ImportUtil.getIO().getOut().println(msg2);
     }
 
-    boolean doUpdate(final DocumentId calendar, final ImportedLesson imp) {
-        final Lesson lesson = imp.getLesson();
-        int untisLessonKopplung = imp.getUntisKopplung();
-        //
-        final int cloneId = imp.id();
-        //If it's clone, 
-        if (cloneId != 0) {
-            //Save the clone a kopplung
-            //Workaround to prevent overwriting existing lesson/kopplung mappings in the database
-            untisLessonKopplung += (100 * cloneId);
-            final String msg = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.kupplung.workaround", imp.getSourceNodeLabel(), cloneId, untisLessonKopplung);
-            ImportUtil.getIO().getOut().println(msg);
-        }
-        //
-        final Signee signee = imp.getSignee();
-        final UnitId unit = imp.getUnitId();
-        final Marker[] fach = imp.getSubjectMarkers();
-        if (signee == null || unit == null || fach == null) {
-            String msg2 = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.noImport", imp.getSourceNodeLabel());
+    boolean doUpdate(final DocumentId calendar, final LessonDataKey key, final List<ImportedLesson> l) {
+        if (!key.isValid()) {
+            final String msg2 = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.noImport", key.label);
             ImportUtil.getIO().getErr().println(msg2);
             return false;
         }
-        final LessonTimeData[] times = imp.getTimes();
-        final String teacherId = lesson.getLessonTeacher().getId().substring(3);//remove TR_
-        final VendorData vData = new VendorData(imp.getUntisLessonId(), untisLessonKopplung, teacherId);
-        Arrays.stream(items)
-                .map(ImportedLesson::getUntisLessonId)
-                .forEach(vData.getJoinedVendorLessons()::add);
-        final LessonId lid = new LessonId(imp.getTargetDocumentIdBase().getAuthority(), imp.getTargetDocumentIdBase().getId());
-        final LessonData ld = new LessonData(lid, LessonData.METHOD_PUBLISH, new UnitId[]{unit}, signee, fach, lesson.getEffectiveBeginDate(), lesson.getEffectiveEndDate(), times);
-        ld.setVendorData(vData);
-        ld.setMessage(lesson.getText());
+
+        final LessonTimeData[] times = l.stream()
+                .flatMap(il -> Arrays.stream(il.getTimes()))
+                .toArray(LessonTimeData[]::new);
+
+        final LessonData ld = new LessonData(key.lesson, LessonData.METHOD_PUBLISH, key.units, key.signee, key.subject, times);
+//        ld.setVendorData(vData);
+//        ld.setMessage(lesson.getText());
 
         final String provider = config.getWebServiceProvider().getInfo().getURL();
         final WebProvider wp = WebProvider.find(provider, WebProvider.class);
@@ -144,7 +136,7 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
         }
         final Response.StatusType statusInfo = resp.getStatusInfo();
         if (statusInfo.getStatusCode() != Response.Status.OK.getStatusCode()) {
-            final String msg2 = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.http.status", imp.getSourceNodeLabel(), statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            final String msg2 = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.http.status", key.label, statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
             ImportUtil.getIO().getErr().println(msg2);
             return false;
         }
@@ -155,14 +147,14 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
         return "gpuntis/" + Integer.toString(general.getSchoolnumber());
     }
 
-    public static LessonTimeData[] createTimes(final Lesson lesson, final General general) {
+    public static LessonTimeData[] createTimes(final Lesson lesson, final General general, final ImportedLesson il) {
         return lesson.getTimes().stream()
-                .map(t -> StudenplanUpdater.createTime(lesson, general, t))
+                .map(t -> StudenplanUpdater.createTime(lesson, general, t, il))
                 .filter(Objects::nonNull)
                 .toArray(LessonTimeData[]::new);
     }
 
-    private static LessonTimeData createTime(final Lesson lesson, final General general, final Time t) {
+    private static LessonTimeData createTime(final Lesson lesson, final General general, final Time t, final ImportedLesson il) {
         if (t.getPeriod() == 0) {
             return null;
         }
@@ -179,8 +171,10 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
             }
             ld = ld.plusDays(1);
         }
-        ret.setSince(general.getTermbegindate());
-        ret.setUntil(general.getTermenddate());
+//        ret.setSince(general.getTermbegindate());
+        ret.setSince(lesson.getEffectiveBeginDate());
+//        ret.setUntil(general.getTermenddate());
+        ret.setUntil(lesson.getEffectiveEndDate());
         if (!exDates.isEmpty()) {
             ret.setExdates(exDates.toArray(LocalDate[]::new));
         }
@@ -188,7 +182,77 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
         if (room != null) {
             ret.setLocation(room);
         }
+
+        int untisLessonKopplung = il.getUntisKopplung();
+        //
+        final int cloneId = il.id();
+        //If it's clone, 
+        if (cloneId != 0) {
+            //Save the clone a kopplung
+            //Workaround to prevent overwriting existing lesson/kopplung mappings in the database
+            untisLessonKopplung += (100 * cloneId);
+            final String msg = NbBundle.getMessage(StudenplanUpdater.class, "StudenplanUpdater.message.kupplung.workaround", il.getSourceNodeLabel(), cloneId, untisLessonKopplung);
+            ImportUtil.getIO().getOut().println(msg);
+        }
+        final String teacherId = lesson.getLessonTeacher().getId().substring(3);//remove TR_
+        final VendorData vData = new VendorData(il.getUntisLessonId(), untisLessonKopplung, teacherId);
+        ret.setVendorData(vData);
         return ret;
+    }
+
+    class LessonDataKey {
+
+        final LessonId lesson;
+        final UnitId[] units;
+        final Signee signee;
+        final Marker[] subject;
+        final String label;
+
+        LessonDataKey(final ImportedLesson imp) {
+            this.lesson = new LessonId(imp.getTargetDocumentIdBase().getAuthority(), imp.getTargetDocumentIdBase().getId());
+            this.units = new UnitId[]{imp.getUnitId()};
+            this.signee = imp.getSignee();
+            this.subject = imp.getSubjectMarkers();
+            this.label = imp.getSourceNodeLabel();
+        }
+
+        boolean isValid() {
+            return signee != null && units != null && subject != null;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 97 * hash + Objects.hashCode(this.lesson);
+            hash = 97 * hash + Arrays.deepHashCode(this.units);
+            hash = 97 * hash + Objects.hashCode(this.signee);
+            return 97 * hash + Arrays.deepHashCode(this.subject);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final LessonDataKey other = (LessonDataKey) obj;
+            if (!Objects.equals(this.lesson, other.lesson)) {
+                return false;
+            }
+            if (!Arrays.deepEquals(this.units, other.units)) {
+                return false;
+            }
+            if (!Objects.equals(this.signee, other.signee)) {
+                return false;
+            }
+            return Arrays.deepEquals(this.subject, other.subject);
+        }
+
     }
 
 }

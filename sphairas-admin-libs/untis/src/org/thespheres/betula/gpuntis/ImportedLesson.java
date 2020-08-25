@@ -66,7 +66,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
     private Boolean existsUnit;
     private final int clone;
     private final String dates;
-    private final LessonTimeData[] times;
+    private LessonTimeData[] times;
 
     public ImportedLesson(Lesson l, General general, String sourcNode, String sourceSubject, String sourceTeacher, int cloneId) {
         super(sourcNode, sourceSubject, sourceTeacher);
@@ -82,7 +82,6 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
             sj.add(ImportUntisUtil.MSG_DATES.format(l.getEffectiveEndDate()));
         }
         dates = sj.toString();
-        times = StudenplanUpdater.createTimes(l, general);
     }
 
     public static ImportedLesson create(Lesson l, General general) {
@@ -374,6 +373,9 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
     }
 
     public LessonTimeData[] getTimes() {
+        if (times == null) {
+            times = StudenplanUpdater.createTimes(lesson, general, this);
+        }
         return times;
     }
 

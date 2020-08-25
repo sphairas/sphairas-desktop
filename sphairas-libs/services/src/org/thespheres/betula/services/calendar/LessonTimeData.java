@@ -47,13 +47,12 @@ public final class LessonTimeData implements Serializable {
     @XmlElement(name = "until")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate until;
+    @XmlElement(name = "vendor-data")
+    private VendorData vendorData;
     @XmlList
     @XmlElement(name = "exdates")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate[] exdates;
-    @Deprecated
-    @XmlElement(name = "ex-weeks")
-    private LessonTimeData.ExWeeks[] exWeeks;
 
     public LessonTimeData() {
     }
@@ -105,6 +104,14 @@ public final class LessonTimeData implements Serializable {
         this.until = until;
     }
 
+    public VendorData getVendorData() {
+        return vendorData;
+    }
+
+    public void setVendorData(VendorData vendorData) {
+        this.vendorData = vendorData;
+    }
+
     public LocalDate[] getExdates() {
         return exdates;
     }
@@ -113,41 +120,4 @@ public final class LessonTimeData implements Serializable {
         this.exdates = exdates;
     }
 
-    @Deprecated
-    public LessonTimeData.ExWeeks[] getExWeeks() {
-        return exWeeks;
-    }
-
-    @Deprecated
-    @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static final class ExWeeks implements Serializable {
-
-        @XmlAttribute(name = "year")
-        private int year;
-        @XmlList
-        @XmlAttribute(name = "weeks")
-        private int[] exWeeks;
-
-        public ExWeeks() {
-        }
-
-        public ExWeeks(int year, int[] exWeeks) {
-            this.year = year;
-            this.exWeeks = exWeeks;
-        }
-
-        public int getYear() {
-            return year;
-        }
-
-        public int[] getExWeeks() {
-            return exWeeks;
-        }
-
-        public void setExWeeks(int[] exWeeks) {
-            this.exWeeks = exWeeks;
-        }
-
-    }
 }
