@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -254,12 +255,12 @@ public abstract class DefaultColumns<I extends ImportItem, T extends ImportTarge
         }
 
         @Override
-        public LocalDate getColumnValue(I il) {
+        public LocalDate getColumnValue(final I il) {
             return il.getDeleteDate();
         }
 
         @Override
-        public boolean setColumnValue(I il, Object value) {
+        public boolean setColumnValue(final I il, final Object value) {
             final Date d = (Date) value;
             if (d != null) {
                 il.setDeleteDate(LocalDateTime.ofInstant(d.toInstant(), ZoneId.systemDefault()).toLocalDate());
@@ -269,7 +270,17 @@ public abstract class DefaultColumns<I extends ImportItem, T extends ImportTarge
 
         @Override
         public void configureTableColumn(M model, TableColumnExt col) {
-            final JFormattedTextField tfield = new JFormattedTextField(new DateFormatter(dateFormat));
+            final JFormattedTextField tfield = new JFormattedTextField(new DateFormatter(dateFormat)) {
+                @Override
+                public void setValue(final Object value) {
+                    final Date d = Optional.ofNullable(value)
+                            .filter(LocalDate.class::isInstance)
+                            .map(LocalDate.class::cast)
+                            .map(ld -> Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                            .orElse(null);
+                    super.setValue(d);
+                }            
+            };
             tfield.setBorder(new LineBorder(Color.black, 2));
             class CellEditor extends DefaultCellEditor {
 
