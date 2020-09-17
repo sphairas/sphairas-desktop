@@ -14,7 +14,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>0.2.12</version>
+            <version>0.2.13</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
