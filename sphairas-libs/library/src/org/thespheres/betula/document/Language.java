@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -17,8 +18,9 @@ import org.thespheres.betula.Identity;
  */
 @XmlType(name = "languageIdType", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Language extends Identity<String> {
+public class Language extends Identity<String> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final String IETF = "ietf";
 
     @XmlAttribute(name = "id", required = true)

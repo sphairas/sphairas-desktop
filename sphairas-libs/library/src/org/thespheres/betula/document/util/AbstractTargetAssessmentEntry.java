@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -30,8 +31,9 @@ import org.thespheres.betula.util.GradeAdapter;
  * @param <S>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractTargetAssessmentEntry<I extends Identity, S extends Identity> extends DocumentEntry {
+public abstract class AbstractTargetAssessmentEntry<I extends Identity, S extends Identity> extends DocumentEntry implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlAttribute(name = "file-null-grade-entries")
     protected final boolean fileNullGradeEntries = true;
     @XmlAttribute(name = "override-timestamp-with-null")

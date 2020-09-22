@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
  * @author boris.heithecker
  */
 public enum Action implements Serializable {
+
     @XmlEnumValue("request-completion")
     REQUEST_COMPLETION, //bitte um informationen NACH TICKET
     @XmlEnumValue("return-completion")
@@ -22,5 +23,6 @@ public enum Action implements Serializable {
     @XmlEnumValue("confirm")
     CONFIRM,
     @XmlEnumValue("annul")
-    ANNUL
+    ANNUL;
+    private static final long serialVersionUID = 1L;
 }

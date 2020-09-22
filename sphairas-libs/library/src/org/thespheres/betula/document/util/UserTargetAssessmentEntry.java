@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,7 +27,9 @@ import org.thespheres.betula.document.Timestamp;
 @XmlRootElement(name = "user-assessment-document", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "userTargetAssessmentEntryType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserTargetAssessmentEntry<I extends Identity> extends AbstractTargetAssessmentEntry<I, UserId> {
+public class UserTargetAssessmentEntry<I extends Identity> extends AbstractTargetAssessmentEntry<I, UserId> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public UserTargetAssessmentEntry() {
     }

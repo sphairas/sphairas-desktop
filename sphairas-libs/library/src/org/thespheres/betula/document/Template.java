@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.document;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,10 +24,12 @@ import org.thespheres.betula.util.GradeAdapter;
 @XmlType(name = "templateType",
         propOrder = {"value"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Template<V extends Object> extends Envelope {
+public class Template<V extends Object> extends Envelope implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final String PROP_VALUE = "PROP_VALUE";
     @XmlElements(value = {//Content == Text (z.B klassenbucheinträge) & description & note & datum  & marker set...                     
+        
         @XmlElement(name = "text", type = String.class),
         @XmlElement(name = "int-value", type = Integer.class),
         @XmlElement(name = "double-value", type = Double.class),

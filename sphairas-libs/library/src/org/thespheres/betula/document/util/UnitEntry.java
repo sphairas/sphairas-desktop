@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,8 +25,9 @@ import org.thespheres.betula.document.DocumentId;
 @XmlRootElement(name = "betula-unit-document", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "unitEntryType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UnitEntry extends DocumentEntry {
+public class UnitEntry extends DocumentEntry implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final String PROP_COMMON_UNIT_NAME = "common-unit-name";
     @XmlElement(name = "unit-entry-unit", type = UnitId.class)
     private UnitId unit;

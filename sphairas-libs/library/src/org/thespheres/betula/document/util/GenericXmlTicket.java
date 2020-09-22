@@ -1,5 +1,6 @@
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,8 +30,9 @@ import org.thespheres.betula.document.util.MarkerAdapter.XmlMarkerAdapter;
 @XmlType(name = "genericXmlTicketType",
         propOrder = {"ticketClass", "scope"})
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class GenericXmlTicket extends XmlContent {
+public class GenericXmlTicket extends XmlContent implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "ticket-class")
     private XmlTicketClass ticketClass;
     @XmlElement(name = "scope-definition")
@@ -60,8 +62,9 @@ public class GenericXmlTicket extends XmlContent {
     }
 
     @XmlAccessorType(value = XmlAccessType.FIELD)
-    public static class XmlTicketClass {
+    public static class XmlTicketClass implements Serializable {
 
+        private static final long serialVersionUID = 1L;
         @XmlAttribute
         private String version;
         @XmlValue
@@ -88,8 +91,9 @@ public class GenericXmlTicket extends XmlContent {
     }
 
     @XmlAccessorType(value = XmlAccessType.FIELD)
-    public static class XmlTicketScope<I extends Identity> {
+    public static class XmlTicketScope<I extends Identity> implements Serializable {
 
+        private static final long serialVersionUID = 1L;
         @XmlAttribute
         private String scope;
         @XmlAttribute

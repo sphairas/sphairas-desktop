@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,8 +18,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "content-value", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "xmlContentValueType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class XmlContentValue extends XmlContent implements Content {
+public class XmlContentValue extends XmlContent implements Content, Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final String VALUE = "value";
 
     public XmlContentValue() {

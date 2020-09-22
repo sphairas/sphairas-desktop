@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,7 +20,9 @@ import org.thespheres.betula.document.Entry;
 @XmlRootElement(name = "ticket", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "ticketType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TicketEntry extends Entry<Ticket, GenericXmlTicket> {
+public class TicketEntry extends Entry<Ticket, GenericXmlTicket> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public TicketEntry() {
     }

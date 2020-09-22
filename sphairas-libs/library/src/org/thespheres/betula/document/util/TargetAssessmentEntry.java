@@ -31,7 +31,8 @@ import org.thespheres.betula.assess.IdentityTargetAssessment;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TargetAssessmentEntry<I extends Identity> extends AbstractTargetAssessmentEntry<I, StudentId> implements IdentityTargetAssessment<Grade, I, IdentityTargetAssessment.Listener<Grade, I>> {
 
-    private final transient EventListenerList listenerList = new EventListenerList();
+    private static final long serialVersionUID = 1L;
+    private transient EventListenerList listenerList;
 
     public TargetAssessmentEntry() {
     }
@@ -62,19 +63,19 @@ public class TargetAssessmentEntry<I extends Identity> extends AbstractTargetAss
 
     @Override
     public void addListener(IdentityTargetAssessment.Listener<Grade, I> listener) {
-        listenerList.add(TargetAssessment.Listener.class, listener);
+        getListenerList().add(TargetAssessment.Listener.class, listener);
     }
 
     @Override
     public void removeListener(IdentityTargetAssessment.Listener<Grade, I> listener) {
-        listenerList.remove(TargetAssessment.Listener.class, listener);
+        getListenerList().remove(TargetAssessment.Listener.class, listener);
     }
 
     @Override
     protected void studentChanged(StudentId s, Identity id, Grade o, Grade n, Timestamp ts) {
         if (o == null || !o.equals(n)) { //TODO: temestamp !!!!
             // Guaranteed to return a non-null array
-            Object[] listeners = listenerList.getListenerList();
+            final Object[] listeners = getListenerList().getListenerList();
             // Process the listeners last to first, notifying
             // those that are interested in this event
             for (int i = listeners.length - 2; i >= 0; i -= 2) {
@@ -84,14 +85,13 @@ public class TargetAssessmentEntry<I extends Identity> extends AbstractTargetAss
                     ((IdentityTargetAssessment.Listener) listeners[i + 1]).valueForStudentChanged(this, s, id, o, n, ts);
                 }
             }
-
         }
     }
 
     @Override
     protected void studentRemoved(StudentId s, Identity id) {
         // Guaranteed to return a non-null array
-        Object[] listeners = listenerList.getListenerList();
+        final Object[] listeners = getListenerList().getListenerList();
         // Process the listeners last to first, notifying
         // those that are interested in this event
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
@@ -101,6 +101,13 @@ public class TargetAssessmentEntry<I extends Identity> extends AbstractTargetAss
                 ((IdentityTargetAssessment.Listener) listeners[i + 1]).studentRemoved(s, id);
             }
         }
+    }
+
+    private EventListenerList getListenerList() {
+        if (listenerList == null) {
+            listenerList = new EventListenerList();
+        }
+        return listenerList;
     }
 
 }

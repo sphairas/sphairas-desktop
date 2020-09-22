@@ -5,6 +5,7 @@
 package org.thespheres.betula.document;
 
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -15,8 +16,9 @@ import javax.xml.bind.annotation.XmlValue;
  * @author boris.heithecker
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageInfo {
+public class LanguageInfo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     //skript transliteration
     public static final String PROP_LANGUAGE = "PROP_LANGUAGE";
     public static final String PROP_AUTHORITY = "PROP_AUTHORITY";

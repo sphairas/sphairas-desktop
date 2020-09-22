@@ -6,6 +6,7 @@
 package org.thespheres.betula.document;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -19,8 +20,9 @@ import org.thespheres.betula.util.LocalDateTimeAdapter;
  * @author boris.heithecker
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExceptionMessage {
+public class ExceptionMessage implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "stack-trace-element")
     private String stackTraceElement;
     @XmlElement(name = "display-message")

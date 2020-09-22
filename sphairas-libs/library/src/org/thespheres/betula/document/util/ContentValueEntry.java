@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.thespheres.betula.Identity;
@@ -24,7 +25,9 @@ import org.thespheres.betula.document.Signee;
  */
 //Must be final: no entry in Envelope, must must to "entry" element!
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class ContentValueEntry<I extends Identity> extends Entry<I, Content> {
+public final class ContentValueEntry<I extends Identity> extends Entry<I, Content> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public ContentValueEntry() {
         super();

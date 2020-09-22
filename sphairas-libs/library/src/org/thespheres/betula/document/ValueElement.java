@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
@@ -28,8 +29,9 @@ import org.thespheres.betula.util.GradeAdapter;
 @XmlType(name = "valueEntryType",
         propOrder = {"action", "value", "description"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ValueElement<V> {
+public class ValueElement<V> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlElementWrapper(name = "descriptions")
     @XmlElement(name = "description")
     protected List<Description> description;

@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.document;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,10 +26,11 @@ import org.thespheres.betula.UserId;
  * @param <V>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "entryType", 
+@XmlType(name = "entryType",
         propOrder = {"identity", "timestamp"})
-public class Entry<I extends Identity, V> extends Template<V> {
+public class Entry<I extends Identity, V> extends Template<V> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final String PROP_IDENTITY = "PROP_IDENTITY";
     public static final String PROP_TIMESTAMP = "PROP_TIMESTAMP";
     public static final String PROP_SIGNATURE = "PROP_SIGNATURE";
@@ -41,9 +43,9 @@ public class Entry<I extends Identity, V> extends Template<V> {
         @XmlElement(name = "term", type = TermId.class),
         @XmlElement(name = "signee", type = Signee.class),
         @XmlElement(name = "ticket", type = Ticket.class),
-        @XmlElement(name = "user", type =UserId.class)
+        @XmlElement(name = "user", type = UserId.class)
     })
-    private  I identity;
+    private I identity;
     @XmlAttribute(name = "timestamp")
     private Timestamp timestamp;
 

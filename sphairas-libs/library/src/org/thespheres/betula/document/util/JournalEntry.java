@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import org.thespheres.betula.RecordId;
 import org.thespheres.betula.document.Action;
 import org.thespheres.betula.document.DocumentEntry;
@@ -16,7 +17,9 @@ import org.thespheres.betula.document.Timestamp;
  * @author boris.heithecker
  * @param <V>
  */
-public class JournalEntry<V> extends DocumentEntry {
+public class JournalEntry<V> extends DocumentEntry implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public JournalEntry() {
     }

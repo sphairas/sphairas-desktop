@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -16,8 +17,9 @@ import javax.xml.bind.annotation.XmlValue;
  */
 //@XmlSeeAlso(value = XmlTextContentElement.StringValue.class)
 @XmlAccessorType(value = XmlAccessType.FIELD)
-final class XmlTextContentElement implements XmlContentElement<String> {
+final class XmlTextContentElement implements XmlContentElement<String>, Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlAttribute(name = "key")
     protected String key;
     @XmlValue

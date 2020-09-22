@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.document;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,7 +19,9 @@ import org.thespheres.betula.Identity;
 @XmlRootElement(name = "betula-document")
 @XmlType(name = "documentEntryType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentEntry<D extends Document> extends Entry<DocumentId, D> {
+public class DocumentEntry<D extends Document> extends Entry<DocumentId, D> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public DocumentEntry() {
     }

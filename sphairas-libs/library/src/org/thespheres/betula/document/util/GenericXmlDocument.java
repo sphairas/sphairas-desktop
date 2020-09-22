@@ -1,5 +1,6 @@
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -29,8 +30,9 @@ import org.thespheres.betula.util.XmlZonedDateTime;
 @XmlType(name = "genericXmlDocumentType",
         propOrder = {"isFragment", "docClass", "signeeInfos", "creationInfo", "validity"})
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class GenericXmlDocument extends XmlContent implements Document {
+public class GenericXmlDocument extends XmlContent implements Document, Serializable {
 
+    private static final long serialVersionUID = 1L;
     //declared-document-id
 //    @XmlElement(name = "document")
 //    private DocumentId preferredId;
@@ -119,8 +121,9 @@ public class GenericXmlDocument extends XmlContent implements Document {
     }
 
     @XmlAccessorType(value = XmlAccessType.FIELD)
-    public static class XmlDocumentClass {
+    public static class XmlDocumentClass implements Serializable {
 
+        private static final long serialVersionUID = 1L;
         @XmlAttribute
         private String revision;
         @XmlValue
@@ -146,8 +149,9 @@ public class GenericXmlDocument extends XmlContent implements Document {
     }
 
     @XmlAccessorType(value = XmlAccessType.FIELD)
-    public static class XmlSigneeInfo implements SigneeInfo {
+    public static class XmlSigneeInfo implements SigneeInfo, Serializable {
 
+        private static final long serialVersionUID = 1L;
         @XmlAttribute(name = "signee-entitlement", required = true)
         private String type;
         @XmlAttribute(name = "sign-time")
@@ -196,7 +200,9 @@ public class GenericXmlDocument extends XmlContent implements Document {
     }
 
     @XmlAccessorType(value = XmlAccessType.FIELD)
-    static class XmlValidity extends XmlZonedDateTime implements Validity {
+    static class XmlValidity extends XmlZonedDateTime implements Validity, Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         public XmlValidity() {
             super();

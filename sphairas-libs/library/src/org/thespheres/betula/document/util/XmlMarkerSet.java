@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,8 +28,9 @@ import org.thespheres.betula.document.Marker;
  */
 @XmlType(name = "markerSetType", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XmlMarkerSet extends AbstractSet<Marker> {
+public class XmlMarkerSet extends AbstractSet<Marker> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 //    @XmlElementWrapper(name = "markers")
     @XmlElement(name = "marker")
     private final HashSet<MarkerAdapter> elements = new HashSet<>();

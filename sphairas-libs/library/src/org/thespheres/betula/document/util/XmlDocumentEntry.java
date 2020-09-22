@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.util;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,8 +21,9 @@ import org.thespheres.betula.document.DocumentId;
 @XmlRootElement(name = "betula-xml-document", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "xmlDocumentEntryType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XmlDocumentEntry extends DocumentEntry<GenericXmlDocument> {
+public class XmlDocumentEntry extends DocumentEntry<GenericXmlDocument> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final String PROP_REPORT_DATA = "report-data";
 
     public XmlDocumentEntry() {

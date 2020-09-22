@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.util;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -20,8 +21,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author boris.heithecker
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XmlZonedDateTime {
+public class XmlZonedDateTime implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @XmlAttribute(name = "zone-id")
     private String zoneId;
     @XmlElement(name = "date-time")
@@ -32,7 +34,7 @@ public class XmlZonedDateTime {
     }
 
     public XmlZonedDateTime(ZonedDateTime zdt) {
-        this.zoneId =  zdt.getZone().getId();
+        this.zoneId = zdt.getZone().getId();
         this.dateTime = zdt.toLocalDateTime();
     }
 
