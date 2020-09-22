@@ -35,7 +35,7 @@ public interface NamingResolver {
     }
 
     public Result resolveDisplayNameResult(Identity id) throws IllegalAuthorityException;
-    
+
     default public Map<String, String> properties() {
         return Collections.EMPTY_MAP;
     }
