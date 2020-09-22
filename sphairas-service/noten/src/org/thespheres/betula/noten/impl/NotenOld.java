@@ -121,11 +121,6 @@ public class NotenOld {
         }
 
         @Override
-        public String toString() {
-            return text;
-        }
-
-        @Override
         public String getLongLabel(Object... formattingArgs) {
             return text;
         }

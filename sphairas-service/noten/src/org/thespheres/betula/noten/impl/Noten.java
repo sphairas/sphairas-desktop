@@ -100,12 +100,7 @@ public class Noten {
             }
             return find(getId(), null);
         }
-
-        @Override
-        public String toString() {
-            return text;
-        }
-
+        
         @Override
         public String getLongLabel(Object... formattingArgs) {
             return text;

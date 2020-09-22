@@ -13,6 +13,10 @@ import org.thespheres.betula.assess.NumberValueGrade;
  */
 public abstract class NotenGrade extends AbstractGrade implements NumberValueGrade {
 
+    protected NotenGrade(String gradeConvention, String gradeId) {
+        super(gradeConvention, gradeId);
+    }
+
     public abstract boolean isBiased();
 
     public abstract boolean isCeilingBiased();
@@ -24,9 +28,5 @@ public abstract class NotenGrade extends AbstractGrade implements NumberValueGra
     public abstract NotenGrade getFloorBiased();
 
     public abstract NotenGrade getUnbiased();
-
-    protected NotenGrade(String gradeConvention, String gradeId) {
-        super(gradeConvention, gradeId);
-    }
 
 }
