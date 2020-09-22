@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.services.ws;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -16,8 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "NotFoundFault", propOrder = {
     "message"
 })
-public class NotFoundFault {
+public class NotFoundFault implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     protected String message;
 
     public String getMessage() {
