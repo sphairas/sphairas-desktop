@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.openide.util.Lookup;
 import org.openide.util.Mutex;
 import org.openide.util.MutexException;
@@ -40,6 +41,42 @@ public class MarkerFactory {
         } else {
             throw new MarkerParsingException(convention, longLabel);
         }
+    }
+
+    public static Marker resolve(final String representation) {
+        if (representation == null || representation.isEmpty()) {
+            return Marker.NULL;
+        }
+        final String[] parts = representation.split("#");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Marker can have only one # character.");
+        }
+        final String cnv = parts[0];
+        final String[] idParts = parts[1].split("/");
+        final String id;
+        final String subset;
+        switch (parts.length) {
+            case 1:
+                subset = null;
+                id = idParts[0];
+                break;
+            case 2:
+                subset = idParts[0];
+                id = idParts[1];
+                break;
+            default:
+                throw new IllegalArgumentException("Marker id can have only one / character.");
+        }
+        if (!cnv.equals(StringUtils.strip(cnv))) {
+            throw new IllegalArgumentException("Untrimmed input \"" + cnv + "\"");
+        }
+        if (!id.equals(StringUtils.strip(id))) {
+            throw new IllegalArgumentException("Untrimmed input \"" + id + "\"");
+        }
+        if (subset != null && !subset.equals(StringUtils.strip(subset))) {
+            throw new IllegalArgumentException("Untrimmed input \"" + subset + "\"");
+        }
+        return MarkerFactory.find(cnv, id, subset);
     }
 
     public static Tag find(String convention, String id) {

@@ -216,13 +216,13 @@ public final class RecordId extends Identity<String> implements Serializable {
                 return 0;
             }
             int[] ret = new int[1];
-            Identities.<Identity<Integer>>parse(period, (a, i, v) -> {
+            Identities.<Identity<Integer>>resolve(period, (a, i, v) -> {
                 try {
                     ret[0] = Integer.parseInt(i);
                 } catch (NumberFormatException nfex) {
                 }
                 return null;
-            });
+            }, null, null);
             return ret[0];
         }
 

@@ -81,7 +81,7 @@ public class AbstractMarker implements Marker, Serializable {
 
     @Override
     public String toString() {
-        return "{" + markerConvention + "}" + subset + ":" + markerId;
+        return getConvention() + "#" + (getSubset() != null ? getSubset() + "/" : "") + getId();
     }
 
     public static class Replacer implements Serializable {

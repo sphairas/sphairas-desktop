@@ -67,46 +67,58 @@ public final class Identities {
         return AUTHORITYPATTERN.matcher(value).matches();
     }
 
-    public static <I extends Identity<?>> I parse(final String value, final ParsedIdentityConverter<I> create) {
+    public static <I extends Identity<?>> I resolve(final String value, final ParsedIdentityConverter<I> create, final String defaultAuthority, final String defaultVersion) {
         if (StringUtils.isBlank(value)) {
             return null;
         }
         if (!value.equals(StringUtils.strip(value))) {
-            return null;
+            throw new IllegalArgumentException("Untrimmed input \"" + value + "\"");
         }
         final String[] parts = value.split(Identity.AUTHORITY_DELIMITER);
-        if (parts.length > 2) {
-            return null;
+        final String idPart;
+        final String authority;
+        switch (parts.length) {
+            case 1:
+                idPart = parts[0];
+                authority = defaultAuthority;
+                break;
+            case 2:
+                idPart = parts[0];
+                authority = parts[1];
+                if (!isValidAuthority(authority)) {
+                    throw new IllegalArgumentException("String " + authority + " is not a valid authority.");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Identity can have only one " + Identity.AUTHORITY_DELIMITER + " (authority delimiter) character.");
         }
-        final String idPart = parts[0];
         final String[] idParts = idPart.split(Identity.VERSION_DELIMITER);
-        if (idParts.length > 2) {
-            return null;
+        final String id;
+        switch (idParts.length) {
+            case 1:
+            case 2:
+                id = idParts[0];
+                break;
+            default:
+                throw new IllegalArgumentException("Identity id can have only one " + Identity.VERSION_DELIMITER + " (version delimiter) character.");
         }
-        final String id = idParts[0];
         if (!isValidStringId(id)) {
-            return null;
+            throw new IllegalArgumentException("String " + id + " is not a valid id.");
         }
         final String version;
         if (idParts.length == 2) {
             version = idParts[1];
             if (!version.equals(StringUtils.strip(version))) {
-                return null;
+                throw new IllegalArgumentException("Untrimmed input \"" + version + "\"");
             }
             if (!isValidVersion(version)) {
-                return null;
+                throw new IllegalArgumentException("String " + version + " is not a valid version.");
             }
         } else {
-            version = null;
+            version = defaultVersion;
         }
-        final String authority;
-        if (parts.length == 2) {
-            authority = parts[1];
-            if (!isValidAuthority(authority)) {
-                return null;
-            }
-        } else {
-            authority = null;
+        if (StringUtils.isBlank(authority)) {
+            throw new IllegalArgumentException("Authoritiy cannot be null or empty.");
         }
         return create.apply(authority, id, version);
     }

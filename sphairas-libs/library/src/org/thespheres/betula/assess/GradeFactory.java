@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.openide.util.Mutex;
 import org.openide.util.Mutex.Action;
 import org.openide.util.Mutex.ExceptionAction;
@@ -36,6 +37,25 @@ public class GradeFactory {
         } else {
             throw new GradeParsingException(convention, text);
         }
+    }
+
+    public static Grade resolve(final String representation) {
+        if (representation == null || representation.isEmpty()) {
+            return null;
+        }
+        final String[] parts = representation.split("#");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Grade can have only one # character.");
+        }
+        final String cnv = parts[0];
+        if (!cnv.equals(StringUtils.strip(cnv))) {
+            throw new IllegalArgumentException("Untrimmed input \"" + cnv + "\"");
+        }
+        final String id = parts[1];
+        if (!id.equals(StringUtils.strip(id))) {
+            throw new IllegalArgumentException("Untrimmed input \"" + id + "\"");
+        }
+        return GradeFactory.find(cnv, id);
     }
 
     public static Grade find(String convention, String id) {

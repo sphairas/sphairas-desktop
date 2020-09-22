@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.thespheres.betula.Identity;
+import org.thespheres.betula.document.util.Identities;
 import org.thespheres.betula.util.DeweyDecimal;
 
 /**
@@ -68,6 +69,14 @@ public final class DocumentId extends Identity<String> implements Serializable {
             sj.add(authority);
         }
         return sj.toString();
+    }
+
+    public static DocumentId resolve(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new DocumentId(a, i, Version.parse(v)), null, null);
+    }
+
+    public static DocumentId resolve(final String input, final String defaultAuthority, final Version defaultVersion) {
+        return Identities.resolve(input, (a, i, v) -> new DocumentId(a, i, Version.parse(v)), defaultAuthority, defaultVersion.getVersion());
     }
 
     @Override

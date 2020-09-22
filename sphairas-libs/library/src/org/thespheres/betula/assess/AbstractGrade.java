@@ -76,7 +76,7 @@ public class AbstractGrade implements Grade, Serializable {
 
     @Override
     public String toString() {
-        return "{" + gradeConvention + "}" + gradeId;
+        return getConvention() + "#" + getId();
     }
 
     public Object writeReplace() {
