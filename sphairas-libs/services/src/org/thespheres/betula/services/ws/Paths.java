@@ -33,6 +33,7 @@ public class Paths {
     //
     public static final String[] TICKETS_PATH = new String[]{"tickets"};
     public static final String[] UNITS_TICKETS_PATH = new String[]{"units", "tickets"};
+    public static final String[] TARGETS_TICKETS_PATH = new String[]{"targets", "tickets"};
     //
     public static final String[] UNITS_REPORTS_PATH = new String[]{"units", "reports"};
     public static final String[] UNITS_REPORTTERMGRADES_PATH = new String[]{"units", "report-termgrades"};
