@@ -46,6 +46,9 @@ import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
  */
 public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetItem> {
 
+    enum StudentsOrigin {
+        ENTRIES, STUDENTS, NONE
+    };
     static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("d.M.y", Locale.getDefault());
     public static final String PROP_TARGET_ID = "targetId";
     private final ConfigurableImportTargetHelper<TargetItemsXmlCsvItem> helper;
@@ -53,6 +56,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
     private IOException importStudentsException;
     private final boolean allowNullUnit;
     protected boolean allowEmptySubject = false;
+    private StudentsOrigin studentsSource;
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public TargetItemsXmlCsvItem(String sourceNode, XmlTargetItem source, boolean allowNullUnit) {
@@ -110,14 +114,17 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         if (configChanged) {
             importStudents.setConfiguration(config);
             if (!getSource().getStudents().isEmpty()) {
+                this.studentsSource = StudentsOrigin.STUDENTS;
                 final List<XmlStudentItem> ls = getSource().getStudents();
                 setStudents(ls);
             } else if (!getSource().getEntries().isEmpty()) {
+                this.studentsSource = StudentsOrigin.ENTRIES;
                 final List<XmlTargetEntryItem> ls = getSource().getEntries();
                 setStudents(ls);
             } else {
+                this.studentsSource = StudentsOrigin.NONE;
                 importStudents.clear();
-                students = null;
+                students = null;//Reset students, lazy load in getUnitStudents();
             }
         }
 
@@ -165,7 +172,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
     public StudentId[] getUnitStudents() {
         final ConfigurableImportTarget cfg = getConfiguration();
         final UnitId uid = getUnitId();
-        if (getSource().getStudents().isEmpty()) {
+        if (studentsSource.equals(StudentsOrigin.NONE)) {
             if (students == null && cfg != null && uid != null) {
                 students = Units.get(cfg.getWebServiceProvider().getInfo().getURL())
                         .filter(u -> u.hasUnit(uid))
@@ -187,8 +194,8 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
 
     @Override
     public void setUnitId(UnitId unit) {
-        if (getSource().getStudents().isEmpty()) {
-            students = null;
+        if (studentsSource.equals(StudentsOrigin.NONE)) {
+            students = null; //Reset students, lazy load in getUnitStudents();
         }
         super.setUnitId(unit);
     }
