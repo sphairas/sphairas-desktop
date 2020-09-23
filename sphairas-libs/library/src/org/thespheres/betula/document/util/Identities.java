@@ -18,9 +18,9 @@ import org.thespheres.betula.Identity;
 //TODO replace IdFormatter and ServiceConstants
 public final class Identities {
 
-    public static final Pattern IDPATTERN = Pattern.compile("[\\w+[\\w\\.]*]+(-[\\w+[\\w\\.]*]+)*", Pattern.UNICODE_CHARACTER_CLASS);
-    public static final Pattern VERSIONPATTERN = Pattern.compile("[\\w+[\\w\\.]*]+", Pattern.UNICODE_CHARACTER_CLASS);
-    public static final Pattern AUTHORITYPATTERN = Pattern.compile("([\\w+[\\w\\.]*]+(-[\\w+[\\w\\.]*]+)*)(\\/[\\w+[\\w\\.]*]+(-[\\w+[\\w\\.]*]+)*)", Pattern.UNICODE_CHARACTER_CLASS);
+    public static final Pattern IDPATTERN = Pattern.compile("^\\w+([\\-\\.]\\w+)*$", Pattern.UNICODE_CHARACTER_CLASS);
+    //public static final Pattern VERSIONPATTERN = Pattern.compile("[\\w+[\\w\\.]*]+", Pattern.UNICODE_CHARACTER_CLASS);
+    public static final Pattern AUTHORITYPATTERN = Pattern.compile("^\\w+(\\.\\w+)*(\\/\\w+(\\.\\w+)*)*$", Pattern.UNICODE_CHARACTER_CLASS);
     public static final int ID_MAX_LENGTH = 256;
     public static final int VERSION_MAX_LENGTH = 32;
     public static final int AUTHORITY_MAX_LENGTH = 64;
@@ -51,7 +51,7 @@ public final class Identities {
         if (value.length() > VERSION_MAX_LENGTH) {
             return false;
         }
-        return VERSIONPATTERN.matcher(value).matches();
+        return IDPATTERN.matcher(value).matches();
     }
 
     public static boolean isValidAuthority(final String value) {
@@ -120,7 +120,11 @@ public final class Identities {
         if (StringUtils.isBlank(authority)) {
             throw new IllegalArgumentException("Authoritiy cannot be null or empty.");
         }
-        return create.apply(authority, id, version);
+        try {
+            return create.apply(authority, id, version);
+        } catch (final NumberFormatException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     @FunctionalInterface

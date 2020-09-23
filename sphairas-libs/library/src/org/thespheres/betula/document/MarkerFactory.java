@@ -43,7 +43,16 @@ public class MarkerFactory {
         }
     }
 
-    public static Marker resolve(final String representation) {
+    public static Marker resolve(final String respresentation) {
+        final Marker res = resolveAbstract(respresentation);
+        if (Marker.isNull(res)) {
+            return Marker.NULL;
+        } else {
+            return MarkerFactory.find(res.getConvention(), res.getId(), res.getSubset());
+        }
+    }
+
+    public static Marker resolveAbstract(final String representation) {
         if (representation == null || representation.isEmpty()) {
             return Marker.NULL;
         }
@@ -76,7 +85,7 @@ public class MarkerFactory {
         if (subset != null && !subset.equals(StringUtils.strip(subset))) {
             throw new IllegalArgumentException("Untrimmed input \"" + subset + "\"");
         }
-        return MarkerFactory.find(cnv, id, subset);
+        return new AbstractMarker(cnv, id, subset);
     }
 
     public static Tag find(String convention, String id) {

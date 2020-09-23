@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang3.StringUtils;
 import org.thespheres.betula.Identity;
 import org.thespheres.betula.document.util.Identities;
 import org.thespheres.betula.util.DeweyDecimal;
@@ -76,6 +77,9 @@ public final class DocumentId extends Identity<String> implements Serializable {
     }
 
     public static DocumentId resolve(final String input, final String defaultAuthority, final Version defaultVersion) {
+        if (defaultVersion == null || StringUtils.isBlank(defaultVersion.getVersion())) {
+            throw new IllegalArgumentException("Version cannot be null or empty.");
+        }
         return Identities.resolve(input, (a, i, v) -> new DocumentId(a, i, Version.parse(v)), defaultAuthority, defaultVersion.getVersion());
     }
 

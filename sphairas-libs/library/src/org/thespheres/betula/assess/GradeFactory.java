@@ -7,6 +7,7 @@ package org.thespheres.betula.assess;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,13 @@ public class GradeFactory {
     }
 
     public static Grade resolve(final String representation) {
-        if (representation == null || representation.isEmpty()) {
+        return Optional.ofNullable(resolveAbstract(representation))
+                .map(ag -> GradeFactory.find(ag.getConvention(), ag.getId()))
+                .orElse(null);
+    }
+
+    public static AbstractGrade resolveAbstract(final String representation) {
+        if (StringUtils.isBlank(representation)) {
             return null;
         }
         final String[] parts = representation.split("#");
@@ -55,7 +62,7 @@ public class GradeFactory {
         if (!id.equals(StringUtils.strip(id))) {
             throw new IllegalArgumentException("Untrimmed input \"" + id + "\"");
         }
-        return GradeFactory.find(cnv, id);
+        return new AbstractGrade(cnv, id);
     }
 
     public static Grade find(String convention, String id) {

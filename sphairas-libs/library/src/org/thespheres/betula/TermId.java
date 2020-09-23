@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.thespheres.betula.document.util.Identities;
 
 /**
  *
@@ -42,6 +43,14 @@ public class TermId extends Identity<Integer> implements Serializable {
     @Override
     public String getAuthority() {
         return authority;
+    }
+
+    public static TermId resolve(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new TermId(a, Integer.parseInt(i)), null, null);
+    }
+
+    public static TermId resolve(final String input, final String defaultAuthority) {
+        return Identities.resolve(input, (a, i, v) -> new TermId(a, Integer.parseInt(i)), defaultAuthority, null);
     }
 
     @Override

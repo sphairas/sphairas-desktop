@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.thespheres.betula.document.util.Identities;
 
 /**
  *
@@ -49,6 +50,14 @@ public final class StudentId extends Identity<Long> implements Serializable {
     @Override
     public Long getId() {
         return id;
+    }
+
+    public static StudentId resolve(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new StudentId(a, Long.parseLong(i)), null, null);
+    }
+
+    public static StudentId resolve(final String input, final String defaultAuthority) {
+        return Identities.resolve(input, (a, i, v) -> new StudentId(a, Long.parseLong(i)), defaultAuthority, null);
     }
 
     @Override
