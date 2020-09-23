@@ -105,12 +105,13 @@ public abstract class Naming {
             }
         }
         final Object id = identity.getId();
-        NamingResolver.Result unresolved = new NamingResolver.Result(Collections.EMPTY_MAP) {
+        final NamingResolver.Result unresolved = new NamingResolver.Result(Collections.EMPTY_MAP) {
             @Override
             public String getResolvedName(Object... params) {
                 return id.toString();
             }
         };
+        unresolved.addResolverHint(NamingResolver.Result.HINT_UNRESOLVED);
         if (!(id instanceof String)) {
             return unresolved;
         }

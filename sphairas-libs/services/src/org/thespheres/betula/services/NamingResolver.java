@@ -73,7 +73,8 @@ public interface NamingResolver {
 
         public static final String ELEMENT_DEFAULT_NAME = "default.name";
         public static final String HINT_STATIC_NAME = "static.name";
-
+        public static final String HINT_UNRESOLVED = "unresolved";
+        
         protected final Map<String, String> elements = new HashMap<>();
         protected final ArrayList<String> hints = new ArrayList<>();
         protected final PropertyChangeSupport pSupport = new PropertyChangeSupport(this);
