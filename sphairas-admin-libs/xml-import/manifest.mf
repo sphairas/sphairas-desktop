@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: false
 OpenIDE-Module: org.thespheres.betula.xmlimport
-OpenIDE-Module-Implementation-Version: 5
+OpenIDE-Module-Implementation-Version: 6
 OpenIDE-Module-Layer: org/thespheres/betula/xmlimport/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/xmlimport/Bundle.properties
 

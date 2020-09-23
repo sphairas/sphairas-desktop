@@ -6,6 +6,7 @@
 package org.thespheres.betula.xmlimport.parse;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -167,14 +168,20 @@ public class NameParser {
 
     public DocumentId translateUnitIdToTargetDocumentBase(final String source, final String subjectId, String[] append) {
         final StringJoiner target = new StringJoiner("-");
+        boolean subjectAdded = false;//Add subject only once
         for (final String el : source.split("-")) {
             if (subjectId != null && TranslateID.NO_SUBJECT_ELEMENT.equals(el)) {
                 target.add(subjectId);
+                subjectAdded = true;
             } else if (subjectId != null && el.startsWith("abitur") && el.length() == "abitur".length() + 4) {
-                target.add(subjectId);
+                if (!subjectAdded) {
+                    target.add(subjectId);
+                    subjectAdded = true;
+                }
                 target.add(el);
             } else {
                 target.add(el);
+                subjectAdded = Objects.equals(el, subjectId);
             }
         }
         if (append != null) {
