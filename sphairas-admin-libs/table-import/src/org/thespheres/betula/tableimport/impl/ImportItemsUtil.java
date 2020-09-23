@@ -51,13 +51,16 @@ class ImportItemsUtil {
             dirName = sj.toString();
         }
         final XmlItem.SourceDateTime dob = xmls.getDateOfBirth();
+        final ImportStudentKey ret;
         if (dob != null) {
             final String sd = dob.getSourceDate();
             final LocalDate zdt = LocalDate.parse(sd, TargetItemsXmlCsvItem.DTF);
-            return new ImportStudentKey(dirName, sd, zdt);
+            ret = new ImportStudentKey(dirName, sd, zdt);
         } else {
-            return new ImportStudentKey(dirName);
+            ret = new ImportStudentKey(dirName);
         }
+        ret.setStudentId(xmls.getStudent());
+        return ret;
     }
 
     static String findN(final XmlStudentItem xmls) {
