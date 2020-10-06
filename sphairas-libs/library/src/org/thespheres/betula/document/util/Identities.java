@@ -19,11 +19,13 @@ import org.thespheres.betula.Identity;
 public final class Identities {
 
     public static final Pattern IDPATTERN = Pattern.compile("^\\w+([\\-\\.]\\w+)*$", Pattern.UNICODE_CHARACTER_CLASS);
+    public static final Pattern CONVENTIONPATTERN = IDPATTERN;
     //public static final Pattern VERSIONPATTERN = Pattern.compile("[\\w+[\\w\\.]*]+", Pattern.UNICODE_CHARACTER_CLASS);
     public static final Pattern AUTHORITYPATTERN = Pattern.compile("^\\w+(\\.\\w+)*(\\/\\w+(\\.\\w+)*)*$", Pattern.UNICODE_CHARACTER_CLASS);
     public static final int ID_MAX_LENGTH = 256;
     public static final int VERSION_MAX_LENGTH = 32;
     public static final int AUTHORITY_MAX_LENGTH = 64;
+    public static final int CONVENTION_MAX_LENGTH = 64;
 
     private Identities() {
     }
