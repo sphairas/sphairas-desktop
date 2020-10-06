@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 import java.util.Objects;
 import org.thespheres.betula.StudentId;
-import org.thespheres.betula.util.IDUtilities;
 
 /**
  *

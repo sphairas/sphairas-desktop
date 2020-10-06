@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import org.thespheres.betula.RecordId;
 import org.thespheres.betula.document.DocumentId;
-import org.thespheres.betula.util.IDUtilities;
 
 /**
  *

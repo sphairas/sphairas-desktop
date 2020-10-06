@@ -29,7 +29,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.document.DocumentId;
-import org.thespheres.betula.util.IDUtilities;
 
 /**
  *

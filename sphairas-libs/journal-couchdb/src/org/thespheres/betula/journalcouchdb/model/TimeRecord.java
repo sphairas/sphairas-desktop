@@ -15,7 +15,6 @@ import java.util.List;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.assess.GradeFactory;
-import org.thespheres.betula.util.IDUtilities;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)

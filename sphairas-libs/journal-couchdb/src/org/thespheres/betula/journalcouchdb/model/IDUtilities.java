@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thespheres.betula.util;
+package org.thespheres.betula.journalcouchdb.model;
 
 import java.lang.reflect.InvocationTargetException;
 import org.thespheres.betula.Identity;
@@ -16,12 +16,13 @@ import org.thespheres.betula.document.DocumentId;
  *
  * @author boris.heithecker
  */
-public class IDUtilities {
+@Deprecated
+class IDUtilities {
 
     private IDUtilities() {
     }
 
-    public static DocumentId parseDocumentId(String raw) throws IllegalArgumentException {
+    static DocumentId parseDocumentId(String raw) throws IllegalArgumentException {
         int rb = raw.indexOf("}");
         String auth = raw.substring(1, rb);
         int v = raw.indexOf("#");
@@ -37,15 +38,15 @@ public class IDUtilities {
         return new DocumentId(auth, id, version);
     }
 
-    public static StudentId parseStudentId(String raw) throws IllegalArgumentException {
+    static StudentId parseStudentId(String raw) throws IllegalArgumentException {
         return parseId(raw, StudentId.class, Long.class);
     }
 
-    public static UnitId parseUnitId(String raw) throws IllegalArgumentException {
+    static UnitId parseUnitId(String raw) throws IllegalArgumentException {
         return parseId(raw, UnitId.class, String.class);
     }
 
-    public static TermId parseTermId(String raw) throws IllegalArgumentException {
+    static TermId parseTermId(String raw) throws IllegalArgumentException {
         return parseId(raw, TermId.class, Integer.class);
     }
 
