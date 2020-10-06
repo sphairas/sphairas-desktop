@@ -64,7 +64,7 @@ public final class DocumentId extends Identity<String> implements Serializable {
     @Override
     public String toString() {
         final StringJoiner sj = new StringJoiner("@");
-        final String prefix = id + (getVersion().equals(Version.UNSPECIFIED) ? "" : "#" + version);
+        final String prefix = id + (getVersion().equals(Version.UNSPECIFIED) ? "" : Identity.VERSION_DELIMITER + version);
         sj.add(prefix);
         if (authority != null) {
             sj.add(authority);

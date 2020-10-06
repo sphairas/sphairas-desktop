@@ -14,7 +14,7 @@ import java.util.StringJoiner;
 public abstract class Identity<I> {
 
     public static final String AUTHORITY_DELIMITER = "@";
-    public static final String VERSION_DELIMITER = "#";
+    public static final String VERSION_DELIMITER = "/";
 
     public abstract I getId();
 
