@@ -78,7 +78,7 @@ public abstract class TextKursUpdater<I extends TextKursImportItem> extends Abst
 //                    }
 //                }
 //            }
-            kurs.entries().forEach(te -> tae.submit(te.getStudent(), term, te.getSection(), te.getText(), te.getTimestamp()));
+            kurs.entries().forEach(te -> tae.submit(te.getStudent(), term, te.getSection(), te.getText(), te.getTimestamp(), Action.FILE));
             //Signee
             if (signee != null) {
                 tae.getValue().addSigneeInfo("entitled.signee", signee);
