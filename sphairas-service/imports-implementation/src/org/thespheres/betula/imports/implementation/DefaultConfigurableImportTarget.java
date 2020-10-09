@@ -8,6 +8,8 @@ package org.thespheres.betula.imports.implementation;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.thespheres.betula.*;
 import org.thespheres.betula.assess.Grade;
@@ -80,8 +82,15 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
     public TargetDocumentProperties[] createTargetDocuments(ImportTargetsItem lesson) {
         final XmlTargetImportSettings.TargetDefault[] targetDefaults = importSettings.getTargetDefaults(lesson);
         return Arrays.stream(targetDefaults)
-                .map(xtd -> DefaultTargetDocument.create(xtd.getTargetType(), lesson, xtd.getPreferredConvention(), importSettings, processorHints.getTargetDefaults(xtd, lesson)))
+                .map(xtd -> DefaultTargetDocument.create(xtd.getTargetType(), lesson, xtd.getPreferredConvention(), importSettings, processorHints.getTargetDefaults(xtd, lesson), isTextValueTarget(xtd.getTargetType())))
                 .toArray(TargetDocumentProperties[]::new);
+    }
+
+    boolean isTextValueTarget(final String targetType) {
+        return Optional.ofNullable(this.properties.get("text.target.types"))
+                .map(v -> Set.of(v.split(",")))
+                .map(v -> v.contains(targetType))
+                .orElse(false);
     }
 
     @Override

@@ -16,11 +16,11 @@ import org.openide.util.NbBundle;
 import org.thespheres.betula.*;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.Description;
+import org.thespheres.betula.document.DocumentEntry;
 import org.thespheres.betula.document.Language;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.document.Timestamp;
-import org.thespheres.betula.document.util.TargetAssessmentEntry;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.NamingResolver;
 import org.thespheres.betula.services.scheme.spi.SchemeProvider;
@@ -54,7 +54,7 @@ public class TargetItemsUpdaterDescriptions {
         this.signees = signees;
     }
 
-    protected Description createTargetMarkerDescription(final TargetAssessmentEntry<TermId> tae, final Marker[] markers) {
+    protected Description createTargetMarkerDescription(final DocumentEntry<?> tae, final Marker[] markers) {
         final Language l = new Language(Language.IETF, "de");
         final String key = "targetMarkers";
         String docRes;
@@ -74,7 +74,7 @@ public class TargetItemsUpdaterDescriptions {
         return m.getLongLabel() + "(" + m.getId() + ")";
     }
 
-    Description createTargetSubjectAlternativeNameDescription(final TargetAssessmentEntry<TermId> tae, final String subjectAlternativeName) {
+    Description createTargetSubjectAlternativeNameDescription(final DocumentEntry<?> tae, final String subjectAlternativeName) {
         final Language l = new Language(Language.IETF, "de");
         final String key = "targetSubjectAlternativeName";
         String docRes;
@@ -87,7 +87,7 @@ public class TargetItemsUpdaterDescriptions {
         return new Description(key, value, l);
     }
 
-    Description createTargetDocumentValidityDescription(final TargetAssessmentEntry<TermId> tae, final LocalDate deleteDate) {
+    Description createTargetDocumentValidityDescription(final DocumentEntry<?> tae, final LocalDate deleteDate) {
         final Language l = new Language(Language.IETF, "de");
         final String key = "targetValidity";
         String docRes;
@@ -101,7 +101,7 @@ public class TargetItemsUpdaterDescriptions {
         return new Description(key, value, l);
     }
 
-    Description createTargetSigneeInfoDescription(final TargetAssessmentEntry<TermId> tae, final String entitlement, final Signee signee) {
+    Description createTargetSigneeInfoDescription(final DocumentEntry<?> tae, final String entitlement, final Signee signee) {
         final Language l = new Language(Language.IETF, "de");
         final String key = "targetSigneeInfo";
         String docRes;
@@ -135,6 +135,16 @@ public class TargetItemsUpdaterDescriptions {
         final String gradeRes = grade.getLongLabel();
         final String timestampRes = DATETIME_FORMATTER.format(timestamp.getDateTime());
         final String value = MessageFormat.format(BUNDLE.getString(key), new Object[]{stud, termRes, gradeRes, timestampRes});
+        return new Description(key, value, l);
+    }
+
+    protected Description createTargetStudentTextEntryDescription(final StudentId student, final Term term, final String text, final Timestamp timestamp) {
+        final Language l = new Language(Language.IETF, "de");
+        final String key = "targetStudentEntry";
+        final String stud = students.find(student).getFullName();
+        final String termRes = term.getDisplayName();
+        final String timestampRes = DATETIME_FORMATTER.format(timestamp.getDateTime());
+        final String value = MessageFormat.format(BUNDLE.getString(key), new Object[]{stud, termRes, text, timestampRes});
         return new Description(key, value, l);
     }
 

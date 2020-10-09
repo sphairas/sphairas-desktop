@@ -33,11 +33,21 @@ public abstract class TargetDocumentProperties implements TargetDocument {
     private final Map<String, Signee> signees = new HashMap<>();
     private final String preferredConvention;
     private final SigneeInfo creationInfo = new AbstractCreationInfo();
+    private final boolean isTextValueTarget;
 
-    public TargetDocumentProperties(DocumentId document, Marker[] markers, String targetType, String preferredConvention, LocalDate deleteDate) {
+    protected TargetDocumentProperties(final DocumentId document, final Marker[] markers, final String targetType, final String preferredConvention, final LocalDate deleteDate) {
+        this(document, markers, targetType, false, preferredConvention, deleteDate);
+    }
+
+    protected TargetDocumentProperties(final DocumentId document, final Marker[] markers, final String targetType, final LocalDate deleteDate) {
+        this(document, markers, targetType, true, null, deleteDate);
+    }
+
+    protected TargetDocumentProperties(final DocumentId document, final Marker[] markers, final String targetType, final boolean isText, final String preferredConvention, final LocalDate deleteDate) {
         this.document = document;
         this.markers = markers;
         this.targetType = targetType;
+        this.isTextValueTarget = isText;
         this.preferredConvention = preferredConvention;
         this.deleteDate = deleteDate;
     }
@@ -81,7 +91,23 @@ public abstract class TargetDocumentProperties implements TargetDocument {
         return deleteDate;
     }
 
-    public abstract Grade getDefaultGrade();
+    public boolean isTextValueTarget() {
+        return this.isTextValueTarget;
+    }
+
+    public Grade getDefaultGrade() {
+        if (this.isTextValueTarget()) {
+            throw new UnsupportedOperationException("Method not supported for text value target.");
+        }
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+
+    public String getDefaultText() {
+        if (!this.isTextValueTarget()) {
+            throw new UnsupportedOperationException("Method not supported for non-text value target.");
+        }
+        throw new UnsupportedOperationException("Not implemented.");
+    }
 
     @Override
     public Map<String, Signee> getSignees() {

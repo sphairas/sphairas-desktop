@@ -68,6 +68,18 @@ public class XmlTargetImportSettings implements DocumentDefaults<Grade, TargetDo
         return ret;
     }
 
+    public String getDefaultText(DocumentId id, TargetDocument document) {
+        final String target = document == null ? null : document.getTargetType();
+        if (target != null && targetDefaults != null) {
+            return Arrays.stream(targetDefaults)
+                    .filter(td -> td.target.equalsIgnoreCase(target))
+                    .map(TargetDefault::getDefaultText)
+                    .filter(Objects::nonNull)
+                    .collect(CollectionUtil.singleOrNull());
+        }
+        return null;
+    }
+
     public TargetDefault[] getTargetDefaults(final ImportTargetsItem selector) {
         if (targetDefaults != null) {
             return Arrays.stream(targetDefaults)
@@ -122,6 +134,8 @@ public class XmlTargetImportSettings implements DocumentDefaults<Grade, TargetDo
         @XmlJavaTypeAdapter(GradeAdapter.class)
         @XmlElement(name = "default")
         private Grade defaultGrade;
+        @XmlAttribute(name = "default-empty-text")
+        private Boolean defaultEmptyText;
         @XmlElement(name = "preferred-convention")
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         private String preferredConvention;
@@ -155,6 +169,10 @@ public class XmlTargetImportSettings implements DocumentDefaults<Grade, TargetDo
 
         public void setSelector(XmlTargetSelector[] selector) {
             this.selector = selector;
+        }
+
+        public String getDefaultText() {
+            return (this.defaultEmptyText == null || this.defaultEmptyText == true) ? "" : null;
         }
 
     }

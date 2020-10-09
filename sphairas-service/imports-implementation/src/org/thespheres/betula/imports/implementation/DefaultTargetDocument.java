@@ -12,9 +12,7 @@ import org.openide.util.NbBundle.Messages;
 import org.thespheres.betula.assess.GradeFactory;
 import org.thespheres.betula.assess.AssessmentConvention;
 import org.thespheres.betula.assess.Grade;
-import org.thespheres.betula.assess.TargetDocument;
 import org.thespheres.betula.document.DocumentId;
-import org.thespheres.betula.document.model.DocumentDefaults;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.XmlTargetImportSettings;
 import org.thespheres.betula.xmlimport.utilities.ImportConfigurationException;
@@ -26,11 +24,11 @@ import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
  */
 class DefaultTargetDocument extends TargetDocumentProperties {
 
-    private final DocumentDefaults<Grade, TargetDocument> defaultGrades;
+    private final XmlTargetImportSettings defaultGrades;
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
-    DefaultTargetDocument(DocumentId id, ImportTargetsItem imp, String targetType, String preferredConvention, XmlTargetImportSettings settings, Map<String, String> hints) {
-        super(id, imp.allMarkers(), targetType, preferredConvention, imp.getDeleteDate());
+    DefaultTargetDocument(DocumentId id, ImportTargetsItem imp, String targetType, boolean text, String preferredConvention, XmlTargetImportSettings settings, Map<String, String> hints) {
+        super(id, imp.allMarkers(), targetType, text, preferredConvention, imp.getDeleteDate());
         this.defaultGrades = settings;
         getProcessorHints().putAll(hints);
 //        getProcessorHints().put("process-bulk", "true");
@@ -41,15 +39,15 @@ class DefaultTargetDocument extends TargetDocumentProperties {
     }
 
     @Messages({"DefaultTargetDocument.create.missingAssessmentConvention.message=Für den Import der Liste \"{0}\" konnte keine Notensystem-Vorgabe gefunden werden."})
-    public static DefaultTargetDocument create(final String suffix, ImportTargetsItem imp, String preferredConvention, XmlTargetImportSettings settings, Map<String, String> hints) {
+    public static DefaultTargetDocument create(final String suffix, ImportTargetsItem imp, String preferredConvention, XmlTargetImportSettings settings, Map<String, String> hints, boolean text) {
         //TODO: really override imp.getPreferredConvention ???? 
-        AssessmentConvention gv;
+        AssessmentConvention gv = null;
         if (preferredConvention != null) {
             gv = GradeFactory.findConvention(preferredConvention);
-        } else {
+        } else if (!text) {
             gv = GradeFactory.findConvention(imp.getPreferredConvention());
         }
-        if (gv == null) {
+        if (gv == null && !text) {
             final String msg = NbBundle.getMessage(DefaultTargetDocument.class, "DefaultTargetDocument.create.missingAssessmentConvention.message", imp.getSourceNodeLabel());
             throw new ImportConfigurationException(msg);
         }
@@ -58,7 +56,7 @@ class DefaultTargetDocument extends TargetDocumentProperties {
             throw new IllegalArgumentException("Suffix already added.");
         }
         DocumentId id = new DocumentId(baseId.getAuthority(), baseId.getId() + "-" + suffix, baseId.getVersion());
-        return new DefaultTargetDocument(id, imp, StringUtils.capitalize(suffix), gv.getName(), settings, hints);
+        return new DefaultTargetDocument(id, imp, StringUtils.capitalize(suffix), text, gv != null ? gv.getName() : null, settings, hints);
     }
 
     @Override
@@ -71,6 +69,11 @@ class DefaultTargetDocument extends TargetDocumentProperties {
         //TODO: use NdsDefaultproperties and XmlDefaultGrades
 //        return DEFAULT_GRADES.getDefaultValue(getDocument(), this);
         return defaultGrades.getDefaultValue(getDocument(), this);
+    }
+
+    @Override
+    public String getDefaultText() {
+        return defaultGrades.getDefaultText(getDocument(), this);
     }
 
 }

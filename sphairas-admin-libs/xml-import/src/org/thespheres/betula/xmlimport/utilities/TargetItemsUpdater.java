@@ -27,7 +27,9 @@ import org.thespheres.betula.document.Entry;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.Timestamp;
 import org.thespheres.betula.document.model.DocumentsModel;
+import org.thespheres.betula.document.util.BaseTargetAssessmentEntry;
 import org.thespheres.betula.document.util.TargetAssessmentEntry;
+import org.thespheres.betula.document.util.TextAssessmentEntry;
 import org.thespheres.betula.document.util.UnitEntry;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.scheme.spi.Term;
@@ -135,10 +137,14 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
                         if (tdMessage != null) {
                             ImportUtil.getIO().getOut().println(tdMessage);
                         }
-                        final TargetAssessmentEntry<TermId> tae = builder.createTargetAssessmentAction(unitId, td.getDocument(), Paths.UNITS_TARGETS_PATH, null, Action.FILE, td.isFragment());
-                        writeTargetEntry(importTargetsItem, tae, td);
+                        if (td.isTextValueTarget()) {
+                            final TextAssessmentEntry txae = builder.createTextAssessmentAction(unitId, td.getDocument(), Paths.TEXT_UNITS_TARGETS_PATH, null, Action.FILE, td.isFragment());
+                            writeTargetEntry(importTargetsItem, txae, td);
+                        } else {
+                            final TargetAssessmentEntry<TermId> tae = builder.createTargetAssessmentAction(unitId, td.getDocument(), Paths.UNITS_TARGETS_PATH, null, Action.FILE, td.isFragment());
+                            writeTargetEntry(importTargetsItem, tae, td);
+                        }
                     }
-
                     //Add students to unit
                     //TODO: better solution for "!sibankkurs.isKlassenfach), problem: primary units are not updated properly
                     if (!UnitId.isNull(unitId) && importTargetsItem.fileUnitParticipants()) {
@@ -165,7 +171,7 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
         }
     }
 
-    protected void writeTargetEntry(final I importTargetsItem, final TargetAssessmentEntry<TermId> tae, final TargetDocumentProperties td) {
+    protected void writeTargetEntry(final I importTargetsItem, final BaseTargetAssessmentEntry<TermId, StudentId> tae, final TargetDocumentProperties td) {
         final Marker[] markers = td.markers();
         if (markers != null && markers.length != 0) {
             tae.getValue().getMarkerSet().addAll(Arrays.asList(markers));
@@ -176,8 +182,8 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
         }
         tae.getHints().putAll(td.getProcessorHints());
         final String preferredConvention = td.getPreferredConvention();
-        if (preferredConvention != null) {
-            tae.setPreferredConvention(preferredConvention);
+        if (preferredConvention != null && tae instanceof TargetAssessmentEntry) {
+            ((TargetAssessmentEntry) tae).setPreferredConvention(preferredConvention);
         }
         final String targetType = td.getTargetType();
         if (targetType != null) {
@@ -208,38 +214,57 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
         });
 
         final StudentId[] unitStuds = importTargetsItem.getUnitStudents();
-        final Grade defaultGrade = td.getDefaultGrade();
-        if (unitStuds != null && defaultGrade != null && term != null) {
+        Grade defaultGrade = null;
+        try {
+            defaultGrade = td.getDefaultGrade();
+        } catch (UnsupportedOperationException e) {
+        }
+        String defaultText = null;
+        try {
+            defaultText = td.getDefaultText();
+        } catch (UnsupportedOperationException e) {
+        }
+        if (unitStuds != null && term != null) {
             final TermId tid = term.getScheduledItemId();
             final Timestamp gradeTime = new Timestamp(term.getBegin());
             for (final StudentId stud : unitStuds) {
                 if (!checkStudent(importTargetsItem, td, stud)) {
                     continue;
                 }
-                final Entry<StudentId, Grade> se = tae.submit(stud, tid, defaultGrade, gradeTime, Action.FILE);
-                if (addDescriptions != null) {
-                    final Description d = addDescriptions.createTargetStudentEntryDescription(stud, term, defaultGrade, gradeTime);
-                    se.getDescription().add(d);
+                if (defaultGrade != null && tae instanceof TargetAssessmentEntry) {
+                    final Entry<StudentId, Grade> se = ((TargetAssessmentEntry) tae).submit(stud, tid, defaultGrade, gradeTime, Action.FILE);
+                    if (addDescriptions != null) {
+                        final Description d = addDescriptions.createTargetStudentEntryDescription(stud, term, defaultGrade, gradeTime);
+                        se.getDescription().add(d);
+                    }
+                } else if (defaultText != null && tae instanceof TextAssessmentEntry) {
+                    final Entry<StudentId, String> se = ((TextAssessmentEntry) tae).submit(stud, tid, null, defaultText, gradeTime, Action.FILE);
+                    if (addDescriptions != null) {
+                        final Description d = addDescriptions.createTargetStudentTextEntryDescription(stud, term, defaultText, gradeTime);
+                        se.getDescription().add(d);
+                    }
                 }
             }
             final long termBegin = term.getBegin().getTime();
             tae.getHints().put("keep.old.target.entries.after", Long.toString(termBegin));
         }
-        importTargetsItem.identities().forEach(t -> {
-            importTargetsItem.students().forEach(s -> {
-                importTargetsItem.entry(s, t)
-                        .filter(GradeEntry::isValid)
-                        .ifPresent(ge -> {
-                            if (checkGradeEntry(importTargetsItem, td, s, t, ge)) {
-                                final Entry<StudentId, Grade> se = tae.submit(s, ge.getTerm(), ge.getGrade(), ge.getTimestamp(), Action.FILE);
-                                if (addDescriptions != null) {
-                                    final Description d = addDescriptions.createTargetStudentEntryDescription(s, ge);
-                                    se.getDescription().add(d);
+        if (tae instanceof TargetAssessmentEntry) {
+            importTargetsItem.identities().forEach(t -> {
+                importTargetsItem.students().forEach(s -> {
+                    importTargetsItem.entry(s, t)
+                            .filter(GradeEntry::isValid)
+                            .ifPresent(ge -> {
+                                if (checkGradeEntry(importTargetsItem, td, s, t, ge)) {
+                                    final Entry<StudentId, Grade> se = ((TargetAssessmentEntry) tae).submit(s, ge.getTerm(), ge.getGrade(), ge.getTimestamp(), Action.FILE);
+                                    if (addDescriptions != null) {
+                                        final Description d = addDescriptions.createTargetStudentEntryDescription(s, ge);
+                                        se.getDescription().add(d);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                });
             });
-        });
+        }
     }
 
     protected void writeUnitEntry(final I importTargetsItem, final UnitEntry uEntry) {
