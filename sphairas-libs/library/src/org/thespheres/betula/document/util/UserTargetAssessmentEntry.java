@@ -27,7 +27,7 @@ import org.thespheres.betula.document.Timestamp;
 @XmlRootElement(name = "user-assessment-document", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "userTargetAssessmentEntryType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserTargetAssessmentEntry<I extends Identity> extends AbstractTargetAssessmentEntry<I, UserId> implements Serializable {
+public class UserTargetAssessmentEntry<I extends Identity> extends AbstractGradeTargetAssessmentEntry<I, UserId> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

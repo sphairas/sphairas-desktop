@@ -5,16 +5,15 @@
 package org.thespheres.betula.document.util;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.TermId;
-import org.thespheres.betula.assess.TargetAssessment;
 import org.thespheres.betula.document.Action;
-import org.thespheres.betula.document.DocumentEntry;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Entry;
 import org.thespheres.betula.document.Marker;
@@ -28,7 +27,7 @@ import org.thespheres.betula.document.Timestamp;
 @XmlRootElement(name = "betula-text-assessment-document", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "textAssessmentEntryType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TextAssessmentEntry extends DocumentEntry implements Serializable {
+public class TextAssessmentEntry extends BaseTargetAssessmentEntry<TermId, StudentId> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,20 +45,20 @@ public class TextAssessmentEntry extends DocumentEntry implements Serializable {
     }
 
     @Override
-    public GenericXmlDocument getValue() {
-        return (GenericXmlDocument) super.getValue();
+    public Set<StudentId> students() {
+        return getChildren().stream()
+                .filter(Entry.class::isInstance)
+                .map(Entry.class::cast)
+                .flatMap(e -> e.getChildren().stream())
+                .filter(Entry.class::isInstance)
+                .map(Entry.class::cast)
+                .map(Entry::getIdentity)
+                .filter(StudentId.class::isInstance)
+                .map(StudentId.class::cast)
+                .collect(Collectors.toSet());
     }
 
-//    @Override
-//    public void setValue(Document value) {
-//        if (value != null && value instanceof GenericXmlDocument) {
-//            super.setValue(value);
-//            super.setIdentity(((GenericXmlDocument) value).getPreferredDocumentId());
-//        } else {
-//            throw new IllegalArgumentException();
-//        }
-//    }
-    public void submit(final StudentId student, final TermId term, final Marker section, final String text, final Timestamp timestamp) {
+    public Entry<StudentId, String> submit(final StudentId student, final TermId term, final Marker section, final String text, final Timestamp timestamp, final Action gradeIdAction) {
         if (student == null) {
             throw new IllegalArgumentException("Student cannot be null.");
         }
@@ -68,9 +67,9 @@ public class TextAssessmentEntry extends DocumentEntry implements Serializable {
             current = findEntry(term);
             if (current == null) {
                 if (text == null) {
-                    return;
+                    return null;
                 }
-                current = new Entry(Action.FILE, term);
+                current = new Entry(gradeIdAction, term);
                 getChildren().add(current);
             }
         }
@@ -80,7 +79,7 @@ public class TextAssessmentEntry extends DocumentEntry implements Serializable {
             Template sectionEntry = findSectionNode(sma, current);
             if (sectionEntry == null) {
                 if (text == null) {
-                    return;
+                    return null;
                 }
                 sectionEntry = new Template(Action.FILE, sma);
                 current.getChildren().add(sectionEntry);
@@ -88,10 +87,10 @@ public class TextAssessmentEntry extends DocumentEntry implements Serializable {
             current = sectionEntry;
         }
 
-        Entry studEntry = findEntry(student, current);
+        Entry<StudentId, String> studEntry = findEntry(student, current);
         if (studEntry == null) {
             if (text == null) {
-                return;
+                return null;
             }
             studEntry = new Entry(Action.FILE, student);
             current.getChildren().add(studEntry);
@@ -104,6 +103,7 @@ public class TextAssessmentEntry extends DocumentEntry implements Serializable {
             studEntry.setValue(text);
             studEntry.setTimestamp(timestamp);
         }
+        return studEntry;
     }
 
     public String select(final StudentId student, final TermId gradeId, final Marker section) {
@@ -159,23 +159,4 @@ public class TextAssessmentEntry extends DocumentEntry implements Serializable {
         return studEntry.getTimestamp();
     }
 
-    public void setDocumentValidity(ZonedDateTime deleteDate) {
-        getValue().setDocumentValidity(deleteDate);
-    }
-
-    public String getPreferredConvention() {
-        return getValue().getContentString(TargetAssessment.PROP_PREFERRED_CONVENTION);
-    }
-
-    public void setPreferredConvention(String con) {
-        getValue().setContent(TargetAssessment.PROP_PREFERRED_CONVENTION, con);
-    }
-
-    public String getTargetType() {
-        return getValue().getContentString(TargetAssessment.PROP_TARGETTYPE);
-    }
-
-    public void setTargetType(String type) {
-        getValue().setContent(TargetAssessment.PROP_TARGETTYPE, type);
-    }
 }

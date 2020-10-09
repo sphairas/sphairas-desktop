@@ -44,7 +44,7 @@ public class DocumentEntry<D extends Document> extends Entry<DocumentId, D> impl
         return findEntry(identity, this);
     }
 
-    protected <I extends Identity> Entry<I, ?> findEntry(I identity, Template<?> parent) {
+    protected <I extends Identity, V> Entry<I, V> findEntry(I identity, Template<?> parent) {
         for (Template t : parent.getChildren()) {
             if (t instanceof Entry) {
                 Entry entry = (Entry) t;

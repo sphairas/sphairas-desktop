@@ -5,11 +5,6 @@
  */
 package org.thespheres.betula.document.util;
 
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -17,10 +12,10 @@ import org.thespheres.betula.Identity;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.assess.TargetAssessment;
 import org.thespheres.betula.document.Action;
-import org.thespheres.betula.document.Document;
-import org.thespheres.betula.document.DocumentEntry;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Entry;
+import org.thespheres.betula.document.Marker;
+import org.thespheres.betula.document.Template;
 import org.thespheres.betula.document.Timestamp;
 import org.thespheres.betula.util.GradeAdapter;
 
@@ -31,32 +26,18 @@ import org.thespheres.betula.util.GradeAdapter;
  * @param <S>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractTargetAssessmentEntry<I extends Identity, S extends Identity> extends DocumentEntry implements Serializable {
+public abstract class AbstractGradeTargetAssessmentEntry<I extends Identity, S extends Identity> extends BaseTargetAssessmentEntry<I, S> {
 
-    private static final long serialVersionUID = 1L;
     @XmlAttribute(name = "file-null-grade-entries")
     protected final boolean fileNullGradeEntries = true;
     @XmlAttribute(name = "override-timestamp-with-null")
     protected final boolean overrideTimestampWithNull = false;
 
-    protected AbstractTargetAssessmentEntry() {
+    protected AbstractGradeTargetAssessmentEntry() {
     }
 
-    protected AbstractTargetAssessmentEntry(Action action, DocumentId id) {
+    protected AbstractGradeTargetAssessmentEntry(Action action, DocumentId id) {
         super(action, id); //TODO: fileNullGradeEntries = action.equals(Action.FILE)
-    }
-
-    @Override
-    public GenericXmlDocument getValue() {
-        return (GenericXmlDocument) super.getValue();
-    }
-
-    protected Grade findGrade(Entry stud) {
-        try {
-            return (stud.getValue() != null && stud.getValue() instanceof GradeAdapter) ? ((GradeAdapter) stud.getValue()).getGrade() : null;
-        } catch (Exception ex) {
-            return null;
-        }
     }
 
     public void submit(S student, Grade grade, Timestamp timestamp) {
@@ -67,35 +48,54 @@ public abstract class AbstractTargetAssessmentEntry<I extends Identity, S extend
         submit(student, gradeId, grade, timestamp, null);
     }
 
-    // "process-bulk" = gradeIdAction = Action.File
     public Entry<S, Grade> submit(final S student, final I gradeId, final Grade grade, final Timestamp timestamp, final Action gradeIdAction) {
+        return submit(student, gradeId, null, grade, timestamp, gradeIdAction);
+    }
+
+    // "process-bulk" = gradeIdAction = Action.File
+    public Entry<S, Grade> submit(final S student, final I gradeId, final Marker section, final Grade grade, final Timestamp timestamp, final Action gradeIdAction) {
         if (student == null) {
             throw new IllegalArgumentException("Student null.");
         }
-        Entry gradeEntry = this;
+
+        Template current = this;
         if (gradeId != null) {
-            gradeEntry = findEntry(gradeId);
-            if (gradeEntry == null) {
+            current = findEntry(gradeId);
+            if (current == null) {
                 if (grade == null && !fileNullGradeEntries) {
                     return null;
                 }
-                gradeEntry = new Entry(gradeIdAction, gradeId);
-                getChildren().add(gradeEntry);
+                current = new Entry(gradeIdAction, gradeId);
+                getChildren().add(current);
             }
         }
-        Entry studEntry = findEntry(student, gradeEntry);
+
+        if (section != null) {
+            final MarkerAdapter sma = new MarkerAdapter(section);
+            Template sectionEntry = findSectionNode(sma, current);
+            if (sectionEntry == null) {
+                if (grade == null) {
+                    return null;
+                }
+                sectionEntry = new Template(Action.FILE, sma);
+                current.getChildren().add(sectionEntry);
+            }
+            current = sectionEntry;
+        }
+
+        Entry studEntry = findEntry(student, current);
         if (studEntry == null) {
             if (grade == null && !fileNullGradeEntries) {
                 return null;
             }
             studEntry = new Entry(null, student);
-            gradeEntry.getChildren().add(studEntry);
+            current.getChildren().add(studEntry);
         }
         if (grade == null && !fileNullGradeEntries) {
-            gradeEntry.getChildren().remove(studEntry);
+            current.getChildren().remove(studEntry);
             studentRemoved(student, gradeId);
         } else {
-            final Grade old = findGrade(gradeEntry);
+            final Grade old = findGrade(current);
             final Action ac = grade == null ? Action.ANNUL : Action.FILE;  //TODO: action
             studEntry.setAction(ac);
             if (grade != null) {
@@ -116,25 +116,53 @@ public abstract class AbstractTargetAssessmentEntry<I extends Identity, S extend
     }
 
     public Grade select(S student, I gradeId) {
+        return select(student, null, null);
+    }
+
+    public Grade select(S student, I gradeId, Marker section) {
         if (student == null) {
             throw new IllegalArgumentException("Student null");
         }
-        Entry studEntry = findStudentEntry(student, gradeId);
+        Template studEntry = findStudentEntry(student, gradeId, section);
         if (studEntry == null) {
             return null;
         }
         return findGrade(studEntry);
     }
 
-    protected Entry findStudentEntry(S student, I gradeId) {
-        Entry gradeEntry = this;
+    protected Entry findStudentEntry(S student, I gradeId, Marker section) {
+        Template current = this;
         if (gradeId != null) {
-            gradeEntry = findEntry(gradeId);
-            if (gradeEntry == null) {
+            current = findEntry(gradeId);
+            if (current == null) {
                 return null;
             }
         }
-        return findEntry(student, gradeEntry);
+        if (section != null) {
+            final MarkerAdapter sma = new MarkerAdapter(section);
+            current = findSectionNode(sma, current);
+            if (current == null) {
+                return null;
+            }
+        }
+        return findEntry(student, current);
+    }
+
+    private Template findSectionNode(final MarkerAdapter section, final Template<?> parent) {
+        for (final Template t : parent.getChildren()) {
+            if (t.getValue() != null && t.getValue().equals(section)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    protected Grade findGrade(Template stud) {
+        try {
+            return (stud.getValue() != null && stud.getValue() instanceof GradeAdapter) ? ((GradeAdapter) stud.getValue()).getGrade() : null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public Timestamp timestamp(S student) {
@@ -142,40 +170,18 @@ public abstract class AbstractTargetAssessmentEntry<I extends Identity, S extend
     }
 
     public Timestamp timestamp(S student, I gradeId) {
+        return timestamp(student, null, null);
+    }
+
+    public Timestamp timestamp(S student, I gradeId, Marker section) {
         if (student == null) {
             throw new IllegalArgumentException("Student null");
         }
-        Entry studEntry = findStudentEntry(student, gradeId);
+        Entry studEntry = findStudentEntry(student, gradeId, section);
         if (studEntry == null) {
             return null;
         }
         return studEntry.getTimestamp();
-    }
-
-    public abstract Set<S> students();
-
-    public Set<I> identities() {
-        return getChildren().stream()
-                .filter(Entry.class::isInstance)
-                .map(Entry.class::cast)
-                .map(e -> {
-                    try {
-                        return (I) e.getIdentity();
-                    } catch (ClassCastException cce) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-    }
-
-    public ZonedDateTime getDocumentValidity() {
-        final Document.Validity dv = getValue().getDocumentValidity();
-        return dv == null ? null : dv.getExpirationDate();
-    }
-
-    public void setDocumentValidity(ZonedDateTime deleteDate) {
-        getValue().setDocumentValidity(deleteDate);
     }
 
     public String getPreferredConvention() {
@@ -184,22 +190,6 @@ public abstract class AbstractTargetAssessmentEntry<I extends Identity, S extend
 
     public void setPreferredConvention(String con) {
         getValue().setContent(TargetAssessment.PROP_PREFERRED_CONVENTION, con);
-    }
-
-    public String getTargetType() {
-        return getValue().getContentString(TargetAssessment.PROP_TARGETTYPE);
-    }
-
-    public void setTargetType(String type) {
-        getValue().setContent(TargetAssessment.PROP_TARGETTYPE, type);
-    }
-
-    public String getSubjectAlternativeName() {
-        return getValue().getContentString(TargetAssessment.PROP_SUBJECT_NAME);
-    }
-
-    public void setSubjectAlternativeName(String name) {
-        getValue().setContent(TargetAssessment.PROP_SUBJECT_NAME, name);
     }
 
     protected abstract void studentChanged(S s, Identity id, Grade o, Grade n, Timestamp ts);

@@ -29,7 +29,7 @@ import org.thespheres.betula.assess.IdentityTargetAssessment;
 @XmlRootElement(name = "betula-assessment-document", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlType(name = "targetAssessmentEntryType", namespace = "http://www.thespheres.org/xsd/betula/container.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TargetAssessmentEntry<I extends Identity> extends AbstractTargetAssessmentEntry<I, StudentId> implements IdentityTargetAssessment<Grade, I, IdentityTargetAssessment.Listener<Grade, I>> {
+public class TargetAssessmentEntry<I extends Identity> extends AbstractGradeTargetAssessmentEntry<I, StudentId> implements IdentityTargetAssessment<Grade, I, IdentityTargetAssessment.Listener<Grade, I>> {
 
     private static final long serialVersionUID = 1L;
     private transient EventListenerList listenerList;
