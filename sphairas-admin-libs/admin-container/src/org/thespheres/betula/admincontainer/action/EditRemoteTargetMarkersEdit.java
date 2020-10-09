@@ -20,6 +20,7 @@ import org.openide.util.Mutex;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.OutputWriter;
+import org.thespheres.betula.StudentId;
 import org.thespheres.betula.TermId;
 import org.thespheres.betula.admin.units.AbstractUnitOpenSupport;
 import org.thespheres.betula.admincontainer.util.TargetsUtil;
@@ -27,6 +28,7 @@ import org.thespheres.betula.document.Action;
 import org.thespheres.betula.document.DocumentEntry;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerConvention;
+import org.thespheres.betula.document.util.BaseTargetAssessmentEntry;
 import org.thespheres.betula.document.util.GenericXmlDocument;
 import org.thespheres.betula.document.util.TargetAssessmentEntry;
 import org.thespheres.betula.document.util.UnitEntry;
@@ -157,7 +159,7 @@ class EditRemoteTargetMarkersEdit extends AbstractUndoableEdit {
         }
 
         @Override
-        protected void writeTargetEntry(final EditRemoteTargetMarkersImportTargetsItem iti, final TargetAssessmentEntry<TermId> tae, final TargetDocumentProperties td) {
+        protected void writeTargetEntry(final EditRemoteTargetMarkersImportTargetsItem iti, final BaseTargetAssessmentEntry<TermId, StudentId> tae, final TargetDocumentProperties td) {
             super.writeTargetEntry(iti, tae, td);
             writeRemoveMarkers(iti, tae);
         }
