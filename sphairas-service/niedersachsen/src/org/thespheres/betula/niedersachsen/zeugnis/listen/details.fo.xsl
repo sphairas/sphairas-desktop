@@ -162,7 +162,9 @@
                                         <fo:block keep-with-next.within-page="always" space-before="5pt" margin-left="2pt" height="0.5cm" font-weight="bold" font-size="9pt" font-family="SansSerif" text-align="left">
                                             <xsl:value-of select="@title"/>
                                         </fo:block>
-                                        <fo:block min-height="0.6cm" margin-left="2pt" font-size="9pt" font-family="SansSerif" text-align="left" hyphenate="true" >
+                                        
+                                        <!--https://stackoverflow.com/questions/3661483/inserting-a-line-break-in-a-pdf-generated-from-xsl-fo-using-xslvalue-of-->
+                                        <fo:block min-height="0.6cm" margin-left="2pt" font-size="9pt" font-family="SansSerif" text-align="left" hyphenate="true" linefeed-treatment="preserve">
                                             <xsl:if test="."> 
                                                 <xsl:value-of select="."/> 
                                             </xsl:if>
