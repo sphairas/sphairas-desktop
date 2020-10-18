@@ -7,6 +7,7 @@ package org.thespheres.betula.curriculum.xml;
 
 import org.thespheres.betula.curriculum.DefaultCourseSelectionValue;
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.thespheres.betula.curriculum.Curriculum;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -81,6 +82,29 @@ public class XmlCurriculum implements Curriculum {
             courses.add(ret);
         }
         throw new IllegalArgumentException();
+    }
+
+    public boolean removeEntry(final String id) {
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
+        final int ret = removeRecursively(courses, id, 0);
+        return ret != 0;
+    }
+
+    private int removeRecursively(final List<? extends CourseEntry> l, final String id, int ret) {
+        final Iterator<? extends CourseEntry> it = l.iterator();
+        while (it.hasNext()) {
+            final CourseEntry ce = it.next();
+            if (ce.getId().equals(id)) {
+                it.remove();
+                ++ret;
+            } else if (ce instanceof CourseGroup) {
+                final CourseGroup cg = (CourseGroup) ce;
+                ret += removeRecursively(cg.getChildren(), id, ret);
+            }
+        }
+        return ret;
     }
 
 }

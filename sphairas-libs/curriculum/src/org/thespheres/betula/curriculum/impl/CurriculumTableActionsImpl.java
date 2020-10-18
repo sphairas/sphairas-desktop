@@ -102,7 +102,10 @@ public class CurriculumTableActionsImpl extends CurriculumTableActions<XmlCurric
 
     @Override
     public void removeCourse(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final boolean mod = getCurriculum().removeEntry(id);
+        if (mod) {
+            setFileModified(true);
+        }
     }
 
     @Override

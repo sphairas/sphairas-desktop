@@ -52,8 +52,7 @@ public class XmlCourseGroup extends XmlCourseEntry implements CourseGroup {
 
     @Override
     public List<CourseEntry> getChildren() {
-        return children.stream()
-                .collect(Collectors.toList());
+        return children;
     }
 
     @Override

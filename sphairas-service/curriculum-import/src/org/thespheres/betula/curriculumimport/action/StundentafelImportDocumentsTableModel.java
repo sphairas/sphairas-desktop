@@ -9,7 +9,6 @@ import org.thespheres.betula.curriculumimport.StundentafelImportTargetsItem;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 import java.util.Set;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
@@ -24,7 +23,6 @@ import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
 import org.thespheres.betula.xmlimport.uiutil.ImportTableModel;
 import org.thespheres.betula.xmlimport.uiutil.DefaultColumns;
 import org.thespheres.betula.xmlimport.uiutil.DefaultColumns.SigneeColumn;
-import org.thespheres.betula.xmlimport.uiutil.DefaultColumns.SourceSigneeColumn;
 import org.thespheres.betula.xmlimport.uiutil.ImportTableColumn;
 import org.thespheres.betula.xmlimport.uiutil.UnitColumn;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
@@ -43,23 +41,15 @@ class StundentafelImportDocumentsTableModel extends ImportTableModel<Stundentafe
     private static Set<ImportTableColumn> createColumns() {
         final String product = NbBundle.getMessage(StundentafelImportDocumentsTableModel.class, "StundentafelImportDocumentsTableModel.product");
         final Set<ImportTableColumn> s = ImportTableModel.createDefault(product);
-        final Iterator<ImportTableColumn> it = s.iterator();
-        while (it.hasNext()) {
-            final ImportTableColumn itc = it.next();
-            if (SigneeColumn.ID.equals(itc.columnId())) {
-                it.remove();
-            } else if (SourceSigneeColumn.ID.equals(itc.columnId())) {
-                it.remove();
-            } else if (UnitColumn.ID.equals(itc.columnId())) {
-                it.remove();
-            }
-        }
+        Lookups.forPath("DefaultCreateDocumentsVisualPanel/Columns").lookupAll(ImportTableColumn.Factory.class).stream()
+                .map(ImportTableColumn.Factory::createInstance)
+                .forEach(s::add);
         s.add(new UnitColumn(product, false));
         s.add(new StundentafelSigneeColumn(product));
         s.add(new SelectedColumn());
         s.add(new FixedSubjectColumn(product));
         s.add(new TargetIdColumn(product));
-        Lookups.forPath("DefaultCreateDocumentsVisualPanel/Columns").lookupAll(ImportTableColumn.Factory.class).stream()
+        Lookups.forPath("StundentafelImportConfigVisualPanel/Columns").lookupAll(ImportTableColumn.Factory.class).stream()
                 .map(ImportTableColumn.Factory::createInstance)
                 .forEach(s::add);
         return s;

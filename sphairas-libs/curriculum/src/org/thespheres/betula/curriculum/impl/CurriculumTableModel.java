@@ -14,7 +14,7 @@ import org.openide.nodes.Node;
 import org.openide.util.NbBundle;
 import org.thespheres.betula.curriculum.CourseEntry;
 import org.thespheres.betula.curriculum.Curriculum;
-import org.thespheres.betula.curriculum.impl.CourseEntryChildren.EditBemerkungenSetRootNode;
+import org.thespheres.betula.curriculum.impl.CourseEntryChildren.CourseEntriesRootNode;
 import org.thespheres.betula.curriculum.impl.CurriculumTableColumn.SumColumn;
 import org.thespheres.betula.ui.swingx.treetable.NbPluggableSwingXTreeTableModel;
 import org.thespheres.betula.ui.util.PluggableTableColumn;
@@ -32,13 +32,13 @@ class CurriculumTableModel extends NbPluggableSwingXTreeTableModel<Curriculum, C
     @SuppressWarnings(value = {"OverridableMethodCallInConstructor",
         "LeakingThisInConstructor"})
     private CurriculumTableModel(final CourseEntryChildren ch) {
-        super(CurriculumTableModel.class.getName(), new EditBemerkungenSetRootNode(ch), createColumns());
+        super(CurriculumTableModel.class.getName(), new CourseEntriesRootNode(ch), createColumns());
         this.children = ch;
 //        children.setModel(this);
     }
 
     CurriculumTableModel() {
-        this(new CourseEntryChildren(null, null));
+        this(new CourseEntryChildren(null));
     }
 
     static Set<PluggableTableColumn<Curriculum, CourseEntry>> createColumns() {
@@ -64,58 +64,16 @@ class CurriculumTableModel extends NbPluggableSwingXTreeTableModel<Curriculum, C
 
     void setEnv(final CurriculumDataObject value) {
         final Curriculum curr = value.getLookup().lookup(Curriculum.class);
-//        env = value;
         children.setCurriculum(curr, value);
         this.initialize(curr, value.getLookup());
     }
 
-//    void setModified() {
-//        if (env != null) {
-//            env.setModified(true);
-//        }
-//    }
     @Override
     protected CourseEntry getItemAt(final Object node) {
         final Node n = Visualizer.findNode(node);
         return n.getLookup().lookup(CourseEntry.class);
     }
 
-//    @Override
-//    public boolean isCellEditable(Object node, int column) {
-//        final Node n = Visualizer.findNode(node);
-//        final Course m = n.getLookup().lookup(Course.class);
-//        final CourseGroup el = n.getLookup().lookup(CourseGroup.class);
-//        if (el != null && m != null) {
-////            return !Marker.isNull(m.getMarker()) && column != 0 && column != 4;
-//        } else if (el != null) {
-////            return column != 0;
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public Object getValueAt(Object node, int column) {
-//        final Node n = Visualizer.findNode(node);
-//        final Course m = n.getLookup().lookup(Course.class);
-//        final CourseGroup el = n.getLookup().lookup(CourseGroup.class);
-//        if (el != null && m != null) {
-//            return getValue(m, column);
-//        } else if (el != null) {
-//            return getValue(el, column);
-//        }
-//        return null;
-//    }
-//    @Override
-//    public void setValueAt(Object value, Object node, int column) {
-//        final Node n = Visualizer.findNode(node);
-//        final Course2 m = n.getLookup().lookup(Course2.class);
-//        final CourseGroup el = n.getLookup().lookup(CourseGroup.class);
-//        if (el != null && m != null) {
-//            setMarkerValue(m, column, value);
-//        } else if (el != null) {
-//            setMarkerValue(el, column, value);
-//        }
-//    }
     @Override
     public void stateChanged(ChangeEvent e) {
         children.update();

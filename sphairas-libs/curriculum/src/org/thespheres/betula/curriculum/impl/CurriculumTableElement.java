@@ -71,6 +71,7 @@ public final class CurriculumTableElement extends NbSwingXTreeTableElement imple
         "OverridableMethodCallInConstructor"})
     public CurriculumTableElement() {
         super();
+        this.addNodeDelegateToActivatedNodes = true;
         setDropTarget(true);
         treeTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         toolbar.setLayout(new FlowLayout(FlowLayout.LEADING));
@@ -187,14 +188,10 @@ public final class CurriculumTableElement extends NbSwingXTreeTableElement imple
     }
 
     @Override
-    protected void activatedNodes(List<Node> sel) {
-        if (obj.isValid()) {
-            final List<Node> selection = new ArrayList<>(sel);
-            selection.add(obj.getNodeDelegate());
-            setActivatedNodes(selection.toArray(new Node[selection.size()]));
-            setIcon(obj.getNodeDelegate().getIcon(BeanInfo.ICON_COLOR_16x16));
-            updateName(getNodeDelegate());
-        }
+    protected void activatedNodes(final List<Node> sel) {
+        //MoveUpAction, MoveDownAction accept only one activated node
+        addNodeDelegateToActivatedNodes = sel == null || sel.isEmpty();
+        super.activatedNodes(sel);
     }
 
     @Override

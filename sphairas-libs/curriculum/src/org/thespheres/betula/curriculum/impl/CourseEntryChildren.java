@@ -18,15 +18,15 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Index;
 import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
-import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.actions.NodeAction;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.Lookups;
 import org.thespheres.betula.curriculum.CourseEntry;
 import org.thespheres.betula.curriculum.CourseGroup;
 import org.thespheres.betula.curriculum.Curriculum;
+import org.thespheres.betula.curriculum.util.CurriculumTableActions;
 import org.thespheres.betula.curriculum.util.CurriculumUtil;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerConvention;
@@ -37,13 +37,15 @@ import org.thespheres.betula.document.MarkerConvention;
  */
 class CourseEntryChildren extends Index.KeysChildren<CourseEntry> {
 
-//    private Model2 model;
     private CurriculumDataObject env;
-    private final CourseEntry entry;
+
+    CourseEntryChildren(final CourseGroup key) {
+        super(key != null ? new DelegateList(key.getChildren()) : new DelegateList());
+    }
 
     CourseEntryChildren(final CourseGroup key, final CurriculumDataObject env) {
-        super(key != null ? new DelegateList(key.getChildren()) : new DelegateList());
-        this.entry = key;
+        this(key);
+        this.env = env;
     }
 
     @Override
@@ -62,9 +64,12 @@ class CourseEntryChildren extends Index.KeysChildren<CourseEntry> {
         update();
     }
 
-//    void setModel(Model2 m) {
-//        model = m;
-//    }
+    @Override
+    protected void reorder(final int[] perm) {
+        super.reorder(perm);
+        env.setModified(true);
+    }
+
     static class DelegateList<CE extends CourseEntry> extends ForwardingList<CE> {
 
         private List<CE> delegate;
@@ -90,10 +95,10 @@ class CourseEntryChildren extends Index.KeysChildren<CourseEntry> {
         }
     }
 
-    static class EditBemerkungenSetRootNode extends AbstractNode {
+    static class CourseEntriesRootNode extends AbstractNode {
 
-        public EditBemerkungenSetRootNode(final CourseEntryChildren ch) {
-            super(ch);
+        public CourseEntriesRootNode(final CourseEntryChildren ch) {
+            super(ch, Lookups.singleton(ch.getIndex()));
         }
 
     }
@@ -120,6 +125,39 @@ class CourseEntryChildren extends Index.KeysChildren<CourseEntry> {
 
         private CourseGroupNode(final CourseGroup key, final CurriculumDataObject env) {
             this(key, new CourseEntryChildren(key, env), new InstanceContent(), env);
+        }
+
+        @Override
+        public boolean canCut() {
+            return true;
+        }
+
+        @Override
+        public boolean canCopy() {
+            return true;
+        }
+
+        @Override
+        public boolean canDestroy() {
+            return true;
+        }
+
+        @Override
+        public void destroy() throws IOException {
+            final CourseGroup el = getLookup().lookup(CourseGroup.class);
+            final CurriculumDataObject dob = getLookup().lookup(CurriculumDataObject.class);
+            final CurriculumTableActions ac = dob.getLookup().lookup(CurriculumTableActions.class);
+            ac.removeCourse(el.getId());
+            final CourseEntryChildren ch = (CourseEntryChildren) getParentNode().getChildren();
+            ch.update();
+        }
+
+        @Override
+        public Action[] getActions(boolean context) { //Actions.forID(PROP_NAME, PROP_ICON)
+            final Action up = Actions.forID("System", "org.openide.actions.MoveUpAction");
+            final Action down = Actions.forID("System", "org.openide.actions.MoveDownAction");
+            final Action del = Actions.forID("Edit", "org.openide.actions.DeleteAction");
+            return new Action[]{up, down, del};
         }
 
         @Override
@@ -154,8 +192,8 @@ class CourseEntryChildren extends Index.KeysChildren<CourseEntry> {
             setName(item.getId());
             setDisplayName(CurriculumUtil.getDisplayName(item));
             ic.add(item);
+            ic.add((env));
             ic.add(this);
-//            ic.add(env);
             setIconBaseWithExtension("org/thespheres/betula/curriculum/resources/book.png");
         }
 
@@ -176,20 +214,20 @@ class CourseEntryChildren extends Index.KeysChildren<CourseEntry> {
 
         @Override
         public void destroy() throws IOException {
-            //TODO: Warning, template change will effect order of bemerkungen in past reports
-//            final Element el = getLookup().lookup(Element.class);
-//            final MarkerItem im = getLookup().lookup(MarkerItem.class);
-//            el.removeItem(im);
-//            final CourseGroupNodeChildren children = (CourseGroupNodeChildren) getParentNode().getChildren();
-//            children.update();
+            final CourseEntry el = getLookup().lookup(CourseEntry.class);
+            final CurriculumDataObject dob = getLookup().lookup(CurriculumDataObject.class);
+            final CurriculumTableActions ac = dob.getLookup().lookup(CurriculumTableActions.class);
+            ac.removeCourse(el.getId());
+            final CourseEntryChildren children = (CourseEntryChildren) getParentNode().getChildren();
+            children.update();
         }
 
         @Override
         public Action[] getActions(boolean context) { //Actions.forID(PROP_NAME, PROP_ICON)
-            Action up = Actions.forID("System", "org.openide.actions.MoveUpAction");
-            Action down = Actions.forID("System", "org.openide.actions.MoveDownAction");
-            Action del = Actions.forID("Edit", "org.openide.actions.DeleteAction");
-            return new Action[]{up, down, del, TestA.instance};
+            final Action up = Actions.forID("System", "org.openide.actions.MoveUpAction");
+            final Action down = Actions.forID("System", "org.openide.actions.MoveDownAction");
+            final Action del = Actions.forID("Edit", "org.openide.actions.DeleteAction");
+            return new Action[]{up, down, del};
         }
 
         @Override
@@ -211,32 +249,6 @@ class CourseEntryChildren extends Index.KeysChildren<CourseEntry> {
             }
             return null;
         }
-    }
-
-    private static class TestA extends NodeAction {
-
-        static TestA instance = new TestA();
-
-        @Override
-        protected void performAction(Node[] activatedNodes) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        protected boolean enable(Node[] activatedNodes) {
-            return true;
-        }
-
-        @Override
-        public String getName() {
-            return "test";
-        }
-
-        @Override
-        public HelpCtx getHelpCtx() {
-            return HelpCtx.DEFAULT_HELP;
-        }
-
     }
 
 }

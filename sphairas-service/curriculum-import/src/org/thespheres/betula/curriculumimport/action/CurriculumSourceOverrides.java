@@ -83,7 +83,10 @@ public class CurriculumSourceOverrides extends AbstractSourceOverrides<Stundenta
         protected void uninitialize() {
             targetItem.removeVetoableChangeListener(this);
             if (targetLink != null && (removeWhenUnitialize || targetLink.getClone() != 0)) {
-                links.remove(targetLink);
+                //Do not remove the link if non default properties have been set; it needs to be saved
+                if (targetLink.getNonDefaultProperties().isEmpty()) {
+                    links.remove(targetLink);
+                }
             }
         }
 

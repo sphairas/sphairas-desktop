@@ -4,7 +4,6 @@
  */
 package org.thespheres.betula.curriculumimport.action;
 
-import java.util.List;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeListener;
@@ -13,7 +12,6 @@ import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
-import org.thespheres.betula.UnitId;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.xmlimport.ImportTargetFactory;
 import org.thespheres.betula.xmlimport.model.Product;
