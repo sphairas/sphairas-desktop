@@ -44,10 +44,12 @@ import org.thespheres.betula.UnitId;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
 import org.thespheres.betula.admin.units.RemoteUnitsModel;
 import org.thespheres.betula.admin.units.ticketui.SetExemptedStudentsVisualPanel.SetExemptedStudentsWizardPanel;
+import org.thespheres.betula.assess.TargetDocument;
 import org.thespheres.ical.builder.ICalendarBuilder;
 import org.thespheres.betula.document.Action;
 import org.thespheres.betula.document.Container;
 import org.thespheres.betula.document.Envelope;
+import org.thespheres.betula.document.model.DocumentsModel;
 import org.thespheres.betula.document.util.DocumentUtilities;
 import org.thespheres.betula.document.util.GenericXmlTicket;
 import org.thespheres.betula.document.util.TicketEntry;
@@ -213,11 +215,19 @@ public final class AddUnitTicketAction implements ActionListener {
                 return;
             }
             if (!rum.getInitialization().satisfies(RemoteUnitsModel.INITIALISATION.MAXIMUM)) {
-                //Log tt incomplete
+                //Log target types list may be incomplete
                 targetTypeWarning = NbBundle.getMessage(AddUnitTicketAction.class, "AddUnitTicketAction.action.warning.loadingIncomplete");
+                //add target types from documents model
+                try {
+                    final String sfx = rum.getUnitOpenSupport().findBetulaProjectProperties().getProperty(DocumentsModel.PROP_DOCUMENT_SUFFIXES);
+                    Arrays.stream(sfx.split(","))
+                            .forEach(targetTypes::add);
+                } catch (IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
             }
             rum.getTargets().stream()
-                    .map(rtad -> rtad.getTargetType())
+                    .map(TargetDocument::getTargetType)
                     .forEach(targetTypes::add);
         }
         final Date wd = Lookup.getDefault().lookup(WorkingDate.class).getCurrentWorkingDate();
