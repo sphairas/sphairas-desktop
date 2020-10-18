@@ -14,13 +14,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.thespheres.betula.TermId;
+import org.thespheres.betula.UnitId;
 import org.thespheres.betula.document.DocumentId;
+import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.util.CollectionUtil;
 
 /**
@@ -43,7 +46,7 @@ public class DBAdminTask {
     public DBAdminTask() {
     }
 
-    public DBAdminTask(String name) {
+    public DBAdminTask(final String name) {
         this.name = name;
         this.version = "1.0";
     }
@@ -118,12 +121,22 @@ public class DBAdminTask {
 
         @XmlAttribute(name = "key")
         private String key;
+        //This is necessary to catch all unknown elements during unmarshalling, 
+        //so they will be marshalled again back into the document and don't get lost.
+        //Loss might otherwise occur if the user unmarshals the document 
+        //with specific modules disabled that would add additional ColumnProperty classes.
+        @XmlAnyElement
+        public org.w3c.dom.Element[] otherElements;
 
 //        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @XmlElements(value = {
             @XmlElement(name = "string-value", type = String.class),
+            @XmlElement(name = "boolean-value", type = Boolean.class),
             @XmlElement(name = "int-value", type = Integer.class),
+            @XmlElement(name = "double-value", type = Double.class),
             @XmlElement(name = "term-value", type = TermId.class),
+            @XmlElement(name = "signee-value", type = Signee.class),
+            @XmlElement(name = "unit-value", type = UnitId.class),
             @XmlElement(name = "document-value", type = DocumentId.class)
         })
         private Object[] value;
@@ -131,7 +144,7 @@ public class DBAdminTask {
         public Arg() {
         }
 
-        Arg(String key, Object[] value) {
+        Arg(final String key, final Object[] value) {
             this.key = key;
             this.value = value;
         }
