@@ -5,6 +5,8 @@
  */
 package org.thespheres.betula.admin.units.ticketui;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author boris.heithecker
@@ -17,7 +19,7 @@ public class TargetType {
 
     TargetType(String name) {
         type = name;
-        displayName = name;
+        displayName = StringUtils.capitalize(name);
     }
 
     public String getTargetType() {
