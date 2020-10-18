@@ -299,21 +299,21 @@ public abstract class AbstractSourceOverrides<T extends ImportTargetsItem & Impo
             }
         }
 
-        private void updateFach(Marker old, Marker newMarker) {
+        protected void updateFach(Marker old, Marker newMarker) {
             if (doUpdate()) {
                 removeWhenUnitialize = removeWhenUnitialize
                         & !targetLink.setSubjectMarker(old, newMarker);
             }
         }
 
-        private void updateSignee(Signee old, Signee newSignee) {
+        protected void updateSignee(Signee old, Signee newSignee) {
             if (doUpdate()) {
                 removeWhenUnitialize = removeWhenUnitialize
                         & !targetLink.setSignee(old, newSignee);
             }
         }
 
-        private void updateUnit(UnitId old, UnitId newunit) {
+        protected void updateUnit(UnitId old, UnitId newunit) {
             if (doUpdate()) {
                 removeWhenUnitialize = removeWhenUnitialize
                         & !targetLink.setUnit(old, newunit);
