@@ -18,7 +18,6 @@ import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -85,7 +84,7 @@ public abstract class DefaultColumns<I extends ImportItem, T extends ImportTarge
     }
 
     static Set<ImportTableColumn> createDefaultSet(String product) {
-        final HashSet<ImportTableColumn> ret = new HashSet<>();
+        final Set<ImportTableColumn> ret = new DefaultColumnSet();
         ret.add(new NodeColumn(product));
         ret.add(new UnitColumn(product));
         ret.add(new UnitDisplayColumn(product));
