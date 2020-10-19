@@ -7,28 +7,29 @@ package org.thespheres.betula.database;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
  *
  * @author boris.heithecker
  */
-@XmlRootElement(name = "db-admin-task")
+@XmlRootElement(name = "db-admin-task-result")
 //@XmlType(propOrder = {"path", "files", "messages", "version"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DBAdminTaskResult {
 
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlElement(name = "return-message")
-    private String message;
+    @XmlAttribute(name = "success", required = true)
+    private boolean success;
+    @XmlValue
+    private String message = "";
 
     public DBAdminTaskResult() {
     }
 
-    public DBAdminTaskResult(String message) {
+    public DBAdminTaskResult(final boolean success, final String message) {
+        this.success = success;
         this.message = message;
     }
 
@@ -36,8 +37,8 @@ public class DBAdminTaskResult {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public boolean isSuccess() {
+        return success;
     }
 
 }
