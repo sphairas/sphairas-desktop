@@ -17,35 +17,35 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.thespheres.betula.admin.database.DbAdminServiceProvider;
-import org.thespheres.betula.admin.database.action.DeleteTaskVisualPanel.DeleteTaskPanel;
+import org.thespheres.betula.admin.database.action.ClearSigneesTaskVisualPanel.ClearSigneesTaskPanel;
 import org.thespheres.betula.database.DBAdminTask;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportWizard;
 
 @ActionID(
         category = "Betula",
-        id = "org.thespheres.betula.admin.database.action.DeleteTask"
+        id = "org.thespheres.betula.admin.database.action.ClearSigneesTask"
 )
 @ActionRegistration(
-        displayName = "#DeleteTask.displayName"
+        displayName = "#ClearSigneesTask.displayName"
 )
-@ActionReference(path = "Menu/Tools/DbAdmin", position = 2000)
-@Messages({"DeleteTask.displayName=Einträge löschen",
-    "DeleteTask.wizard.title=Einträge löschen"})
-public final class DeleteTask implements ActionListener {
+@ActionReference(path = "Menu/Tools/DbAdmin", position = 5000)
+@Messages({"ClearSigneesTask.displayName=Unterzeichner zurücksetzen",
+    "ClearSigneesTask.wizard.title=Unterzeichner zurücksetzen"})
+public final class ClearSigneesTask implements ActionListener {
 
     static final String PROP_TASK = "task";
     static final String PROP_PROVIDER = "provider";
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final DBAdminTask task = new DBAdminTask("clean-up");
+        final DBAdminTask task = new DBAdminTask("clear-signees");
         class WizardIterator extends AbstractFileImportWizard<WizardDescriptor> {
 
             @Override
             protected ArrayList<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {
                 final ArrayList<WizardDescriptor.Panel<WizardDescriptor>> ret = new ArrayList<>();
-                ret.add(new DeleteTaskPanel());
+                ret.add(new ClearSigneesTaskPanel());
                 return ret;
             }
 
@@ -56,11 +56,11 @@ public final class DeleteTask implements ActionListener {
         // {0} will be replaced by WizardDescriptor.Panel.getComponent().getName()
         // {1} will be replaced by WizardDescriptor.Iterator.name()
         wd.setTitleFormat(new MessageFormat("{0} ({1})"));
-        wd.setTitle(NbBundle.getMessage(DeleteTask.class, "DeleteTask.wizard.title"));
+        wd.setTitle(NbBundle.getMessage(ClearSigneesTask.class, "ClearSigneesTask.wizard.title"));
         if (DialogDisplayer.getDefault().notify(wd) == WizardDescriptor.FINISH_OPTION) {
-            final ProviderInfo info = (ProviderInfo) wd.getProperty(DeleteTask.PROP_PROVIDER);
-            if (info != null) {
-                final DbAdminServiceProvider provider = DbAdminServiceProvider.create(info);
+            final ProviderInfo pi = (ProviderInfo) wd.getProperty(ClearSigneesTask.PROP_PROVIDER);
+            if (pi != null) {
+                final DbAdminServiceProvider provider = DbAdminServiceProvider.create(pi);
                 final TaskRunner tr = new TaskRunner(provider, task);
                 tr.sp.getDefaultRequestProcessor().post(tr);
             }

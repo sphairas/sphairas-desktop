@@ -58,9 +58,9 @@ public class StudentsDBConfigNodeList extends ConfigNodeTopComponentNodeList {
     }
 
     @ConfigNodeTopComponentNodeList.Factory.Registration
-    public static class CurriculumConfigNodeFactory extends ConfigNodeTopComponentNodeList.Factory<StudentsDBConfigNodeList> {
+    public static class StudentsDBConfigNodeListFactory extends ConfigNodeTopComponentNodeList.Factory<StudentsDBConfigNodeList> {
 
-        public CurriculumConfigNodeFactory() {
+        public StudentsDBConfigNodeListFactory() {
             super(NAME);
         }
 

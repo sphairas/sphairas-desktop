@@ -48,6 +48,10 @@ class AppResourcesConfigOpenSupport extends CloneableOpenSupport implements Open
         return env;
     }
 
+    Env getEnv() {
+        return (Env) env;
+    }
+
     @NbBundle.Messages(value = "AppResourcesConfigOpenSupport.messageOpening=Konfigurations-UI wird geöffnet.")
     @Override
     protected String messageOpening() {

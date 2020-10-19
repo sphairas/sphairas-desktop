@@ -31,7 +31,7 @@ public class AppResourcesConfigNodeList extends ConfigNodeTopComponentNodeList {
 
     private AppResourcesConfigNodeList(final String provider) {
         super(provider, NbPreferences.forModule(AppResourcesConfigNodeList.class).getInt(APPRESOURCES_CONFIG_NODE_POSITION_KEY, 50000));
-        node = new AppResourcesConfigNode(provider);
+        node = new AppResourcesConfigNode();
     }
 
     @Override
@@ -42,14 +42,14 @@ public class AppResourcesConfigNodeList extends ConfigNodeTopComponentNodeList {
     class AppResourcesConfigNode extends AbstractNode {
 
         @SuppressWarnings({"OverridableMethodCallInConstructor"})
-        AppResourcesConfigNode(final AppResourcesFileChildren ch, final String provider) {
-            super(Children.create(ch, true), Lookups.fixed(ch, ch.dir, AppResourcesConfigOpenSupport.find(getProvider())));
+        AppResourcesConfigNode(final AppResourcesFileChildren ch, final AppResourcesConfigOpenSupport os) {
+            super(Children.create(ch, true), Lookups.fixed(ch, ch.dir, os, os.getEnv()));
             setName(NAME + ":" + provider);
             setIconBaseWithExtension("org/thespheres/betula/admin/database/resources/gear.png");
         }
 
-        AppResourcesConfigNode(final String provider) {
-            this(AppResourcesFileChildren.createRoot(provider), provider);
+        AppResourcesConfigNode() {
+            this(AppResourcesFileChildren.createRoot(provider),  AppResourcesConfigOpenSupport.find(getProvider()));
         }
 
         @Override
@@ -70,9 +70,9 @@ public class AppResourcesConfigNodeList extends ConfigNodeTopComponentNodeList {
     }
 
     @ConfigNodeTopComponentNodeList.Factory.Registration
-    public static class CurriculumConfigNodeFactory extends ConfigNodeTopComponentNodeList.Factory<AppResourcesConfigNodeList> {
+    public static class AppResourcesConfigNodeListFactory extends ConfigNodeTopComponentNodeList.Factory<AppResourcesConfigNodeList> {
 
-        public CurriculumConfigNodeFactory() {
+        public AppResourcesConfigNodeListFactory() {
             super(NAME);
         }
 

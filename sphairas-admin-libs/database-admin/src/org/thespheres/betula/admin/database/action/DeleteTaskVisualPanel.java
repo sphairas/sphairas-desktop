@@ -23,6 +23,7 @@ import org.thespheres.betula.database.DBAdminTask;
 import org.thespheres.betula.document.model.DocumentsModel;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.LocalProperties;
+import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.scheme.spi.SchemeProvider;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.scheme.spi.TermNotFoundException;
@@ -36,8 +37,8 @@ import org.thespheres.betula.util.CollectionUtil;
  */
 class DeleteTaskVisualPanel extends javax.swing.JPanel {
 
-    private final DefaultComboBoxModel<DbAdminServiceProvider> providerModel = new DefaultComboBoxModel<>();
-    private final StringValue providerConverter = o -> o instanceof DbAdminServiceProvider ? ((DbAdminServiceProvider) o).getInfo().getDisplayName() : "---";
+    private final DefaultComboBoxModel<ProviderInfo> providerModel = new DefaultComboBoxModel<>();
+    private final StringValue providerConverter = o -> o instanceof ProviderInfo ? ((ProviderInfo) o).getDisplayName() : "---";
     private final DefaultComboBoxModel<Term> termModel = new DefaultComboBoxModel<>();
     private final StringValue termConverter = o -> o instanceof Term ? ((Term) o).getDisplayName() : "---";
     private final DefaultComboBoxModel<String> targetModel = new DefaultComboBoxModel<>();
@@ -46,6 +47,8 @@ class DeleteTaskVisualPanel extends javax.swing.JPanel {
 
     DeleteTaskVisualPanel() {
         initComponents();
+        DbAdminServiceProvider.findAllProviders().stream()
+                .forEach(providerModel::addElement);
         this.providerComboBox.setModel(providerModel);
         this.providerComboBox.setRenderer(new DefaultListRenderer(providerConverter));
         this.termComboBox.setModel(termModel);
@@ -157,10 +160,10 @@ class DeleteTaskVisualPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void providerSelected(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providerSelected
-        final DbAdminServiceProvider provider = (DbAdminServiceProvider) this.providerComboBox.getSelectedItem();
+        final ProviderInfo provider = (ProviderInfo) this.providerComboBox.getSelectedItem();
         LocalProperties props = null;
         if (provider != null) {
-            props = LocalProperties.find(provider.getInfo().getURL());
+            props = LocalProperties.find(provider.getURL());
             currentTermSchedule = Optional.of(props)
                     .map(lp -> lp.getProperty("termSchedule.providerURL"))
                     .map(tsprop -> Lookup.getDefault().lookupAll(SchemeProvider.class).stream()
@@ -269,8 +272,6 @@ class DeleteTaskVisualPanel extends javax.swing.JPanel {
             getComponent().maxEntriesTextField.setValue(task.getArg("max-entries", Integer.class, 1000).longValue());
             getComponent().providerModel.removeAllElements();
             getComponent().providerModel.addElement(null);
-            Lookup.getDefault().lookupAll(DbAdminServiceProvider.class).stream()
-                    .forEach(getComponent().providerModel::addElement);
         }
 
         @Override

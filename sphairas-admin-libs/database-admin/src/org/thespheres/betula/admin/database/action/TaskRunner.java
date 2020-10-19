@@ -16,7 +16,9 @@ import org.thespheres.betula.database.DBAdminTaskResult;
  *
  * @author boris.heithecker
  */
-@NbBundle.Messages({"TaskRunner.message.start.task=Starting delete task."})
+@NbBundle.Messages({"TaskRunner.message.start.task=Starting task {0}",
+    "TaskRunner.message.success=Task finished.",
+    "TaskRunner.message.error=An error has occurred."})
 class TaskRunner implements Runnable {
 
     private static InputOutput io;
@@ -42,9 +44,15 @@ class TaskRunner implements Runnable {
         try {
             getIO().select();
             getIO().getOut().reset();
-            getIO().getOut().println(NbBundle.getMessage(TaskRunner.class, "TaskRunner.message.start.task"));
+            getIO().getOut().println(NbBundle.getMessage(TaskRunner.class, "TaskRunner.message.start.task", task.getName()));
             final DBAdminTaskResult result = sp.createDbAdminServicePort().submitTask(task);
-            getIO().getOut().println(result.getMessage());
+            result.getMessage().lines()
+                    .forEachOrdered(getIO().getOut()::println);
+            if (result.isSuccess()) {
+                getIO().getOut().println(NbBundle.getMessage(TaskRunner.class, "TaskRunner.message.success"));
+            } else {
+                getIO().getErr().println(NbBundle.getMessage(TaskRunner.class, "TaskRunner.message.error"));
+            }
         } catch (Exception ex) {
             ex.printStackTrace(getIO().getErr());
         }
