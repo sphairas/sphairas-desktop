@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -54,8 +55,11 @@ import org.thespheres.betula.ui.util.PlatformUtil;
  */
 public class SyncedProviderInstance {
 
+    public static final int DEFAULT_JMS_PORT = 7781;
+    public static final String JMS_PORT_PROP = "jms.port";
     private static final Map<String, SyncedProviderInstance> INSTANCES = new ConcurrentHashMap<>();
     private static boolean initialized;
+    public static final String HOST_PROP = "host";
     private final String provider;
     private final Path baseDir;
     private final FilePropertiesImpl[] properties = new FilePropertiesImpl[]{null};
@@ -281,9 +285,12 @@ public class SyncedProviderInstance {
         synchronized (jmsProvider) {
             if (jmsProvider[0] == null) {
                 final LocalFileProperties prop = findLocalFileProperties();
-                final String host = prop.getProperty("host");
+                final String host = prop.getProperty(SyncedProviderInstance.HOST_PROP);
+                final int port = Optional.ofNullable(prop.getProperty(JMS_PORT_PROP))
+                        .map(Integer::parseInt)
+                        .orElse(DEFAULT_JMS_PORT);
                 final String certAlias = AppProperties.privateKeyAlias(prop, provider);
-                jmsProvider[0] = new PlatformWsJMSTopicListenerServiceProvider(provider, host, 7781, true, certAlias);
+                jmsProvider[0] = new PlatformWsJMSTopicListenerServiceProvider(provider, host, port, true, certAlias);
             }
         }
         return jmsProvider[0].getListenerServices(provider);
