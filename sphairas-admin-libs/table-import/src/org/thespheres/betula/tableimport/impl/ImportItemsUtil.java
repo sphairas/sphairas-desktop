@@ -6,12 +6,15 @@
 package org.thespheres.betula.tableimport.impl;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.StringJoiner;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.model.XmlItem;
 import org.thespheres.betula.xmlimport.model.XmlSigneeItem;
@@ -51,12 +54,17 @@ class ImportItemsUtil {
             dirName = sj.toString();
         }
         final XmlItem.SourceDateTime dob = xmls.getDateOfBirth();
-        final ImportStudentKey ret;
+        ImportStudentKey ret = null;
         if (dob != null) {
             final String sd = dob.getSourceDate();
-            final LocalDate zdt = LocalDate.parse(sd, TargetItemsXmlCsvItem.DTF);
-            ret = new ImportStudentKey(dirName, sd, zdt);
-        } else {
+            try {
+                final LocalDate zdt = LocalDate.parse(sd, TargetItemsXmlCsvItem.DTF);
+                ret = new ImportStudentKey(dirName, sd, zdt);
+            } catch (final DateTimeParseException dtpex) {
+                PlatformUtil.getCodeNameBaseLogger(ImportItemsUtil.class).log(Level.WARNING, dtpex.getLocalizedMessage(), dtpex);
+            }
+        }
+        if (ret == null) {
             ret = new ImportStudentKey(dirName);
         }
         ret.setStudentId(xmls.getStudent());
