@@ -48,8 +48,6 @@ import org.thespheres.betula.util.StudentComparator;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml, ColumnXml> {
 
-    private static final String WPK = "WPK";
-    private static final String PROFIL_RS = "Profil";
     @XmlElement(name = "list-data")
     private final ListData lData = new ListData();
     @XmlElementWrapper(name = "data-header")
@@ -60,6 +58,8 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
     private final ArrayList<DataLineXml> list = new ArrayList<>();
     @XmlAttribute(name = "first-column-width", required = false)
     public String firstColumnWidth;
+    @XmlAttribute(name = "column-width", required = false)
+    public String columnWidth;
     @XmlElement(name = "footnote")
     private final List<FootnoteXml> footnotes = new ArrayList<>();
     @XmlElement(name = "text")
@@ -71,6 +71,8 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
 //    private final Map<Integer, Set> colset = new HashMap<>();
     @XmlTransient
     private final Map<ColumnKey, ColumnXml> colset = new HashMap<>();
+    @XmlTransient
+    private final Map<Integer, String> tierLabels = new HashMap<>();
 
     public String getSortString() {
         return sortString;
@@ -78,6 +80,10 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
 
     public void setSortString(String sort) {
         this.sortString = sort;
+    }
+
+    public Map<Integer, String> getTierLabels() {
+        return tierLabels;
     }
 
     @Override
@@ -143,7 +149,7 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
                 .forEach(columns::add);
     }
 
-    private ColumnXml mapToColumn(Object value, int tier) {
+    private ColumnXml mapToColumn(Object value, int tier, String useLabel) {
         String fName;
         int pos;
 //        boolean keep = false;
@@ -172,28 +178,26 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
         } else {
             throw new IllegalArgumentException();
         }
-        if (fName.startsWith("Profil ")) {
-            fName = fName.replaceAll("Profil ", "");
-        }
+//        if (fName.startsWith("Profil ")) {
+//            fName = fName.replaceAll("Profil ", "");
+//        }
         if (fName.length() > 40) {
             fName = fName.substring(0, 37) + "...";
         }
-        ColumnXml ret = new ColumnXml(fName, tier, pos);
+        ColumnXml ret = new ColumnXml(useLabel != null ? useLabel : fName, useLabel != null ? fName : null, tier, pos);
 //        if (keep) {
 //            ret.keepTogetherWithinLine = "always";
 //        }
         int l = 0;
-        if (tier == 1) {
-            l += WPK.length();
-            ret.setLevel(WPK);
-        } else if (tier == 2) {
-            ret.setLevel(PROFIL_RS);
-            l += PROFIL_RS.length();
+        final String tl = tierLabels.get(tier);
+        if (tl != null) {
+            l += tl.length();
+            ret.setLevel(tl);
         }
         l += fName.length();
         if (l > 25) {
             ret.setFontSize("7pt");//ZGN
-        } else if (l > 15) {
+        } else if (l > 15 || useLabel != null) {
             ret.setFontSize("9pt");//ZGN
         } else {
             ret.setFontSize("11pt");
@@ -218,25 +222,25 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
         final Marker min = fach.stream().min(ORDER).get();
         final ColumnXml ret = new ColumnXml(label, tier, ORDER.positionOf(min));
 //        colset.computeIfAbsent(tier, t -> new HashSet<>()).add(fach);
-        colset.computeIfAbsent(ck, k -> mapToColumn(fach, tier));
+        colset.computeIfAbsent(ck, k -> mapToColumn(fach, tier, null));
         line.map.put(ck, ret);
 //        line.values.add(ret);
         return ret;
     }
 
     public ColumnXml setValue(DataLineXml line, Term term, Grade g, String ifGradeNull) {
-        return setValue(line, 0, term, g, ifGradeNull);
+        return setValue(line, 0, term, g, ifGradeNull, null);
     }
 
-    public ColumnXml setValue(DataLineXml line, int tier, Term term, Grade g, String ifGradeNull) {
+    public ColumnXml setValue(DataLineXml line, int tier, Term term, Grade g, String ifGradeNull, String columnLabel) {
         final TermColumnKey ck = new TermColumnKey(tier, term.getScheduledItemId());
         if (g == null && line.map.containsKey(ck)) {
             return null;
         }
         String label = g != null ? g.getShortLabel() : (ifGradeNull != null ? ifGradeNull : null);
-        ColumnXml ret = new ColumnXml(label, 0, term.getScheduledItemId().getId());
+        ColumnXml ret = new ColumnXml(label, tier, term.getScheduledItemId().getId());
 //        colset.computeIfAbsent(Integer.MAX_VALUE, t -> new HashSet<>()).add(term);
-        colset.computeIfAbsent(ck, k -> mapToColumn(term, 0));
+        colset.computeIfAbsent(ck, k -> mapToColumn(term, tier, columnLabel));
 //        colset.compute(Integer.MAX_VALUE, (t, s) -> {
 //            if (s == null) {
 //                s = new HashSet<>();
@@ -301,13 +305,20 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
         private String lbl;
         @XmlValue
         private String value;
+        @XmlAttribute(name = "sub-label")
+        private String subLabel;
         @XmlAttribute(name = "font-size", required = false)
         private String fontSize;
         @XmlAttribute(name = "color", required = false)
         private String color;
 
         private ColumnXml(String longLabel, int tier, int order) {
+            this(longLabel, null, tier, order);
+        }
+
+        private ColumnXml(String longLabel, String subLabel, int tier, int order) {
             this.value = longLabel;
+            this.subLabel = subLabel;
             this.tier = tier;
             this.order = order;
         }

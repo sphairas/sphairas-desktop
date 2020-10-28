@@ -38,7 +38,13 @@
                                         </xsl:if>   
                                     </fo:table-column>
                                     <xsl:for-each select="data-header/subject">
-                                        <fo:table-column column-width="0.7cm"/>
+                                        <fo:table-column column-width="0.7cm">
+                                            <xsl:if test="../../@column-width">
+                                                <xsl:attribute name="column-width">
+                                                    <xsl:value-of select="../../@column-width"/>
+                                                </xsl:attribute>     
+                                            </xsl:if> 
+                                        </fo:table-column>
                                     </xsl:for-each>
                                     <fo:table-column/>
                                     <fo:table-header>
@@ -68,6 +74,11 @@
                                                             </xsl:if>                                                                                            
                                                             <xsl:value-of select="normalize-space(.)"/>                                                         
                                                         </fo:block>          
+                                                        <xsl:if test="@sub-label">
+                                                            <fo:block font-size="5" padding-before="-1pt" padding-after="2pt">
+                                                                <xsl:value-of select="@sub-label"/>
+                                                            </fo:block>
+                                                        </xsl:if>   
                                                     </fo:block-container>
                                                 </fo:table-cell>
                                             </xsl:for-each>
