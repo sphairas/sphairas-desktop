@@ -62,6 +62,8 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
     public String firstColumnWidth;
     @XmlElement(name = "footnote")
     private final List<FootnoteXml> footnotes = new ArrayList<>();
+    @XmlElement(name = "text")
+    private List<Text> texts = new ArrayList<>();
     private transient String sortString;
     final static Collator COLLATOR = Collator.getInstance(Locale.GERMANY);
     private final SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
@@ -104,6 +106,22 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
         ret.student = sName;
         list.add(ret);
         return ret;
+    }
+
+    public Text addText(String u, int position) {
+        for (Text t : getTexts()) {
+            if (t.getPosition() == position) {
+                t.noteHeader = u;
+                return t;
+            }
+        }
+        Text toAdd = new Text(u, position);
+        texts.add(toAdd);
+        return toAdd;
+    }
+
+    public List<Text> getTexts() {
+        return texts;
     }
 
     @Override
@@ -207,7 +225,11 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
     }
 
     public ColumnXml setValue(DataLineXml line, Term term, Grade g, String ifGradeNull) {
-        final TermColumnKey ck = new TermColumnKey(0, term.getScheduledItemId());
+        return setValue(line, 0, term, g, ifGradeNull);
+    }
+
+    public ColumnXml setValue(DataLineXml line, int tier, Term term, Grade g, String ifGradeNull) {
+        final TermColumnKey ck = new TermColumnKey(tier, term.getScheduledItemId());
         if (g == null && line.map.containsKey(ck)) {
             return null;
         }
@@ -391,6 +413,48 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
 
         public void setFontSize(String fontSize) {
             this.fontSize = fontSize;
+        }
+
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Text {
+
+        @XmlAttribute(name = "title", required = true)
+        private String noteHeader;
+        @XmlAttribute(name = "position", required = true)
+        private int position;
+        @XmlValue
+        //TODO: adapted CollapsedStringAdapter which leaves \n = 0xA untouched 
+        private String noteValue;
+
+        //JAXB only
+        public Text() {
+        }
+
+        public Text(String noteHeader, int position) {
+            this.noteHeader = noteHeader;
+            this.position = position;
+        }
+
+        public String getNoteHeader() {
+            return noteHeader;
+        }
+
+        public String getNoteValue() {
+            return noteValue;
+        }
+
+        public void setValue(String noteValue) {
+            this.noteValue = noteValue;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
         }
 
     }

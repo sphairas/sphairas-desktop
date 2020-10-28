@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<xsl:stylesheet version="1.0" 
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:fo="http://www.w3.org/1999/XSL/Format"
+                xmlns:svg="http://www.w3.org/2000/svg">
+    
     <xsl:output method="xml" indent="yes"/>
     <xsl:template match="/">
         <fo:root>
@@ -151,6 +155,28 @@
                                             </fo:inline>
                                             <xsl:value-of select="normalize-space(.)"/>   
                                         </fo:block>
+                                    </xsl:for-each>
+                                </xsl:if>
+                                <xsl:if test="text">
+                                    <xsl:for-each select="text">
+                                        <xsl:sort select="@position" data-type="number" order="ascending"/>
+                                        <fo:block keep-with-next.within-page="always" space-before="5pt" margin-left="2pt" height="0.5cm" font-weight="bold" font-size="9pt" font-family="SansSerif" text-align="left">
+                                            <xsl:value-of select="@title"/>
+                                        </fo:block>
+                                        
+                                        <!--https://stackoverflow.com/questions/3661483/inserting-a-line-break-in-a-pdf-generated-from-xsl-fo-using-xslvalue-of-->
+                                        <fo:block min-height="0.6cm" margin-left="2pt" font-size="9pt" font-family="SansSerif" text-align="left" hyphenate="true" linefeed-treatment="preserve">
+                                            <xsl:if test="."> 
+                                                <xsl:value-of select="."/> 
+                                            </xsl:if>
+                                            <xsl:if test="not(normalize-space(.))"> 
+                                                <fo:instream-foreign-object width="26cm" content-width="scale-to-fit">
+                                                    <svg:svg width="260" height="9" viewBox="0 0 260 9">
+                                                        <svg:line style="stroke-width:0.1; stroke: black;" x1="10" y1="8.8" x2="250" y2="0.2"/>
+                                                    </svg:svg>
+                                                </fo:instream-foreign-object>
+                                            </xsl:if>
+                                        </fo:block>                                
                                     </xsl:for-each>
                                 </xsl:if>                                                                                                                                                                                                                    
                                 <fo:block font-size="7pt" font-family="SansSerif" text-align="right" space-before="2pt" space-after="0.1cm">
