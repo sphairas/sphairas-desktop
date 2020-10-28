@@ -5,7 +5,9 @@
  */
 package org.thespheres.betula.document.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.logging.Level;
@@ -29,6 +31,7 @@ public class DocumentsModel extends GroupingByIdentity<DocumentId, DocumentId> {
     public static final String PROP_AUTHORITY = "authority";
     protected String studentsSuffix;
     protected String primarySuffix;
+    private final List<String> suffixes = new ArrayList<>();
 
     public DocumentsModel() {
         super();
@@ -47,6 +50,8 @@ public class DocumentsModel extends GroupingByIdentity<DocumentId, DocumentId> {
             if (!StringUtils.isBlank(sfx)) {
                 final StringJoiner patJoin = new StringJoiner("|", "-(", ")\\z");
                 Arrays.stream(sfx.split(","))
+                        .forEach(suffixes::add);
+                suffixes.stream()
                         .forEach(patJoin::add);
                 patJoin.add(studentsSuffix);
                 pattern = Pattern.compile(patJoin.toString());
@@ -96,5 +101,21 @@ public class DocumentsModel extends GroupingByIdentity<DocumentId, DocumentId> {
             uid += suffix;
         }
         return new DocumentId(unit.getAuthority(), uid, DocumentId.Version.LATEST);
+    }
+
+    public DocumentId convert(final DocumentId source, final String suffix) {
+        checkInitialized();
+        if (StringUtils.isBlank(suffix)) {
+            throw new IllegalArgumentException("Suffix cannot be null or empty");
+        }
+        if (!suffixes.contains(suffix)) {
+            throw new IllegalStateException("Unknown suffix \"" + suffix + "\".");
+        }
+        if (suffix.equals(getSuffix(source))) {
+            return source;
+        }
+        final DocumentId base = convert(source);
+        final String nid = base.getId() + "-" + suffix;
+        return new DocumentId(source.getAuthority(), nid, source.getVersion());
     }
 }
