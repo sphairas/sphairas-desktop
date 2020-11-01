@@ -9,12 +9,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openide.util.NbBundle;
+import org.openide.util.NbBundle.Messages;
 import org.thespheres.ical.VCard;
 
 /**
  *
  * @author boris.heithecker
  */
+@Messages({"VCardHolder.N.getGivenNames.noGivenName=(Kein Vorname)"})
 public class VCardHolder {
 
     private String directoryName;
@@ -131,7 +136,12 @@ public class VCardHolder {
 
         private String getGivenNames() {
             if (given == null) {
-                given = value[1].replace(",", " ");
+                if (value.length > 1) {
+                    given = value[1].replace(",", " ");
+                } else {
+                    given = NbBundle.getMessage(VCardHolder.class, "VCardHolder.N.getGivenNames.noGivenName");
+                    Logger.getLogger(VCardHolder.class.getCanonicalName()).log(Level.INFO, "No given name found in {0}", value);
+                }
             }
             return given;
         }
