@@ -180,7 +180,7 @@
                 <!--                <file name="testTopComponent.wstcgrp" url="testTopComponent.wstcgrp" >
                     <attr name="position"    intvalue="2000" />
                 </file>-->
-                <file name="ZeugnisBemerkungTopComponent.wstcgrp" url="zgnimpl/ZeugnisBemerkungTopComponent.wstcgrp">
+                <file name="ZeugnisMarkerTopComponent.wstcgrp" url="zgnimpl/ZeugnisBemerkungTopComponent.wstcgrp">
                     <attr name="position" intvalue="3000"/>
                 </file>
                 <file name="navigatorTC.wstcgrp" url="zgnimpl/navigatorTC.wstcgrp"/>
