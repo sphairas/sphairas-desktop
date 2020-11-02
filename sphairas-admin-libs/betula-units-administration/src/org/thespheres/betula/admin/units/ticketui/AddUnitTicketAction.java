@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,9 +41,7 @@ import org.thespheres.betula.TermId;
 import org.thespheres.betula.Ticket;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
-import org.thespheres.betula.admin.units.RemoteUnitsModel;
 import org.thespheres.betula.admin.units.ticketui.SetExemptedStudentsVisualPanel.SetExemptedStudentsWizardPanel;
-import org.thespheres.betula.assess.TargetDocument;
 import org.thespheres.ical.builder.ICalendarBuilder;
 import org.thespheres.betula.document.Action;
 import org.thespheres.betula.document.Container;
@@ -53,6 +50,7 @@ import org.thespheres.betula.document.model.DocumentsModel;
 import org.thespheres.betula.document.util.DocumentUtilities;
 import org.thespheres.betula.document.util.GenericXmlTicket;
 import org.thespheres.betula.document.util.TicketEntry;
+import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.WebProvider;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.scheme.spi.TermSchedule;
@@ -79,8 +77,8 @@ import org.thespheres.ical.util.IComponentUtilities;
     @ActionReference(path = "Loaders/application/betula-unit-data/Actions", position = 5500, separatorBefore = 5000), //    @ActionReference(path = "Editors/application/xml-dtd/Popup", position = 4000)
 })
 @NbBundle.Messages({"AddUnitTicketAction.title=Neue Berechtigung",
-    "AddUnitTicketAction.action.multipleTargets.scope={0} Klassen",
-    "AddUnitTicketAction.action.warning.loadingIncomplete=Die Klasse ist nicht vollständig geladen. Einige Listentypen können fehlen."})
+    "AddUnitTicketAction.action.multipleTargets.scope={0} Klassen"})
+//"AddUnitTicketAction.action.warning.loadingIncomplete=Die Klasse ist nicht vollständig geladen. Einige Listentypen können fehlen."
 public final class AddUnitTicketAction implements ActionListener {
 
     private final List<PrimaryUnitOpenSupport> context;
@@ -204,32 +202,32 @@ public final class AddUnitTicketAction implements ActionListener {
 //    }
     @Override
     public void actionPerformed(ActionEvent event) {
-        final Set<String> targetTypes = new HashSet<>();
-        String targetTypeWarning = null;
-        for (final PrimaryUnitOpenSupport puos : context) {
-            final RemoteUnitsModel rum;
-            try {
-                rum = puos.getRemoteUnitsModel(RemoteUnitsModel.INITIALISATION.NO_INITIALISATION);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-                return;
-            }
-            if (!rum.getInitialization().satisfies(RemoteUnitsModel.INITIALISATION.MAXIMUM)) {
-                //Log target types list may be incomplete
-                targetTypeWarning = NbBundle.getMessage(AddUnitTicketAction.class, "AddUnitTicketAction.action.warning.loadingIncomplete");
-                //add target types from documents model
-                try {
-                    final String sfx = rum.getUnitOpenSupport().findBetulaProjectProperties().getProperty(DocumentsModel.PROP_DOCUMENT_SUFFIXES);
-                    Arrays.stream(sfx.split(","))
-                            .forEach(targetTypes::add);
-                } catch (IOException ex) {
-                    throw new IllegalStateException(ex);
-                }
-            }
-            rum.getTargets().stream()
-                    .map(TargetDocument::getTargetType)
-                    .forEach(targetTypes::add);
-        }
+//        final Set<String> targetTypes = new HashSet<>();
+//        String targetTypeWarning = null;
+//        for (final PrimaryUnitOpenSupport puos : context) {
+//            final RemoteUnitsModel rum;
+//            try {
+//                rum = puos.getRemoteUnitsModel(RemoteUnitsModel.INITIALISATION.NO_INITIALISATION);
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//                return;
+//            }
+//            if (!rum.getInitialization().satisfies(RemoteUnitsModel.INITIALISATION.MAXIMUM)) {
+//                //Log target types list may be incomplete
+//                targetTypeWarning = NbBundle.getMessage(AddUnitTicketAction.class, "AddUnitTicketAction.action.warning.loadingIncomplete");
+//                //add target types from documents model
+//                try {
+//                    final String sfx = rum.getUnitOpenSupport().findBetulaProjectProperties().getProperty(DocumentsModel.PROP_DOCUMENT_SUFFIXES);
+//                    Arrays.stream(sfx.split(","))
+//                            .forEach(targetTypes::add);
+//                } catch (IOException ex) {
+//                    throw new IllegalStateException(ex);
+//                }
+//            }
+//            rum.getTargets().stream()
+//                    .map(TargetDocument::getTargetType)
+//                    .forEach(targetTypes::add);
+//        }
         final Date wd = Lookup.getDefault().lookup(WorkingDate.class).getCurrentWorkingDate();
         final Map<String, List<PrimaryUnitOpenSupport>> m = context.stream()
                 .collect(Collectors.groupingBy(puos -> {
@@ -241,6 +239,10 @@ public final class AddUnitTicketAction implements ActionListener {
                 }));
         for (Map.Entry<String, List<PrimaryUnitOpenSupport>> e : m.entrySet()) {
             final WebServiceProvider ws = WebProvider.find(e.getKey(), WebServiceProvider.class);
+            final LocalProperties lp = LocalProperties.find(e.getKey());
+            final String sfx = lp.getProperty(DocumentsModel.PROP_DOCUMENT_SUFFIXES);
+            final Set<String> targetTypes = Arrays.stream(sfx.split(","))
+                    .collect(Collectors.toSet());
             final Map<String, List<PrimaryUnitOpenSupport>> mi = e.getValue().stream()
                     .collect(Collectors.groupingBy(puos -> {
                         try {
@@ -279,7 +281,7 @@ public final class AddUnitTicketAction implements ActionListener {
                         .forEach(sj::add);
                 final PrimaryUnitOpenSupport singleUos = ei.getValue().size() == 1 ? ei.getValue().iterator().next() : null;
                 try {
-                    processSelection(ws, singleUos, units, sj.toString(), term, targetTypes, rm, targetTypeWarning);
+                    processSelection(ws, singleUos, units, sj.toString(), term, targetTypes, rm, null);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
