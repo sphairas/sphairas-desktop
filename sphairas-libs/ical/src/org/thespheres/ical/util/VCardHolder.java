@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.NbBundle;
@@ -23,10 +24,10 @@ import org.thespheres.ical.VCard;
 public class VCardHolder {
 
     private String directoryName;
-    private String gender;
+    private Optional<String> gender;
     private final VCard vCard;
     private String birthplace;
-    private LocalDate bDay;
+    private Optional<LocalDate> bDay;
     private N n;
 
     public VCardHolder(VCard vCard) {
@@ -62,20 +63,24 @@ public class VCardHolder {
 
     public String getGender() {
         if (gender == null) {
-            gender = vCard.getAnyPropertyValue(VCard.GENDER).get();
+            gender = vCard.getAnyPropertyValue(VCard.GENDER);
         }
-        return gender;
+        return gender.orElse(null);
     }
 
     public LocalDate getBDay() {
         if (bDay == null) {
-            String v = vCard.getAnyPropertyValue(VCard.BDAY).get();
-            try {
-                bDay = LocalDate.parse(v, IComponentUtilities.DATE_FORMATTER);
-            } catch (DateTimeParseException e) {
-            }
+            bDay = vCard.getAnyPropertyValue(VCard.BDAY)
+                    .map(v -> {
+                        try {
+                            return LocalDate.parse(v, IComponentUtilities.DATE_FORMATTER);
+                        } catch (final DateTimeParseException e) {
+                            Logger.getLogger(VCardHolder.class.getCanonicalName()).log(Level.INFO, "Invalid date time format {0}", v);
+                            return null;
+                        }
+                    });
         }
-        return bDay;
+        return bDay.orElse(null);
     }
 
     public String getBirthplace() {
@@ -124,7 +129,6 @@ public class VCardHolder {
         private final String[] value;
         private String given;
         private String family;
-        private String search;
 
         private N(String value) {
             this.value = value.split(";");
