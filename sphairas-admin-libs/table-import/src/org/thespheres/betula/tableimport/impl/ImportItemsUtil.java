@@ -137,7 +137,7 @@ class ImportItemsUtil {
                 sj.add(StringUtils.trim(sourceName));
                 if (!StringUtils.isBlank(xmls.getSourceGivenNames())) {
                     sj.add(StringUtils.trim(xmls.getSourceGivenNames()));
-                } else {
+                } else if (xmls.getSource() != null) {
                     for (final XmlItem.SourceElement se : xmls.getSource()) {
                         if (isGivenName(se)) {
                             final String v = StringUtils.trimToNull(se.getValue());
