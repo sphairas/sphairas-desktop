@@ -29,7 +29,7 @@ public class DefaultUntisImportTargetFactory extends UntisImportConfiguration.Fa
 
     @Override
     protected UntisImportConfiguration doCreateInstance(String provider) throws IOException {
-        if (SyncedProviderInstance.getInstances().containsKey(provider) && hasSiBankProperties(provider)) {
+        if (SyncedProviderInstance.getInstances().containsKey(provider) && hasUntisProperties(provider)) {
             try {
                 return DefaultUntisImports.create(provider, SyncedProviderInstance.getInstances().get(provider).getBaseDir().toUri().toURL());
             } catch (Exception ex) {
@@ -42,12 +42,12 @@ public class DefaultUntisImportTargetFactory extends UntisImportConfiguration.Fa
     @Override
     public List<ProviderRef> available(Class<UntisImportConfiguration> subType) {
         return SyncedProviderInstance.getInstances().keySet().stream()
-                .filter(DefaultUntisImportTargetFactory::hasSiBankProperties)
+                .filter(DefaultUntisImportTargetFactory::hasUntisProperties)
                 .map(ProviderRef::new)
                 .collect(Collectors.toList());
     }
 
-    static boolean hasSiBankProperties(final String provider) {
+    static boolean hasUntisProperties(final String provider) {
         final SyncedProviderInstance i = SyncedProviderInstance.getInstances().get(provider);
         final Path p = i.getBaseDir().resolve(UNTIS_PROPERTIES_FILE);
         return Files.exists(p);
