@@ -10,6 +10,7 @@ import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -81,13 +82,14 @@ public abstract class XmlCsvImportAction<I extends ImportItem> extends AbstractF
         final File home = new File(System.getProperty("user.home"));
         final String title = NbBundle.getMessage(XmlCsvImportAction.class, "XmlCsvDataImportAction.FileChooser.Title");
         final MultiFileFilterDelegate filter = MultiFileFilterDelegate.create(getTypes(), true);
-        final String system = Charset.defaultCharset().name();
         final JCheckBox encBox = new JCheckBox();
         encBox.setHorizontalTextPosition(SwingConstants.LEADING);
         encBox.setEnabled(false);
         final String encBoxTitle = NbBundle.getMessage(XmlCsvImportAction.class, "XmlCsvDataImportAction.FileChooser.utf8Box.title");
         encBox.setText(encBoxTitle);
-        encBox.setSelected("utf-8".equals(system));
+        final String system = Charset.defaultCharset().name();
+        final boolean isSystemCharsetUTF8 = StandardCharsets.UTF_8.name().equals(system);
+        encBox.setSelected(isSystemCharsetUTF8);
         final JPanel encBoxLabel = new JPanel();
         final BoxLayout bl = new BoxLayout(encBoxLabel, BoxLayout.LINE_AXIS);
         encBoxLabel.setLayout(bl);
@@ -213,7 +215,7 @@ public abstract class XmlCsvImportAction<I extends ImportItem> extends AbstractF
             return null;
         }
         final String mimeType = filter.getMimeType(file);
-        final String encoding = (encBox.isEnabled() && encBox.isSelected()) ? "UTF-8" : Charset.defaultCharset().name();
+        final String encoding = (encBox.isEnabled() && encBox.isSelected()) ? StandardCharsets.UTF_8.name() : Charset.defaultCharset().name();
         return filter.load(file, encoding);
     }
 
