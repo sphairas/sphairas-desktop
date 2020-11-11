@@ -25,7 +25,7 @@
         <echo>Cleaning ${sphairas.cluster.converted}</echo>
         <subant target="clean" buildpath="${sphairas.cluster.converted}"/>
     </target>
-    <target name="nbms-all" depends="-init,init-cluster" if="${build-clean.all}">
+    <target name="nbms-all" depends="-init,init-cluster">
         <echo>Creating NBMs for ${sphairas.cluster.converted}</echo>
         <subant target="nbms" buildpath="${sphairas.cluster.converted}">
             <!--<property name="javafx.platform.select" value="${harness.taskdefs.done}"/>-->
