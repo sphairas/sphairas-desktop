@@ -3,5 +3,6 @@
 <filesystem>
     <folder name="Imports">
         <file name="default-dictionary.xml" url="impl/default-dictionary.xml" />
+        <file name="signees-dictionary.xml" url="impl/signees-dictionary.xml" />
     </folder>
 </filesystem>

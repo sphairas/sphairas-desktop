@@ -65,7 +65,7 @@ class SigneeXmlCsvSettings extends XmlCsvImportSettings<SigneeXmlCsvItem> {
 
     @Override
     public synchronized XmlCsvDictionary createDictionary() throws IOException {
-        final FileObject d = FileUtil.getConfigFile("/Imports/default-dictionary.xml");
+        final FileObject d = FileUtil.getConfigFile("/Imports/signees-dictionary.xml");
         try (final InputStream is = d.getInputStream()) {
             return (XmlCsvDictionary) DICTJAXB.createUnmarshaller().unmarshal(is);
         } catch (JAXBException ex) {

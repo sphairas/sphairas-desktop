@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<csv:xml-csv-dictionary xmlns:csv="http://www.thespheres.org/xsd/betula/csv-import.xsd" display-name="signees">
+    <csv:entry assignable-key="source-name">Lehrer*,Name*,Familienname*</csv:entry>
+    <csv:entry assignable-key="source-gender">Geschlecht</csv:entry>
+    <csv:entry assignable-key="signee" assignable-key-label="E-Mail-ID">E-Mail,Unterzeichner</csv:entry>
+    <csv:entry assignable-key="signee.prefix">Benutzername,Account,Konto,Anmeldename</csv:entry>
+</csv:xml-csv-dictionary>
