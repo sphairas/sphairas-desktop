@@ -52,6 +52,7 @@ public class ConfigurableImportTarget extends AbstractImportTarget implements Im
             throw new IllegalStateException(ex);
         }
     }
+    private NameParserSettings nameParserSettings;
 
     public ConfigurableImportTarget(String provider, Product prod) {
         super(provider, prod);
@@ -140,6 +141,13 @@ public class ConfigurableImportTarget extends AbstractImportTarget implements Im
 
     public String getStudentsAuthority(Object... params) {
         return properties.get("students.authority");
+    }
+
+    public NameParserSettings getNameParserSettings() {
+        if (nameParserSettings == null) {
+            nameParserSettings = new NameParserSettings(properties);
+        }
+        return nameParserSettings;
     }
 
     public static ConfigurableImportTarget find(final String url) {
