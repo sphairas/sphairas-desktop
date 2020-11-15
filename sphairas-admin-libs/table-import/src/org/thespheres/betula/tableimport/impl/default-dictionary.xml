@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <csv:xml-csv-dictionary xmlns:csv="http://www.thespheres.org/xsd/betula/csv-import.xsd" display-name="default">
     <csv:entry assignable-key="source-level">Stufe</csv:entry>
-    <csv:entry assignable-key="source-unit">Kurs,KURSNR,AG</csv:entry>
+    <csv:entry assignable-key="source-unit">Kurs,Kurskennung,KURSNR</csv:entry>
+    <csv:entry assignable-key="source-unit-name">AG,Kursname</csv:entry>
     <csv:entry assignable-key="source-signee">Lehrer*</csv:entry>
     <csv:entry assignable-key="source-grade">Note,Zensur</csv:entry>
     <csv:entry assignable-key="source-primary-unit">Klasse</csv:entry>

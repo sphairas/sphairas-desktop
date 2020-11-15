@@ -248,7 +248,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         final UnitId unitId = getUnitId();
         final boolean isUnitResolvable = unitId != null && !unitId.getId().equals(helper.getUnitDisplayName());
         return hasUserDisplayName
-                || (isUnitResolvable && !StringUtils.isBlank(getSource().getSourceUnit()));
+                || (isUnitResolvable && !StringUtils.isBlank(getSource().getSourceUnitName()));
     }
 
     @Override
@@ -258,7 +258,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
             if (p instanceof String) {
                 return (String) p;
             }
-            return StringUtils.trimToNull(getSource().getSourceUnit());
+            return StringUtils.trimToNull(getSource().getSourceUnitName());
         }
         return helper.getUnitDisplayName();
     }
