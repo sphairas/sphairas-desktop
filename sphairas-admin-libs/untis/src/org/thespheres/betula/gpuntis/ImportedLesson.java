@@ -5,7 +5,6 @@
  */
 package org.thespheres.betula.gpuntis;
 
-import org.thespheres.betula.xmlimport.parse.TranslateID;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
@@ -26,7 +25,6 @@ import org.thespheres.betula.StudentId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.assess.GradeFactory;
 import org.thespheres.betula.document.DocumentId;
-import org.thespheres.betula.document.DocumentId.Version;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.gpuntis.impl.StudenplanUpdater;
 import org.thespheres.betula.gpuntis.xml.General;
@@ -39,9 +37,11 @@ import org.thespheres.betula.services.scheme.spi.LessonId;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.util.Signees;
 import org.thespheres.betula.services.util.Units;
+import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.ImportItem.CloneableImport;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
+import org.thespheres.betula.xmlimport.parse.NameParser;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
 import org.thespheres.betula.xmlimport.uiutil.OutlineModelNode;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
@@ -192,34 +192,24 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
         if (configChanged || generatedUnit == null) {
             List<org.thespheres.betula.gpuntis.xml.Class> cl = getLesson().getLessonClasses();
             if (cl != null) {
-                String klasse = null;
-                int stufe = -1;
-                String kursid = getLesson().getText1() != null ? getLesson().getText1().trim() : null;
-                int[] ints = cl.stream()
+                final String kursid = StringUtils.trimToNull(getLesson().getText1());
+                final Integer stufe = cl.stream()
                         .map(c -> c.getId().substring(3))
                         .map(STUFE_STPLITTER::split)
-                        .map(arr -> arr.length > 0 ? arr[0] : null)
-                        .filter(Objects::nonNull)
-                        .filter(s -> !s.isEmpty())
+                        .map(arr -> arr[0])
+                        .filter(StringUtils::isNumeric)
                         .mapToInt(Integer::parseInt)
-                        .toArray();
-                if (ints.length > 0) {
-                    final int first = ints[0];
-                    if (first > 0 && Arrays.stream(ints).allMatch(i -> i == first)) {
-                        stufe = first;
-                    }
-                }
-                String[] clArr = cl.stream()
+                        .distinct()
+                        .boxed()
+                        .collect(CollectionUtil.singleOrNull());
+                final String klasse = cl.stream()
                         .map(c -> c.getId().substring(3))
-                        .toArray(String[]::new);
-                if (clArr.length == 1) {
-                    klasse = clArr[0];
-                }
+                        .collect(CollectionUtil.singleOrNull());
                 generatedUnit = new GeneratedUnitId(klasse, stufe, kursid);
                 setDeleteDate(ImportUtil.calculateDeleteDate(stufe, 5, Month.JULY));
             } else {
                 //Fallback case
-                generatedUnit = new GeneratedUnitId(null, -1, null);
+                generatedUnit = new GeneratedUnitId(null, null, null);
                 setDeleteDate(LocalDate.now());
             }
         }
@@ -272,7 +262,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
 
     @Override
     public UnitId getUnitId() {
-        UnitId u = super.getUnitId();
+        final UnitId u = super.getUnitId();
         if (u != null) {
             return u;
         }
@@ -314,8 +304,10 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
         if (targetDocBase == null) {
             final UnitId u = getUnitId();
             if (u != null) {
-                String id = TranslateID.translateUnitToTarget(u.getId(), getSubjectMarker(), getCustomDocumentIdIdentifier());
-                targetDocBase = new DocumentId(getUntisImportConfiguration().getAuthority(), id, Version.LATEST);
+//                String id = TranslateID.translateUnitToTarget(u.getId(), getSubjectMarker(), getCustomDocumentIdIdentifier());
+//                targetDocBase = new DocumentId(getUntisImportConfiguration().getAuthority(), id, Version.LATEST);
+                final NameParser pn2 = generatedUnit.createNameParser();
+                targetDocBase = pn2.translateUnitIdToTargetDocumentBase(u.getId(), getSubjectMarker(), new String[]{getCustomDocumentIdIdentifier()});
             }
         }
         return targetDocBase;
@@ -446,13 +438,13 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
     class GeneratedUnitId implements VetoableChangeListener {
 
         private final String klasse;
-        private final int stufe;
+        private final Integer stufe;
         private final String kursid;
         private boolean isInit = false;
         private UnitId uid;
 
         @SuppressWarnings("LeakingThisInConstructor")
-        private GeneratedUnitId(String klasse, int stufe, String kursid) {
+        private GeneratedUnitId(String klasse, Integer stufe, String kursid) {
             this.klasse = klasse;
             this.stufe = stufe;
             this.kursid = kursid;
@@ -462,20 +454,39 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
         private synchronized UnitId getUnitId() {
             if (!isInit) {
                 final int rJahr = getGeneral().getSchoolyearbegindate().getYear();
-                if (klasse != null && stufe != -1) {
-                    String st = Integer.toString(stufe);
-                    String kid = klasse.replace(st, "");
-                    String idvalue = TranslateID.findId(stufe, rJahr, null, kid, "kgs");
-                    uid = new UnitId(getUntisImportConfiguration().getAuthority(), idvalue);
-                } else if (stufe != -1 && kursid != null) {
-                    String idvalue = TranslateID.findId(stufe, rJahr, getSubjectMarker(), kursid, "kgs");
-                    uid = new UnitId(getUntisImportConfiguration().getAuthority(), idvalue);
+                final NameParser pn2 = createNameParser();
+                if (klasse != null && stufe != null) {
+//                    String st = Integer.toString(stufe);
+//                    String kid = klasse.replace(st, "");
+//                    String idvalue = TranslateID.findId(stufe, rJahr, null, kid, "kgs");
+//                    uid = new UnitId(getUntisImportConfiguration().getAuthority(), idvalue);
+                    uid = pn2.findUnitId(klasse, rJahr, stufe);
+                } else if (stufe != null && kursid != null) {
+//                    String idvalue = TranslateID.findId(stufe, rJahr, getSubjectMarker(), kursid, "kgs");
+//                    uid = new UnitId(getUntisImportConfiguration().getAuthority(), idvalue);
+                    uid = pn2.findUnitId(kursid, getSubjectMarker(), rJahr, stufe);
                 } else {
                     uid = UnitId.NULL;
                 }
                 isInit = true;
             }
             return uid;
+        }
+
+        protected NameParser createNameParser() {
+            final UntisImportConfiguration config = getUntisImportConfiguration();
+            final NamingResolver nr = config.getNamingResolver();
+            final String first = nr.properties().get("first-element");
+            final String bl = nr.properties().get("base-level");
+            Integer baseLevel = null;
+            if (bl != null) {
+                try {
+                    baseLevel = Integer.parseInt(bl);
+                } catch (NumberFormatException nfex) {
+                }
+            }
+            final NameParser pn2 = new NameParser(config.getAuthority(), first, baseLevel);
+            return pn2;
         }
 
         @Override
