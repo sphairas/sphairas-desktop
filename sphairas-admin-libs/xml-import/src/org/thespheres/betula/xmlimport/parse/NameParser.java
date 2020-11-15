@@ -134,21 +134,30 @@ public class NameParser {
             if (m.find()) {
                 int stufe = Integer.parseInt(m.group());
                 if (stufe >= 1 && (checkLevel == null || checkLevel == stufe)) {
-                    final String ident = StringUtils.trimToNull(name.substring(m.end()));
-                    if (stufe == 10) {
-                        uid = TranslateID.findId(stufe, referenzjahr, 10, false, null, ident, firstElement);
-                    } else if (baseLevel != null) {
-                        uid = TranslateID.findIDWithDefaultBase(firstElement, subject, referenzjahr, stufe, baseLevel, true, ident, baseLevel);
-                    } else {
-                        uid = TranslateID.findId(stufe, referenzjahr, subject, ident, firstElement);
-                    }
+                    final String raw = StringUtils.trimToNull(name.substring(m.end()));
+                    String ident = StringUtils.removePattern(raw, "\\A[\\.\\-]*");
+                    uid = createId(stufe, referenzjahr, ident, subject);
                 }
+            } else {//No starting number
+                //TODO: Solution required
             }
         }
         if (uid != null) {
             return new UnitId(authority, uid);
         }
         return null;
+    }
+
+    protected String createId(int stufe, final int referenzjahr, final String ident, final Marker subject) {
+//        if (stufe == 10) {
+//            return TranslateID.findId(stufe, referenzjahr, 10, false, null, ident, firstElement);//KGS spec.
+//            //return TranslateID.findIDWithDefaultBase(firstElement, null, referenzJahr, stufe, stufe, false, ident, TranslateID.DEFAULT_BASE_STUFE);
+//        } else 
+        if (baseLevel != null) {
+            return TranslateID.findIDWithDefaultBase(firstElement, subject, referenzjahr, stufe, baseLevel, true, ident, baseLevel);
+        } else {
+            return TranslateID.findId(stufe, referenzjahr, subject, ident, firstElement);
+        }
     }
 
 //    private static String resolveJg10uid(String resolvedName) {
