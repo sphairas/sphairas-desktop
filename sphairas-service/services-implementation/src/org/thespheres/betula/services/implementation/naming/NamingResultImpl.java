@@ -108,6 +108,14 @@ final class NamingResultImpl extends NamingResolver.Result {
                 String klId = elements.get(Naming.KURS_KLASSE_ID);
                 if (klId.startsWith("hr")) {
                     klId = "." + klId.substring(2);
+                } else {
+                    try {
+                        final int nklid = Integer.parseInt(klId);
+                        if (nklid > 0) {
+                            klId = "." + klId;
+                        }
+                    } catch (final NumberFormatException ignore) {
+                    }
                 }
                 t = t + klId;
                 ret.add(t);
