@@ -32,6 +32,8 @@ public class XmlUnitItem extends XmlItem {
     protected UnitId unitDeprected;
     @XmlElement(name = "source-unit")
     protected String sourceUnit;
+    @XmlElement(name = "source-unit-name")
+    protected String sourceUnitName;
     @XmlElement(name = "source-primary-unit")
     protected String sourcePrimaryUnit;
     @XmlElement(name = "source-level")
@@ -58,7 +60,17 @@ public class XmlUnitItem extends XmlItem {
     }
 
     public String getSourceUnit() {
-        return sourceUnit != null ? sourceUnit : getSourcePrimaryUnit();
+        if (sourceUnit != null) {
+            return sourceUnit;
+        } else if (getSourcePrimaryUnit() != null) {
+            return getSourcePrimaryUnit();
+        } else {
+            return getSourceUnitName();
+        }
+    }
+
+    public String getSourceUnitName() {
+        return sourceUnitName;
     }
 
     public String getSourcePrimaryUnit() {
