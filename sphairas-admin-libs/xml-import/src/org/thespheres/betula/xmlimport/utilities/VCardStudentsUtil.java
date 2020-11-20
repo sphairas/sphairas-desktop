@@ -52,11 +52,15 @@ public class VCardStudentsUtil {
 
     private static List<VCardStudent> tryFindNoStudentId(final VCardStudents from, final ImportStudentKey k) {
         return from.getStudents().stream()
-                .filter(vcs -> k.compareDateOfBirth(vcs) && considerNamesEqual(vcs, k))
+                .filter(vcs -> select(k, vcs))
                 .collect(Collectors.toList());
     }
 
-    @NbBundle.Messages({"VCardStudents.info.resolve=Assoziere SiBank-Name „{0}“ mit „{1}“"})
+    private static boolean select(final ImportStudentKey k, final VCardStudent vcs) {
+        return k.compareDateOfBirth(vcs) && considerNamesEqual(vcs, k);
+    }
+
+    @NbBundle.Messages({"VCardStudents.info.resolve=Assoziere Name „{0}“ mit „{1}“"})
     private static boolean considerNamesEqual(final VCardStudent vcs, final ImportStudentKey k) {
         final String sb = k.getSourceName();
         if (vcs.getDirectoryName().equals(sb)) {

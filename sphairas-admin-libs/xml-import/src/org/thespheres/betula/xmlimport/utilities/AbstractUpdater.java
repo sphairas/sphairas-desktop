@@ -14,6 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.MissingResourceException;
 import java.util.StringJoiner;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
@@ -39,6 +40,7 @@ import org.thespheres.betula.xmlimport.ImportUtil;
  */
 public abstract class AbstractUpdater<I extends ImportItem> implements Runnable {
 
+    protected static final Logger LOGGER = Logger.getLogger("UPDATER");
     protected final I[] items;
     protected OutputWriter err = ImportUtil.getIO().getErr();
     private boolean dryRun = false;

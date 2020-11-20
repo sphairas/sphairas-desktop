@@ -38,7 +38,6 @@ import org.thespheres.betula.services.ws.BetulaWebService;
 import org.thespheres.betula.services.ws.Paths;
 import org.thespheres.betula.services.ws.ServiceException;
 import org.thespheres.betula.services.ws.WebServiceProvider;
-import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.util.ContainerBuilder;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportTargetsItem.GradeEntry;
@@ -49,7 +48,7 @@ import org.thespheres.betula.xmlimport.ImportUtil;
  * @author boris.heithecker
  * @param <I>
  */
-@Messages({"Updater.message.start=Starte Import nach {0}.",
+@Messages({"Updater.message.start=Starte Import von {0} Elementen nach {1}.",
     "Updater.message.network=Senden über das Netzwerk ...",
     "Updater.message.finish=Es wurden {0} Kurs(e) in {1} ms nach {2} importiert.",
     "Updater.message.abort=Der Import wird abgebrochen.",
@@ -94,7 +93,7 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
 
     @Override
     public void run() {
-        final String msg = NbBundle.getMessage(TargetItemsUpdater.class, "Updater.message.start", provider.getInfo().getDisplayName());
+        final String msg = NbBundle.getMessage(TargetItemsUpdater.class, "Updater.message.start", items.length, provider.getInfo().getDisplayName());
         ImportUtil.getIO().getOut().println(msg);
 
         //kurszuordnungen, termtargets
@@ -105,7 +104,7 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
         try {
             builder = createContainer();
         } catch (ImportConfigurationException e) {
-            PlatformUtil.getCodeNameBaseLogger(TargetItemsUpdater.class).log(Level.CONFIG, e.getMessage(), e);
+            LOGGER.log(Level.CONFIG, e.getMessage(), e);
             ImportUtil.getIO().getErr().println(e.getMessage());
             final String msg2 = NbBundle.getMessage(TargetItemsUpdater.class, "Updater.message.abort");
             ImportUtil.getIO().getOut().println(msg2);
@@ -320,9 +319,19 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
         return null;
     }
 
+    @Messages({"TargetItemsUpdater.checkImportTargetsItem.notValid=Der Import {0} ist nicht gültig. Löschdatum: {1}; Gruppe: {2}; Basis-Liste: {3}; Fach: {4}; "})
     protected boolean checkImportTargetsItem(final I iti) {
-        return !filters.stream()
+        final boolean ret = !filters.stream()
                 .anyMatch(uf -> !uf.accept(iti));
+        if (!ret) {
+            final String message = NbBundle.getMessage(TargetItemsUpdater.class, "TargetItemsUpdate.checkImportTargetsItem.notValid", new Object[]{iti.getSourceNodeLabel(),
+                iti.getDeleteDate(),
+                iti.getUnitId(),
+                iti.getTargetDocumentIdBase(),
+                iti.getSubjectMarker()});
+            ImportUtil.getIO().getErr().println(message);
+        }
+        return ret;
     }
 
     protected boolean checkTargetDocument(final I iti, final TargetDocumentProperties td) {
