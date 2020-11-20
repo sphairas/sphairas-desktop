@@ -31,6 +31,7 @@ import org.openide.filesystems.FileChooserBuilder;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.lookup.ServiceProvider;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.NamingResolver;
 import org.thespheres.betula.services.scheme.spi.SchemeProvider;
@@ -248,5 +249,14 @@ public abstract class XmlCsvImportAction<I extends ImportItem> extends AbstractF
         }
 
         public ImportTargetsItem[] map(final ConfigurableImportTarget config, final ImportTargetsItem item, final Term term);
+    }
+
+    @ServiceProvider(service = ImportTargetsItemMapper.class)
+    public static class DefaultImportTargetsItemMapper implements ImportTargetsItemMapper {
+
+        @Override
+        public ImportTargetsItem[] map(final ConfigurableImportTarget config, final ImportTargetsItem item, final Term term) {
+            return new ImportTargetsItem[]{item};
+        }
     }
 }
