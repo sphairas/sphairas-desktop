@@ -69,8 +69,13 @@ public class TableImportStudentsSet<I extends AbstractXmlCsvImportItem> extends 
         }
     }
 
-    protected void initHolder(final Holder holder, VCardStudent found) {
-        holder.id = found.getStudentId();
+    protected void initHolder(final Holder holder, final VCardStudent found) {
+        final StudentId sid = found.getStudentId();
+        if (sid == null) {
+            ImportUtil.getIO().getErr().println("No student id: " + found.toString());
+            return;
+        }
+        holder.id = sid;
     }
 
     protected boolean compareDateOfBirth(ImportStudentKey k, VCardStudent vcs) {
