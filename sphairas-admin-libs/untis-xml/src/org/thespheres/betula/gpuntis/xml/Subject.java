@@ -15,12 +15,11 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.thespheres.betula.document.Marker;
+import org.thespheres.betula.document.util.MarkerAdapter.XmlMarkerAdapter;
 import org.thespheres.betula.gpuntis.xml.Description.DescriptionRef;
 import org.thespheres.betula.gpuntis.xml.Room.RoomRef;
 
-/**
- *
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Subject {
 
@@ -38,95 +37,52 @@ public class Subject {
     @XmlElement(name = "subject_description")
     protected DescriptionRef subjectDescription;
     protected String foreignkey;
+    @XmlJavaTypeAdapter(XmlMarkerAdapter.class)
+    @XmlElement(name = "subject", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
+    protected Marker mappedSubject;
 
-    /**
-     * Gets the value of the id property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Gets the value of the longname property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getLongname() {
+    public String getLongName() {
         return longname;
     }
 
-    /**
-     * Gets the value of the alias property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getAlias() {
         return alias;
     }
 
-    /**
-     * Gets the value of the text property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getText() {
         return text;
     }
 
-    /**
-     * Gets the value of the subjectgroup property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getSubjectgroup() {
+    public String getSubjectGroup() {
         return subjectgroup;
     }
 
-    /**
-     * Gets the value of the subjectRoom property.
-     *
-     * @return possible object is {@link SubjectRoom }
-     *
-     */
     public Room getSubjectRoom() {
         return subjectRoom != null ? subjectRoom.get() : null;
     }
 
-    /**
-     * Gets the value of the flags property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getFlags() {
         return flags;
     }
 
-    /**
-     * Gets the value of the subjectDescription property.
-     *
-     * @return possible object is {@link SubjectDescription }
-     *
-     */
     public Description getSubjectDescription() {
         return subjectDescription != null ? subjectDescription.get() : null;
     }
 
-    /**
-     * Gets the value of the foreignkey property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getForeignkey() {
+    public String getForeignKey() {
         return foreignkey;
+    }
+
+    public Marker getMappedSubject() {
+        return mappedSubject;
+    }
+
+    public void setMappedSubject(final Marker subject) {
+        this.mappedSubject = subject;
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -137,12 +93,6 @@ public class Subject {
         @XmlIDREF
         protected Subject subject;
 
-        /**
-         * Gets the value of the id property.
-         *
-         * @return possible object is {@link Object }
-         *
-         */
         public Subject get() {
             return subject;
         }

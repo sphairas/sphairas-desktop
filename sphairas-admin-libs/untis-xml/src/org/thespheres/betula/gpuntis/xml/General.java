@@ -7,9 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-/**
- *
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class General {
 
@@ -32,24 +29,25 @@ public class General {
     @XmlJavaTypeAdapter(DateAdapter.class)
     @XmlElement(name = "termenddate")
     protected LocalDate termenddate;
+    protected String termname;
 
-    public String getSchoolname() {
+    public String getSchoolName() {
         return schoolname;
     }
 
-    public Integer getSchoolnumber() {
+    public Integer getSchoolNumber() {
         return schoolnumber;
     }
 
-    public String getSchooltype() {
+    public String getSchoolType() {
         return schooltype;
     }
 
-    public LocalDate getSchoolyearbegindate() {
+    public LocalDate getSchoolYearBeginDate() {
         return schoolyearbegindate;
     }
 
-    public LocalDate getSchoolyearenddate() {
+    public LocalDate getSchoolYearEndDate() {
         return schoolyearenddate;
     }
 
@@ -65,12 +63,16 @@ public class General {
         return footer;
     }
 
-    public LocalDate getTermbegindate() {
+    public LocalDate getTermBeginDate() {
         return termbegindate;
     }
 
-    public LocalDate getTermenddate() {
+    public LocalDate getTermEndDate() {
         return termenddate;
+    }
+
+    public String getTermName() {
+        return termname;
     }
 
 }

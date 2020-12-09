@@ -83,6 +83,7 @@ public class ImportAction extends AbstractFileImportAction<UntisImportData, Docu
     public static ImportAction signeeImport() {
         return new ImportAction(ImportAction.SIGNEE);
     }
+    private DataObject data;
 
     private ImportAction(String type) {
         super(NbBundle.getMessage(ImportAction.class, "ImportAction.dialog.title"));
@@ -96,7 +97,7 @@ public class ImportAction extends AbstractFileImportAction<UntisImportData, Docu
 
     @Override
     protected WizardDescriptor.Iterator<UntisImportData> createIterator(Document xml, UntisImportData d) {
-        return new ImportActionWizardIterator(type);
+        return new ImportActionWizardIterator(type, d);
     }
 
     @Override
@@ -166,7 +167,7 @@ public class ImportAction extends AbstractFileImportAction<UntisImportData, Docu
     @Override
     protected void onWizardFinishOK(UntisImportConfiguration config, Set<?> selected, Document xml, UntisImportData wiz) {
         if (wiz.isUploadUntisDocument()) {
-            uploadUntisDocument(config, xml);
+            ImportAction.this.uploadUntisDocument(config, xml);
         }
         super.onWizardFinishOK(config, selected, xml, wiz);
         NbPreferences.forModule(ImportAction.class).put(SAVED_IMPORT_TARGET_PROVIDER, config.getProviderInfo().getURL());
@@ -177,7 +178,7 @@ public class ImportAction extends AbstractFileImportAction<UntisImportData, Docu
 //            remote.getRequestProcessor().post(sup);//TODO: use own RP  --> may last long until processed if app opened recently
         }
     }
-
+    
     @Override
     protected void onUpdateFinished(UntisImportConfiguration config, Set<?> selected, Document xml, UntisImportData wiz, AbstractUpdater<?> updater) {
         final UntisSourceTargetAccess acc = (UntisSourceTargetAccess) wiz.getProperty(UNTIS_SOURCE_TARGET_ACCESS);
@@ -195,7 +196,7 @@ public class ImportAction extends AbstractFileImportAction<UntisImportData, Docu
     private void uploadUntisDocument(UntisImportConfiguration config, Document xml) throws MissingResourceException {
         try {
             UploadXml.upload(config, xml);
-            final String msg = NbBundle.getMessage(ImportAction.class, "ImportAction.UploadXml.succes", config.getUntisXmlDocumentUploadHref());
+            final String msg = NbBundle.getMessage(ImportAction.class, "ImportAction.UploadXml.succes", config.getUntisXmlDocumentResource());
             ImportUtil.getIO().getOut().println(msg);
         } catch (IOException ex) {
             PlatformUtil.getCodeNameBaseLogger(ImportAction.class).log(LogLevel.INFO_WARNING, ex.getMessage(), ex);

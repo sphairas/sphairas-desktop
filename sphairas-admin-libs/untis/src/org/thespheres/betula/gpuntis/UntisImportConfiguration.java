@@ -19,7 +19,7 @@ import org.thespheres.betula.xmlimport.ImportTargetFactory;
 public interface UntisImportConfiguration extends ImportTarget, CommonTargetProperties, CommonDocuments, CommonStudentProperties {
 
     public static final String LINKS_FILENAME = "untis-assoziationen.xml";
-    public static final String UNTIS_FILENAME = "untis.xml";
+    public static final String UNTIS_XML_RESOURCE = "untis.xml";
 
     default public UntisCreateDocumentsTableModel createUntisCreateDocumentsTableModel() {
         return new UntisCreateDocumentsTableModel();
@@ -27,7 +27,7 @@ public interface UntisImportConfiguration extends ImportTarget, CommonTargetProp
 
     public String getDefaultSigneeSuffix();
 
-    public String getUntisXmlDocumentUploadHref();
+    public String getUntisXmlDocumentResource();
 
     public static abstract class Factory extends ImportTargetFactory<UntisImportConfiguration> {
 

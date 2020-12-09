@@ -1,5 +1,6 @@
 package org.thespheres.betula.gpuntis.ui;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
@@ -21,13 +22,16 @@ import org.thespheres.betula.xmlimport.ImportTargetFactory;
 import org.thespheres.betula.xmlimport.uiutil.ImportProviderComboBoxModel;
 import org.thespheres.betula.xmlimport.uiutil.TermModel;
 
-@NbBundle.Messages({"UntisImportConfigVisualPanel.step.name=Datenquellen"})
+@NbBundle.Messages({"UntisImportConfigVisualPanel.step.name=Datenquellen",
+    "UntisImportConfigVisualPanel.untis.period={0} bis {1}"})
 class UntisImportConfigVisualPanel extends JPanel {
 
     private final ImportProviderComboBoxModel<UntisImportConfiguration> providerModel = new ImportProviderComboBoxModel<>();
 //    private final StringValue providerStringValue = v -> v != null ? ((UntisImportConfiguration) v).getProviderInfo().getDisplayName() : "";
-    private final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("EE., d.M.yy HH:mm");
+    private final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("EE, d.M.yy HH:mm");
+    private final DateTimeFormatter DF = DateTimeFormatter.ofPattern("d.M.yy");
     private final UntisTermModel termsModel;
+    private UntisImportData settings;
 
     @SuppressWarnings("LeakingThisInConstructor")
     public UntisImportConfigVisualPanel() {
@@ -53,7 +57,6 @@ class UntisImportConfigVisualPanel extends JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jFormattedTextField1 = new javax.swing.JFormattedTextField();
         providerLabel = new javax.swing.JLabel();
@@ -62,15 +65,15 @@ class UntisImportConfigVisualPanel extends JPanel {
         schoolNumberLabel = new javax.swing.JLabel();
         schoolNumberTextField = new javax.swing.JTextField();
         schoolYearIdLabel = new javax.swing.JLabel();
-        versionLabel = new javax.swing.JLabel();
         untisTermLabel = new javax.swing.JLabel();
         untisTermTextField = new org.jdesktop.swingx.JXTextField();
-        versionTextField = new javax.swing.JFormattedTextField();
         schoolYearIdTextField = new javax.swing.JFormattedTextField();
-        fileDateTextField = new org.jdesktop.swingx.JXTextField();
-        fileDateLabel = new javax.swing.JLabel();
+        untisTermNameTextField = new org.jdesktop.swingx.JXTextField();
+        untisTermNameLabel = new javax.swing.JLabel();
         termLabel = new javax.swing.JLabel();
         termsComboBox = new org.jdesktop.swingx.JXComboBox();
+        versionLabel = new javax.swing.JLabel();
+        versionTextField = new javax.swing.JTextField();
 
         jFormattedTextField1.setText(org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.jFormattedTextField1.text")); // NOI18N
 
@@ -86,55 +89,49 @@ class UntisImportConfigVisualPanel extends JPanel {
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(updateCalendarDataCheckBox, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.updateCalendarDataCheckBox.text")); // NOI18N
+        updateCalendarDataCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateCalendarDataCheckBoxActionPerformed(evt);
+            }
+        });
 
         schoolNumberLabel.setLabelFor(schoolNumberTextField);
         org.openide.awt.Mnemonics.setLocalizedText(schoolNumberLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.schoolNumberLabel.text")); // NOI18N
 
         schoolNumberTextField.setEditable(false);
         schoolNumberTextField.setColumns(10);
-
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, updateCalendarDataCheckBox, org.jdesktop.beansbinding.ELProperty.create("${selected}"), schoolNumberTextField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
-        bindingGroup.addBinding(binding);
+        schoolNumberTextField.setEnabled(false);
 
         schoolYearIdLabel.setLabelFor(schoolYearIdTextField);
         org.openide.awt.Mnemonics.setLocalizedText(schoolYearIdLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.schoolYearIdLabel.text")); // NOI18N
-
-        versionLabel.setLabelFor(versionTextField);
-        org.openide.awt.Mnemonics.setLocalizedText(versionLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.versionLabel.text")); // NOI18N
 
         untisTermLabel.setLabelFor(untisTermTextField);
         org.openide.awt.Mnemonics.setLocalizedText(untisTermLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.untisTermLabel.text")); // NOI18N
 
         untisTermTextField.setEditable(false);
         untisTermTextField.setColumns(20);
+        untisTermTextField.setEnabled(false);
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, updateCalendarDataCheckBox, org.jdesktop.beansbinding.ELProperty.create("${selected}"), untisTermTextField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
-        bindingGroup.addBinding(binding);
-
-        versionTextField.setColumns(3);
-        versionTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, updateCalendarDataCheckBox, org.jdesktop.beansbinding.ELProperty.create("${selected}"), versionTextField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
-        bindingGroup.addBinding(binding);
-
+        schoolYearIdTextField.setEditable(false);
         schoolYearIdTextField.setColumns(10);
         schoolYearIdTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        schoolYearIdTextField.setEnabled(false);
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, updateCalendarDataCheckBox, org.jdesktop.beansbinding.ELProperty.create("${selected}"), schoolYearIdTextField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
-        bindingGroup.addBinding(binding);
+        untisTermNameTextField.setEditable(false);
+        untisTermNameTextField.setColumns(20);
+        untisTermNameTextField.setEnabled(false);
 
-        fileDateTextField.setEditable(false);
-        fileDateTextField.setColumns(20);
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, updateCalendarDataCheckBox, org.jdesktop.beansbinding.ELProperty.create("${selected}"), fileDateTextField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
-        bindingGroup.addBinding(binding);
-
-        fileDateLabel.setLabelFor(fileDateTextField);
-        org.openide.awt.Mnemonics.setLocalizedText(fileDateLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.fileDateLabel.text")); // NOI18N
+        untisTermNameLabel.setLabelFor(untisTermNameTextField);
+        org.openide.awt.Mnemonics.setLocalizedText(untisTermNameLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.untisTermNameLabel.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(termLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.termLabel.text")); // NOI18N
 
         termsComboBox.setModel(termsModel);
+
+        org.openide.awt.Mnemonics.setLocalizedText(versionLabel, org.openide.util.NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.versionLabel.text")); // NOI18N
+
+        versionTextField.setEditable(false);
+        versionTextField.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -149,32 +146,26 @@ class UntisImportConfigVisualPanel extends JPanel {
                             .addComponent(schoolNumberLabel)
                             .addComponent(schoolYearIdLabel)
                             .addComponent(untisTermLabel)
-                            .addComponent(fileDateLabel))
+                            .addComponent(untisTermNameLabel)
+                            .addComponent(versionLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(untisTermTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(schoolNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(schoolYearIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(versionLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(fileDateTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(schoolNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(schoolYearIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(versionTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(untisTermNameTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                                .addComponent(untisTermTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(updateCalendarDataCheckBox)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(providerLabel)
                             .addComponent(termLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(termsComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
-                            .addComponent(providerComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                            .addComponent(termsComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                            .addComponent(providerComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(updateCalendarDataCheckBox))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,8 +187,6 @@ class UntisImportConfigVisualPanel extends JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(schoolYearIdLabel)
-                    .addComponent(versionLabel)
-                    .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(schoolYearIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -205,12 +194,14 @@ class UntisImportConfigVisualPanel extends JPanel {
                     .addComponent(untisTermTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(fileDateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fileDateLabel))
+                    .addComponent(untisTermNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(untisTermNameLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(versionLabel)
+                    .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void providerSelected(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providerSelected
@@ -220,9 +211,15 @@ class UntisImportConfigVisualPanel extends JPanel {
         termsModel.initializeModel(p, null);
     }//GEN-LAST:event_providerSelected
 
+    private void updateCalendarDataCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCalendarDataCheckBoxActionPerformed
+        final boolean uploadDocument = updateCalendarDataCheckBox.isSelected();
+        if (settings != null) {
+            settings.setUploadUntisDocument(uploadDocument);
+            updateEnabled();
+        }
+    }//GEN-LAST:event_updateCalendarDataCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel fileDateLabel;
-    private org.jdesktop.swingx.JXTextField fileDateTextField;
     private javax.swing.JFormattedTextField jFormattedTextField1;
     private org.jdesktop.swingx.JXComboBox providerComboBox;
     private javax.swing.JLabel providerLabel;
@@ -233,11 +230,12 @@ class UntisImportConfigVisualPanel extends JPanel {
     private javax.swing.JLabel termLabel;
     private org.jdesktop.swingx.JXComboBox termsComboBox;
     private javax.swing.JLabel untisTermLabel;
+    private javax.swing.JLabel untisTermNameLabel;
+    private org.jdesktop.swingx.JXTextField untisTermNameTextField;
     private org.jdesktop.swingx.JXTextField untisTermTextField;
     private javax.swing.JCheckBox updateCalendarDataCheckBox;
     private javax.swing.JLabel versionLabel;
-    private javax.swing.JFormattedTextField versionTextField;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
+    private javax.swing.JTextField versionTextField;
     // End of variables declaration//GEN-END:variables
 
     void store(UntisImportData d) {
@@ -250,7 +248,7 @@ class UntisImportConfigVisualPanel extends JPanel {
         d.removePropertyChangeListener(termsModel);
     }
 
-    void read(UntisImportData settings) {
+    void read(final UntisImportData settings) {
         final UntisImportConfiguration p = (UntisImportConfiguration) settings.getProperty(AbstractFileImportAction.IMPORT_TARGET);
         final String purl = (String) settings.getProperty(AbstractFileImportAction.SAVED_IMPORT_TARGET_PROVIDER);
         final Document doc = (Document) settings.getProperty(AbstractFileImportAction.DATA);
@@ -261,11 +259,15 @@ class UntisImportConfigVisualPanel extends JPanel {
         }
         final boolean uploadDocument = settings.isUploadUntisDocument();
         if (doc != null) {
-            schoolNumberTextField.setText(Integer.toString(doc.getGeneral().getSchoolnumber()));
-            versionTextField.setValue(1);
+            schoolNumberTextField.setText(Integer.toString(doc.getGeneral().getSchoolNumber()));
             schoolYearIdTextField.setValue(ImportUntisUtil.computeSchoolYearId(doc.getGeneral()));
+            final LocalDate tb = doc.getGeneral().getTermBeginDate();
+            final LocalDate te = doc.getGeneral().getTermEndDate();
+            final String period = NbBundle.getMessage(UntisImportConfigVisualPanel.class, "UntisImportConfigVisualPanel.untis.period", tb.format(DF), te.format(DF));
+            untisTermTextField.setText(period);
+            untisTermNameTextField.setText(doc.getGeneral().getTermName());
             final LocalDateTime ldt = LocalDateTime.of(doc.getDate(), doc.getTime());
-            fileDateTextField.setText(ldt.format(DTF));
+            versionTextField.setText(ldt.format(DTF));
         }
         updateCalendarDataCheckBox.setSelected(uploadDocument);
         termsModel.init(settings);
@@ -276,7 +278,18 @@ class UntisImportConfigVisualPanel extends JPanel {
                 termsModel.setSelectedItem(term);
             }
         }
+        updateEnabled();
         settings.addPropertyChangeListener(termsModel);
+        this.settings = settings;
+    }
+
+    private void updateEnabled() {
+        final boolean uploadDocument = updateCalendarDataCheckBox.isSelected();
+        schoolNumberTextField.setEnabled(uploadDocument);
+        untisTermTextField.setEnabled(uploadDocument);
+        untisTermNameTextField.setEnabled(uploadDocument);
+        schoolYearIdTextField.setEnabled(uploadDocument);
+        versionTextField.setEnabled(uploadDocument);
     }
 
     class UntisTermModel extends TermModel<UntisImportConfiguration, UntisImportData> {

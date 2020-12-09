@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.gpuntis.xml.Department.DepartmentRef;
 import org.thespheres.betula.gpuntis.xml.Description.DescriptionRef;
 import org.thespheres.betula.gpuntis.xml.Room.RoomRef;
@@ -52,6 +53,8 @@ public class Teacher {
     @XmlElement(name = "external_name")
     protected String externalName;
     protected String weektarget;
+    @XmlElement(name = "signee", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
+    protected Signee mappedSignee;
 
     public String getId() {
         return id;
@@ -127,6 +130,14 @@ public class Teacher {
 
     public String getWeektarget() {
         return weektarget;
+    }
+
+    public Signee getMappedSignee() {
+        return mappedSignee;
+    }
+
+    public void setMappedSignee(final Signee signee) {
+        this.mappedSignee = signee;
     }
 
     @Override

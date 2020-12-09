@@ -39,42 +39,34 @@
                           <Component id="schoolNumberLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="schoolYearIdLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="untisTermLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="fileDateLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="untisTermNameLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="versionLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="untisTermTextField" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="schoolNumberTextField" min="-2" max="-2" attributes="0"/>
-                                  <Component id="schoolYearIdTextField" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="versionLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="versionTextField" min="-2" pref="44" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="schoolNumberTextField" min="-2" max="-2" attributes="0"/>
+                          <Component id="schoolYearIdTextField" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="versionTextField" alignment="0" max="32767" attributes="0"/>
+                              <Component id="untisTermNameTextField" alignment="0" pref="210" max="32767" attributes="0"/>
+                              <Component id="untisTermTextField" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="fileDateTextField" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" attributes="0">
-                      <Component id="updateCalendarDataCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="providerLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="termLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="termsComboBox" pref="266" max="32767" attributes="0"/>
+                          <Component id="termsComboBox" pref="287" max="32767" attributes="0"/>
                           <Component id="providerComboBox" max="32767" attributes="0"/>
                       </Group>
                   </Group>
+                  <Component id="updateCalendarDataCheckBox" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -101,8 +93,6 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="schoolYearIdLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="versionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="versionTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="schoolYearIdTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -112,8 +102,13 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="fileDateTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="fileDateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="untisTermNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="untisTermNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="versionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="versionTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -144,6 +139,9 @@
           <ResourceString bundle="org/thespheres/betula/gpuntis/ui/Bundle.properties" key="UntisImportConfigVisualPanel.updateCalendarDataCheckBox.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateCalendarDataCheckBoxActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="schoolNumberLabel">
       <Properties>
@@ -159,10 +157,8 @@
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="columns" type="int" value="10"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="enabled" source="updateCalendarDataCheckBox" sourcePath="${selected}" target="schoolNumberTextField" targetPath="enabled" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
     </Component>
     <Component class="javax.swing.JLabel" name="schoolYearIdLabel">
       <Properties>
@@ -171,16 +167,6 @@
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/thespheres/betula/gpuntis/ui/Bundle.properties" key="UntisImportConfigVisualPanel.schoolYearIdLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="versionLabel">
-      <Properties>
-        <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="versionTextField"/>
-        </Property>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/thespheres/betula/gpuntis/ui/Bundle.properties" key="UntisImportConfigVisualPanel.versionLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -198,49 +184,33 @@
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="columns" type="int" value="20"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="enabled" source="updateCalendarDataCheckBox" sourcePath="${selected}" target="untisTermTextField" targetPath="enabled" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
-    </Component>
-    <Component class="javax.swing.JFormattedTextField" name="versionTextField">
-      <Properties>
-        <Property name="columns" type="int" value="3"/>
-        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-          <Format format="#0" subtype="-1" type="0"/>
-        </Property>
-      </Properties>
-      <BindingProperties>
-        <BindingProperty name="enabled" source="updateCalendarDataCheckBox" sourcePath="${selected}" target="versionTextField" targetPath="enabled" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="schoolYearIdTextField">
       <Properties>
+        <Property name="editable" type="boolean" value="false"/>
         <Property name="columns" type="int" value="10"/>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
           <Format format="#0" subtype="-1" type="0"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="enabled" source="updateCalendarDataCheckBox" sourcePath="${selected}" target="schoolYearIdTextField" targetPath="enabled" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
     </Component>
-    <Component class="org.jdesktop.swingx.JXTextField" name="fileDateTextField">
+    <Component class="org.jdesktop.swingx.JXTextField" name="untisTermNameTextField">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="columns" type="int" value="20"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="enabled" source="updateCalendarDataCheckBox" sourcePath="${selected}" target="fileDateTextField" targetPath="enabled" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
     </Component>
-    <Component class="javax.swing.JLabel" name="fileDateLabel">
+    <Component class="javax.swing.JLabel" name="untisTermNameLabel">
       <Properties>
         <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="fileDateTextField"/>
+          <ComponentRef name="untisTermNameTextField"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/thespheres/betula/gpuntis/ui/Bundle.properties" key="UntisImportConfigVisualPanel.fileDateLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/thespheres/betula/gpuntis/ui/Bundle.properties" key="UntisImportConfigVisualPanel.untisTermNameLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -256,6 +226,19 @@
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="termsModel" type="code"/>
         </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="versionLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/thespheres/betula/gpuntis/ui/Bundle.properties" key="UntisImportConfigVisualPanel.versionLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="versionTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
   </SubComponents>

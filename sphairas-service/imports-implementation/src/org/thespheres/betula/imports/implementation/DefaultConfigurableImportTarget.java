@@ -43,7 +43,7 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
     private final XmlTargetImportSettings importSettings;
     private final XmlTargetProcessorHintsSettings processorHints;
     private DocumentId careersDocument;
-    private String untisHref;
+    private String untisResource;
     private final String davBase;
 
     public DefaultConfigurableImportTarget(String provider, Product prod, XmlTargetImportSettings settings, XmlTargetProcessorHintsSettings hints) {
@@ -184,12 +184,12 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
     }
 
     @Override
-    public String getUntisXmlDocumentUploadHref() {
-        return untisHref;
+    public String getUntisXmlDocumentResource() {
+        return untisResource;
     }
 
-    public void setUntisXmlDocumentUploadHref(String untisHref) {
-        this.untisHref = untisHref;
+    public void setUntisXmlDocumentResource(final String resource) {
+        this.untisResource = resource;
     }
 
 }

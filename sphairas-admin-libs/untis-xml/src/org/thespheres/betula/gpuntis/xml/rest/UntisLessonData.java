@@ -75,7 +75,7 @@ public class UntisLessonData implements Serializable {
     }
 
     public String getUntisAuthority() {
-        return "untis" + Integer.toString(getGeneral().getSchoolnumber());
+        return "untis" + Integer.toString(getGeneral().getSchoolNumber());
     }
 
     public int getUntisLesson() {

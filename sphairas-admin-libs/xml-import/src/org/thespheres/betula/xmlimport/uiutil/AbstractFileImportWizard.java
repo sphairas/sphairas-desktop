@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
+import org.openide.util.ChangeSupport;
 import org.openide.util.NbBundle;
 
 /**
@@ -23,6 +24,7 @@ public abstract class AbstractFileImportWizard<Data> implements WizardDescriptor
 
     protected int index;
     protected List<WizardDescriptor.Panel<Data>> panels;
+    protected final ChangeSupport cSupport = new ChangeSupport(this);
 
     public AbstractFileImportWizard() {
     }
@@ -90,14 +92,12 @@ public abstract class AbstractFileImportWizard<Data> implements WizardDescriptor
     // If nothing unusual changes in the middle of the wizard, simply:
     @Override
     public void addChangeListener(ChangeListener l) {
+        cSupport.addChangeListener(l);
     }
 
     @Override
     public void removeChangeListener(ChangeListener l) {
+        cSupport.removeChangeListener(l);
     }
-    // If something changes dynamically (besides moving between panels), e.g.
-    // the number of panels changes in response to user input, then use
-    // ChangeSupport to implement add/removeChangeListener and call fireChange
-    // when needed
 
 }

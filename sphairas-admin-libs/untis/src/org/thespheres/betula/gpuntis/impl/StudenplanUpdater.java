@@ -144,7 +144,7 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
     }
 
     public static String untisAuthority(final General general) {
-        return "gpuntis/" + Integer.toString(general.getSchoolnumber());
+        return "gpuntis/" + Integer.toString(general.getSchoolNumber());
     }
 
     public static LessonTimeData[] createTimes(final Lesson lesson, final General general, final ImportedLesson il) {
@@ -162,7 +162,7 @@ public class StudenplanUpdater extends AbstractUpdater<ImportedLesson> {
         final PeriodId period = new PeriodId(untisAuthority(general), t.getPeriod(), PeriodId.Version.UNSPECIFIED);
         final LessonTimeData ret = new LessonTimeData(t.getStarttime(), t.getEndtime(), day, period);
         final String occ = lesson.getOccurence();
-        LocalDate ld = general.getSchoolyearbegindate();
+        LocalDate ld = general.getSchoolYearBeginDate();
         final List<LocalDate> exDates = new ArrayList<>();
         for (char c : occ.toCharArray()) {
             final DayOfWeek dow = ld.getDayOfWeek();

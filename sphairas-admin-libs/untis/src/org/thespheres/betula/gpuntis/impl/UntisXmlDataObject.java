@@ -5,9 +5,11 @@
  */
 package org.thespheres.betula.gpuntis.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
@@ -111,6 +113,19 @@ public class UntisXmlDataObject extends MultiDataObject {
     @Override
     protected int associateLookup() {
         return 1;
+    }
+
+    public static byte[] saveData(final Document xml) throws IOException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            final Marshaller m = JAXB.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            m.marshal(xml, baos);
+        } catch (final JAXBException ex) {
+            throw new IOException(ex);
+        }
+        return baos.toByteArray();
     }
 
     private void loadData() throws Exception {

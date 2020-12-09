@@ -8,8 +8,10 @@ package org.thespheres.betula.gpuntis;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.gpuntis.xml.General;
 import org.thespheres.betula.gpuntis.xml.Lesson;
@@ -36,17 +38,25 @@ public class ImportUntisUtil {
         if (su == null) {
             return "";
         }
-        if (su.getLongname() != null) {
-            return su.getLongname();
+        if (su.getLongName() != null) {
+            return su.getLongName();
         } else {
             return su.getId().substring(3);
         }
     }
 
+    public static Marker findSubjectMarker(final UntisImportConfiguration config, final Subject su) {
+        return Arrays.stream(config.getSubjectMarkerConventions())
+                .flatMap(mc -> Arrays.stream(mc.getAllMarkers()))
+                .filter(m -> (m.getLongLabel().equalsIgnoreCase(su.getLongName()) || m.getShortLabel().equalsIgnoreCase(su.getId().substring(3))))
+                .findAny()
+                .orElse(Marker.NULL);
+    }
+
     @Messages("ImportUntisUtil.findDocumentTerm.exception.nosameterm=Das Halbjahres-Ende in Untis ({1}) liegt nicht mehr im Import-Halbjahr \"{0}\".")
     public static Term findDocumentTerm(General general, TermSchedule ts) {
-        final LocalDate begin = general.getTermbegindate();
-        final LocalDate end = general.getTermenddate();
+        final LocalDate begin = general.getTermBeginDate();
+        final LocalDate end = general.getTermEndDate();
         final Term ret = ts.termOf(begin);
         if (end.isAfter(ret.getEndDate())) {
             String msg = NbBundle.getMessage(ImportUntisUtil.class, "ImportUntisUtil.findDocumentTerm.exception.nosameterm", ret.getDisplayName(), MSG_DATES.format(end));
@@ -71,8 +81,8 @@ public class ImportUntisUtil {
     }
 
     public static Integer computeSchoolYearId(General general) {
-        final int y1 = general.getSchoolyearbegindate().getYear();
-        final int y2 = general.getSchoolyearenddate().getYear();
+        final int y1 = general.getSchoolYearBeginDate().getYear();
+        final int y2 = general.getSchoolYearEndDate().getYear();
         if (y2 == y1 + 1) {
             return y1 * 10000 + y2;
         }

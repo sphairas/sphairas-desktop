@@ -15,6 +15,7 @@ import org.thespheres.betula.xmlimport.uiutil.DefaultImportWizardSettings;
  */
 public class UntisImportData extends DefaultImportWizardSettings<UntisImportConfiguration, ImportedLesson> {
 
+    public static final String PROP_UPLOAD_UNTIS_XML = "upload.untis.xml";
     private boolean uploadDocument;
 
     public UntisImportConfiguration getConfiguration() {
@@ -25,11 +26,13 @@ public class UntisImportData extends DefaultImportWizardSettings<UntisImportConf
         return (Document) getProperty(AbstractFileImportAction.DATA);
     }
 
-    public void setUploadUntisDocument(boolean upload) {
+    public void setUploadUntisDocument(final boolean upload) {
+        final boolean old = isUploadUntisDocument();
         uploadDocument = upload;
+        pSupport.firePropertyChange(PROP_UPLOAD_UNTIS_XML, old, isUploadUntisDocument());
     }
 
     public boolean isUploadUntisDocument() {
-       return uploadDocument;
+        return uploadDocument;
     }
 }

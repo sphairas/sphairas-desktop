@@ -182,11 +182,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
 
         Subject su = getLesson().getLessonSubject();
         if (configChanged || getSubjectMarker() == null) {
-            Marker fach = Arrays.stream(config.getSubjectMarkerConventions())
-                    .flatMap(mc -> Arrays.stream(mc.getAllMarkers()))
-                    .filter(m -> (m.getLongLabel().equalsIgnoreCase(su.getLongname()) || m.getShortLabel().equalsIgnoreCase(su.getId().substring(3))))
-                    .findAny()
-                    .orElse(Marker.NULL);
+            final Marker fach = ImportUntisUtil.findSubjectMarker(config, su);
             setSubjectMarker(fach);
         }
         if (configChanged || generatedUnit == null) {
@@ -453,7 +449,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
 
         private synchronized UnitId getUnitId() {
             if (!isInit) {
-                final int rJahr = getGeneral().getSchoolyearbegindate().getYear();
+                final int rJahr = getGeneral().getSchoolYearBeginDate().getYear();
                 final NameParser pn2 = createNameParser();
                 if (klasse != null && stufe != null) {
 //                    String st = Integer.toString(stufe);

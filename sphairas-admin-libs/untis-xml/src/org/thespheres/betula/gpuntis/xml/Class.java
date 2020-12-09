@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.thespheres.betula.UnitId;
 import org.thespheres.betula.gpuntis.xml.Department.DepartmentRef;
 import org.thespheres.betula.gpuntis.xml.Description.DescriptionRef;
 import org.thespheres.betula.gpuntis.xml.Room.RoomRef;
@@ -49,170 +50,81 @@ public class Class {
     protected DepartmentRef classDepartment;
     protected String foreignkey;
     protected String lessonstable;
+    @XmlElement(name = "unit", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
+    protected UnitId mappedUnit;
 
-    /**
-     * Gets the value of the id property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Gets the value of the longname property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getLongname() {
         return longname;
     }
 
-    /**
-     * Gets the value of the alias property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getAlias() {
         return alias;
     }
 
-    /**
-     * Gets the value of the classTeacher property.
-     *
-     * @return possible object is {@link ClassTeacher }
-     *
-     */
     public Teacher getClassTeacher() {
         return classTeacher != null ? classTeacher.get() : null;
     }
 
-    /**
-     * Gets the value of the classRoom property.
-     *
-     * @return possible object is {@link ClassRoom }
-     *
-     */
     public Room getClassRoom() {
         return classRoom != null ? classRoom.get() : null;
     }
 
-    /**
-     * Gets the value of the classlevel property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getClasslevel() {
         return classlevel;
     }
 
-    /**
-     * Gets the value of the studentsmale property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getStudentsmale() {
+    public String getMaleStudents() {
         return studentsmale;
     }
 
-    /**
-     * Gets the value of the studentsfemale property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getStudentsfemale() {
+    public String getFemalStudents() {
         return studentsfemale;
     }
 
-    /**
-     * Gets the value of the text property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getText() {
         return text;
     }
 
-    /**
-     * Gets the value of the begindate property.
-     *
-     * @return possible object is {@link Begindate }
-     *
-     */
-    public String getBegindate() {
+    public String getBeginDate() {
         return begindate;
     }
 
-    /**
-     * Gets the value of the enddate property.
-     *
-     * @return possible object is {@link Enddate }
-     *
-     */
-    public String getEnddate() {
+    public String getEndDate() {
         return enddate;
     }
 
-    /**
-     * Gets the value of the flags property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public String getFlags() {
         return flags;
     }
 
-    /**
-     * Gets the value of the classDescription property.
-     *
-     * @return possible object is {@link ClassDescription }
-     *
-     */
     public Description getClassDescription() {
         return classDescription != null ? classDescription.get() : null;
     }
 
-    /**
-     * Gets the value of the classDepartment property.
-     *
-     * @return possible object is {@link ClassDepartment }
-     *
-     */
     public Department getClassDepartment() {
         return classDepartment != null ? classDepartment.get() : null;
     }
 
-    /**
-     * Gets the value of the foreignkey property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getForeignkey() {
+    public String getForeignKey() {
         return foreignkey;
     }
 
-    /**
-     * Gets the value of the lessonstable property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getLessonstable() {
+    public String getLessonsTable() {
         return lessonstable;
     }
 
-    /**
-     *
-     */
+    public UnitId getMappedUnit() {
+        return mappedUnit;
+    }
+
+    public void setMappedUnit(UnitId unit) {
+        this.mappedUnit = unit;
+    }
+
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
     public static class ClassRef {
@@ -221,12 +133,6 @@ public class Class {
         @XmlIDREF
         protected Class clasz;
 
-        /**
-         * Gets the value of the id property.
-         *
-         * @return possible object is {@link Object }
-         *
-         */
         public Class get() {
             return clasz;
         }
