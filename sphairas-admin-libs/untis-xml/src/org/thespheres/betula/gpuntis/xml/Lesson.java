@@ -9,8 +9,10 @@ package org.thespheres.betula.gpuntis.xml;
 import org.thespheres.betula.gpuntis.xml.util.DateAdapter;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -21,10 +23,10 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.thespheres.betula.gpuntis.xml.Description.DescriptionRef;
 import org.thespheres.betula.gpuntis.xml.Room.RoomRef;
+import org.thespheres.betula.gpuntis.xml.StudentGroup.StudentGroupRef;
 import org.thespheres.betula.gpuntis.xml.Subject.SubjectRef;
 import org.thespheres.betula.gpuntis.xml.Teacher.TeacherRef;
 import org.thespheres.betula.gpuntis.xml.Term.TermRef;
@@ -48,7 +50,7 @@ public class Lesson {
     @XmlElement(name = "lesson_classes")
     protected LessonClasses lessonClasses;
     @XmlElement(name = "lesson_studentgroups")
-    protected LessonStudentgroups lessonStudentgroups;
+    protected StudentGroupRef lessonStudentGroups;
     @XmlElement(name = "lesson_students")
     protected LessonStudents lessonStudents;
     @XmlElement(name = "lesson_room")
@@ -63,12 +65,14 @@ public class Lesson {
     @XmlJavaTypeAdapter(DateAdapter.class)
     @XmlElement(name = "effectiveenddate")
     protected LocalDate effectiveenddate;
+    @XmlElement(name = "week")
     protected String week;
     protected String block;
     protected String occurence;
     protected String text;
     protected String text1;
     protected String text2;
+    @XmlElement(name = "flags")
     protected String flags;
     protected String foreignkey;
     @XmlElementWrapper(name = "times")
@@ -80,6 +84,8 @@ public class Lesson {
     protected String teacherValue;
     @XmlElement(name = "timegrid")
     protected String timegrid;
+    @XmlElement(name = "lesson_date_scheme")
+    protected String lessonDateScheme;
 
     public String getId() {
         return id;
@@ -101,8 +107,10 @@ public class Lesson {
         return lessonClasses != null ? lessonClasses.getClasses() : null;
     }
 
-    public LessonStudentgroups getLessonStudentgroups() {
-        return lessonStudentgroups;
+    public List<StudentGroup> getLessonStudentgroups() {
+        return Optional.ofNullable(lessonStudentGroups)
+                .map(StudentGroupRef::get)
+                .orElse(Collections.EMPTY_LIST);
     }
 
     public LessonStudents getLessonStudents() {
@@ -169,6 +177,10 @@ public class Lesson {
         return timegrid;
     }
 
+    public String getLessonDateScheme() {
+        return lessonDateScheme;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -220,25 +232,6 @@ public class Lesson {
          */
         public List<Student> getId() {
             return this.id;
-        }
-
-    }
-
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class LessonStudentgroups {
-
-        @XmlAttribute(name = "id", required = true)
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        protected String id;
-
-        /**
-         * Gets the value of the id property.
-         *
-         * @return possible object is {@link String }
-         *
-         */
-        public String getId() {
-            return id;
         }
 
     }
