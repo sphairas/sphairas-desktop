@@ -75,10 +75,10 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         final AssessmentConvention conv;
         if (ac != null && (conv = GradeFactory.findConvention(ac)) != null) {
             setAssessmentConvention(conv);
+        } else if (config.getAssessmentConventions().length > 0) {
+            setAssessmentConvention(config.getAssessmentConventions()[0]);
         }
-//        final AssessmentConvention conv = getImportFile().equals(File.AGS) ? GradeFactory.findConvention("niedersachsen.teilnahme") : GradeFactory.findConvention("de.notensystem");
-//        setAssessmentConvention(conv);
-//
+        
         final Term term = (Term) wizard.getProperty(AbstractFileImportAction.TERM);
         try {
             setClientProperty(ImportTargetsItem.PROP_SELECTED_TERM, term);

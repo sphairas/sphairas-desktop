@@ -44,14 +44,14 @@ class DefaultTargetDocument extends TargetDocumentProperties {
         AssessmentConvention gv = null;
         if (preferredConvention != null) {
             gv = GradeFactory.findConvention(preferredConvention);
-        } else if (!text) {
+        } else if (!text && imp.getPreferredConvention() != null) {
             gv = GradeFactory.findConvention(imp.getPreferredConvention());
         }
         if (gv == null && !text) {
             final String msg = NbBundle.getMessage(DefaultTargetDocument.class, "DefaultTargetDocument.create.missingAssessmentConvention.message", imp.getSourceNodeLabel());
             throw new ImportConfigurationException(msg);
         }
-        DocumentId baseId = imp.getTargetDocumentIdBase();
+        final DocumentId baseId = imp.getTargetDocumentIdBase();
         if (baseId.getId().endsWith(suffix)) {
             throw new IllegalArgumentException("Suffix already added.");
         }
