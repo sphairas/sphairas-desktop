@@ -324,7 +324,7 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
         final boolean ret = !filters.stream()
                 .anyMatch(uf -> !uf.accept(iti));
         if (!ret) {
-            final String message = NbBundle.getMessage(TargetItemsUpdater.class, "TargetItemsUpdate.checkImportTargetsItem.notValid", new Object[]{iti.getSourceNodeLabel(),
+            final String message = NbBundle.getMessage(TargetItemsUpdater.class, "TargetItemsUpdater.checkImportTargetsItem.notValid", new Object[]{iti.getSourceNodeLabel(),
                 iti.getDeleteDate(),
                 iti.getUnitId(),
                 iti.getTargetDocumentIdBase(),
