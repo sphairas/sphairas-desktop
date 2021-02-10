@@ -17,6 +17,8 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.loaders.XMLDataObject;
+import org.openide.util.NbBundle;
+import org.openide.util.NbBundle.Messages;
 import org.openide.xml.XMLUtil;
 import org.thespheres.betula.ui.swingx.BaseAbstractXmlSupport;
 import org.w3c.dom.Document;
@@ -61,7 +63,7 @@ public class AbstractXmlContainerDataObject extends XMLDataObject {
         }
     }
 
-//    public void setLastModified()
+    @Messages({"AbstractXmlContainerDataObject.documentStatus.notOkay=Document {0} parsed with errors. Will not save."})
     protected void save() throws IOException {
         Document d;
         try {
@@ -70,6 +72,10 @@ public class AbstractXmlContainerDataObject extends XMLDataObject {
             throw new IOException(ex);
         }
         final Document doc = d;
+        if (getStatus() != XMLDataObject.STATUS_OK) {
+            final String msg = NbBundle.getMessage(AbstractXmlContainerDataObject.class, "AbstractXmlContainerDataObject.documentStatus.notOkay", getName());
+            throw new IOException(msg);
+        }
         final XmlBeforeSaveCallback[] cb = getLookup().lookupAll(XmlBeforeSaveCallback.class).stream()
                 .sorted(Comparator.comparingInt(XmlBeforeSaveCallback::position))
                 .toArray(XmlBeforeSaveCallback[]::new);
