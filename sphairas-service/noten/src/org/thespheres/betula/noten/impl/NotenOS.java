@@ -105,11 +105,6 @@ public class NotenOS {
         }
 
         @Override
-        public String toString() {
-            return text;
-        }
-
-        @Override
         public String getLongLabel(Object... formattingArgs) {
             return text;
         }
