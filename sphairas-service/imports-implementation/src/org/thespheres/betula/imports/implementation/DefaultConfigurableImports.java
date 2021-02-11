@@ -13,12 +13,15 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.thespheres.betula.services.LocalFileProperties;
 import org.thespheres.betula.ui.util.JAXBUtil;
+import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.model.XmlTargetImportSettings;
+import org.thespheres.betula.xmlimport.parse.ImportScripts;
 
 /**
  *
@@ -64,6 +67,12 @@ public class DefaultConfigurableImports {
         }
         final DefaultConfigurableImportTarget ret = new DefaultConfigurableImportTarget(provider, product, settings, hints);
         ret.initialize(config);
+        try {
+            final ImportScripts scripts = loadImportScripts(provider, config, base, "import.js");
+            ret.setScripts(scripts);
+        } catch (final IOException ioex) {
+            PlatformUtil.getCodeNameBaseLogger(DefaultConfigurableImports.class).log(Level.INFO, "No import.js scripts for provider: {0}", provider);
+        }
         return ret;
     }
 
@@ -107,5 +116,13 @@ public class DefaultConfigurableImports {
             sprops.load(is);
         }
         return sprops;
+    }
+
+    static ImportScripts loadImportScripts(final String provider, final Map<String, String> config, final URL base, final String file) throws IOException {
+        final URL url = new URL(base, file);
+        final URLConnection conn = url.openConnection();
+        try (final InputStream is = conn.getInputStream()) {
+            return ImportScripts.create(provider, config, is);
+        }
     }
 }

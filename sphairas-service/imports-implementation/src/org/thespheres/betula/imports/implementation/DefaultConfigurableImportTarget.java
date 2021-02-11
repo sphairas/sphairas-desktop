@@ -30,6 +30,7 @@ import org.thespheres.betula.sibank.SiBankImportTarget;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.model.XmlTargetImportSettings;
+import org.thespheres.betula.xmlimport.parse.ImportScripts;
 import org.thespheres.betula.xmlimport.parse.TranslateID;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
@@ -64,6 +65,10 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
         if (!StringUtils.isBlank(careersDocId)) {
             this.careersDocument = new DocumentId(getAuthority(), careersDocId, DocumentId.Version.LATEST);
         }
+    }
+
+    void setScripts(final ImportScripts scripts) {
+        this.importScripts = scripts;
     }
 
     void setSourceTargetLinksWebDavUrl(String sourceTargetLinksWebDavUrl) {

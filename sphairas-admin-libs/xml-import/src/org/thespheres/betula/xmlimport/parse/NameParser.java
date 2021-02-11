@@ -26,6 +26,7 @@ public class NameParser {
     private final String authority;
     private final String firstElement;
     private final Integer baseLevel;
+    private ImportScripts importScripts;
 
     public NameParser(String authority, String firstElement, Integer baseLevel) {
         this.authority = authority;
@@ -34,6 +35,14 @@ public class NameParser {
         if (baseLevel != null && baseLevel < 1) {
             throw new IllegalArgumentException("baseLevel must be greater than zero.");
         }
+    }
+
+    public ImportScripts getImportScripts() {
+        return importScripts;
+    }
+
+    public void setImportScripts(final ImportScripts scripts) {
+        this.importScripts = scripts;
     }
 
     //klasse always null, klassenfach always false
@@ -114,6 +123,12 @@ public class NameParser {
 
     private UnitId findUnitIdImpl(final String resolvedName, final Marker subject, final int referenzjahr, final Integer checkLevel) {
         final String name = StringUtils.trimToEmpty(resolvedName);
+        if (importScripts != null) {
+            final String suid = importScripts.parseUnitName(resolvedName, subject, referenzjahr, checkLevel);
+            if (suid != null) {
+                return new UnitId(authority, suid);
+            }
+        }
         final StringJoiner sj = new StringJoiner("-");
         if (firstElement != null) {
             sj.add(firstElement);

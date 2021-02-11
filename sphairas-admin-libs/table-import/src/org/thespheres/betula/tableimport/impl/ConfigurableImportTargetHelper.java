@@ -20,7 +20,7 @@ import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.XmlUnitItem;
 import org.thespheres.betula.xmlimport.parse.NameParser;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
-import org.thespheres.betula.xmlimport.utilities.NameParserSettings;
+import org.thespheres.betula.xmlimport.parse.NameParserSettings;
 
 /**
  *
@@ -115,6 +115,7 @@ public class ConfigurableImportTargetHelper<I extends AbstractXmlCsvImportItem<?
             }
         }
         final NameParser pn2 = new NameParser(item.getConfiguration().getAuthority(), first, baseLevel);
+        pn2.setImportScripts(item.getConfiguration().getImportScripts());
         return pn2;
     }
 

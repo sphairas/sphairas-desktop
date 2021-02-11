@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.xmlimport.utilities;
 
+import org.thespheres.betula.xmlimport.parse.NameParserSettings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.ImportTargetFactory;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.Product;
+import org.thespheres.betula.xmlimport.parse.ImportScripts;
 
 /**
  *
@@ -53,6 +55,7 @@ public class ConfigurableImportTarget extends AbstractImportTarget implements Im
         }
     }
     private NameParserSettings nameParserSettings;
+    protected ImportScripts importScripts;
 
     public ConfigurableImportTarget(String provider, Product prod) {
         super(provider, prod);
@@ -145,9 +148,14 @@ public class ConfigurableImportTarget extends AbstractImportTarget implements Im
 
     public NameParserSettings getNameParserSettings() {
         if (nameParserSettings == null) {
-            nameParserSettings = new NameParserSettings(properties);
+            nameParserSettings = new NameParserSettings(properties) {
+            };
         }
         return nameParserSettings;
+    }
+
+    public ImportScripts getImportScripts() {
+        return importScripts;
     }
 
     public static ConfigurableImportTarget find(final String url) {

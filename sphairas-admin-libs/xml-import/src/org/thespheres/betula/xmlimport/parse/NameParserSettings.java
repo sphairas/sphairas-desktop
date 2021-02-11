@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thespheres.betula.xmlimport.utilities;
+package org.thespheres.betula.xmlimport.parse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ public class NameParserSettings {
     public static final String STRIP_NUM_TRAILING = "parser.strip.num.trailing";
     final Map<String, String> properties = new HashMap<>();
 
-    NameParserSettings(final Map<String, String> properties) {
+    protected NameParserSettings(final Map<String, String> properties) {
         this.properties.putAll(properties);
     }
 
