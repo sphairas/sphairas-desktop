@@ -40,7 +40,7 @@ public abstract class NdsNamingResolverProvider implements NamingResolver.Provid
         final Integer b = (Integer) args.get("base-level");
         final int base = (b != null && b > 0) ? b : 5;
         final Integer ba = (Integer) args.get("base-level-abitur");
-        final int baseAbi = (ba != null && ba > 0) ? b : 11;
+        final int baseAbi = (ba != null && ba > 0) ? ba : 11;
 
         class ProviderImpl extends NdsNamingResolverProvider {
 
