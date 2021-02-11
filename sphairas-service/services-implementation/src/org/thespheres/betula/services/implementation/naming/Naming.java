@@ -217,35 +217,4 @@ public abstract class Naming {
 
     protected abstract boolean findFachMarker(String type, NamingResolver.Result unresolved, HashMap<String, String> elements);
 
-    class NamingResultElements {
-
-        private final HashMap<String, String> elements;
-        private final boolean jahrgang;
-        private final boolean klasse;
-        private final int jahr;
-        private final int stufe;
-        private final boolean aufsteigend;
-        private final boolean sfa;
-        private final String suffix;
-        private final boolean abitur;
-
-        NamingResultElements(HashMap<String, String> elements, boolean jahrgang, boolean klasse, int jahr, int stufe, boolean aufsteigend, boolean sfa, boolean abitur, String suffix) {
-            this.elements = elements;
-            this.jahrgang = jahrgang;
-            this.klasse = klasse;
-            this.jahr = jahr;
-            this.stufe = stufe;
-            this.aufsteigend = aufsteigend;
-            this.elements.put(Naming.STUFE, Integer.toString(stufe));
-            this.elements.put(Naming.START_JAHR, Integer.toString(jahr));
-            this.sfa = sfa;
-            this.suffix = suffix;
-            this.abitur = abitur;
-        }
-
-        NamingResultImpl newResult() {
-            return new NamingResultImpl(elements, jahrgang, klasse, jahr, stufe, aufsteigend, sfa, abitur, suffix, schedule);
-        }
-
-    }
 }
