@@ -28,6 +28,7 @@ import org.thespheres.betula.tableimport.csv.XmlCsvDictionary;
 import org.thespheres.betula.tableimport.csv.XmlCsvDictionary.Entry;
 import org.thespheres.betula.tableimport.csv.XmlCsvFile;
 import org.thespheres.betula.tableimport.csv.XmlCsvFile.Column;
+import org.thespheres.betula.ui.util.WideJXComboBox;
 import org.thespheres.betula.util.CollectionUtil;
 
 /**
@@ -37,38 +38,35 @@ import org.thespheres.betula.util.CollectionUtil;
 class ConfigureDictionaryTableModel extends AbstractTableModel {
 
     final List<Item> items = new ArrayList<>();
+    private XmlCsvDictionary dictionary;
     private boolean useGrouping = true;
     private final DefaultComboBoxModel<XmlCsvDictionary.Entry> editor = new DefaultComboBoxModel<>();
 
-    void initialize(final XmlCsvFile[] f, final XmlCsvDictionary defaultDictionary) {
+    void initialize(final XmlCsvFile[] f, final XmlCsvDictionary dict) {
         items.clear();
-        for (XmlCsvFile csv : f) {
-            final XmlCsvDictionary d = csv.getDictionary();
-            if (d == null) {
-                continue;
-            }
+        this.dictionary = dict;
+        for (final XmlCsvFile csv : f) {
             Arrays.stream(csv.getColumns())
                     .sorted(Comparator.comparing(c -> c.getLabel(), Collator.getInstance(Locale.getDefault())))
                     .map(c -> {
-                        final Entry entry = findEntry(d, c);
-                        return new Item(c, entry, csv.getId(), d);
+                        final Entry entry = findEntry(c);
+                        return new Item(c, entry, csv.getId());
                     })
                     .forEach(items::add);
         }
         editor.removeAllElements();
         editor.addElement(null);
-        if (defaultDictionary != null) {
-            Arrays.stream(defaultDictionary.getEntries())
+        if (dict != null) {
+            Arrays.stream(dict.getEntries())
                     .forEach(editor::addElement);
         }
         fireTableDataChanged();
     }
 
-    private static Entry findEntry(final XmlCsvDictionary d, Column c) {
-        final Entry entry = Arrays.stream(d.getEntries())
+    private Entry findEntry(final Column c) {
+        return Arrays.stream(this.dictionary.getEntries())
                 .filter(e -> e.getAssignedKey().equals(c.getAssignedKey()))
                 .collect(CollectionUtil.requireSingleOrNull());
-        return entry;
     }
 
     boolean useGrouping() {
@@ -111,7 +109,7 @@ class ConfigureDictionaryTableModel extends AbstractTableModel {
         final int col = useGrouping ? c : c + 1;
         switch (col) {
             case 0:
-                return i.entry != null && i.entry.isIsGroupingKey();
+                return i.column.isGroupingColumn();
             case 1:
                 return i.getLabel();
             case 2:
@@ -132,7 +130,7 @@ class ConfigureDictionaryTableModel extends AbstractTableModel {
         final int col = useGrouping ? c : c + 1;
         switch (col) {
             case 0:
-                i.updateIsGroupingKey((Boolean) val);
+                i.updateIsGroupingKey((boolean) val);
                 break;
             case 2:
                 i.updateEntry((Entry) val);
@@ -146,26 +144,22 @@ class ConfigureDictionaryTableModel extends AbstractTableModel {
         private XmlCsvDictionary.Entry entry;
         private final String csvId;
         private boolean updated = false;
-        private final XmlCsvDictionary dictionary;
 
-        private Item(Column column, XmlCsvDictionary.Entry entry, String csvId, final XmlCsvDictionary d) {
+        private Item(Column column, XmlCsvDictionary.Entry entry, String csvId) {
             this.column = column;
             this.entry = entry;
             this.csvId = csvId;
-            this.dictionary = d;
         }
 
-        private void updateEntry(Entry val) {
+        private void updateEntry(final Entry val) {
             this.column.setAssignedKey(val != null ? val.getAssignedKey() : null);
-            this.entry = findEntry(dictionary, column);
+            this.entry = findEntry(column);
             updated = true;
         }
 
-        private void updateIsGroupingKey(Boolean v) {
-            if (entry != null) {
-                entry.setIsGroupingKey(v);
-                updated = true;
-            }
+        private void updateIsGroupingKey(final boolean v) {
+            this.column.setGroupingColumn(v);
+            updated = true;
         }
 
         private String getLabel() {
@@ -184,7 +178,7 @@ class ConfigureDictionaryTableModel extends AbstractTableModel {
         private final JXComboBox keysCombo;
 
         private ConfigureDictionaryColumnFactory() {
-            keysCombo = new JXComboBox();
+            keysCombo = new WideJXComboBox();
             keysCombo.setRenderer(new DefaultListRenderer(this));
             keysCombo.setModel(editor);
         }
@@ -225,10 +219,10 @@ class ConfigureDictionaryTableModel extends AbstractTableModel {
         }
 
         @Override
-        public String getString(Object value) {
+        public String getString(final Object value) {
             if (value instanceof XmlCsvDictionary.Entry) {
                 final XmlCsvDictionary.Entry entry = (XmlCsvDictionary.Entry) value;
-                return entry.getValue().split(",")[0];
+                return entry.getValue();
             }
             return "---";
         }

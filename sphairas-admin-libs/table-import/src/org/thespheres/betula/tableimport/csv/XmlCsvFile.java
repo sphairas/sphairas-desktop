@@ -54,7 +54,6 @@ public class XmlCsvFile {
     @XmlElementWrapper(name = "grouping-keys")
     @XmlElement(name = "grouping-key")
     private XmlCsvFileGroupingKey[] keys;
-    private XmlCsvDictionary dictionary;
 
     public XmlCsvFile() {
     }
@@ -90,14 +89,6 @@ public class XmlCsvFile {
 
     XmlCsvFileGroupingKey[] getKeys() {
         return keys;
-    }
-
-    public XmlCsvDictionary getDictionary() {
-        return dictionary;
-    }
-
-    public void setDictionary(XmlCsvDictionary dictionary) {
-        this.dictionary = dictionary;
     }
 
     public static XmlCsvFile read(final Path file, final Charset enc, final CsvParser parser) throws IOException {
@@ -142,6 +133,8 @@ public class XmlCsvFile {
         private String label;
         @XmlAttribute(name = "assigned-key")
         private String assignedKey;
+        @XmlAttribute(name = "group")
+        private boolean group;
 
         public Column() {
         }
@@ -165,6 +158,14 @@ public class XmlCsvFile {
 
         public void setAssignedKey(String assignedKey) {
             this.assignedKey = assignedKey;
+        }
+
+        public boolean isGroupingColumn() {
+            return group;
+        }
+
+        public void setGroupingColumn(final boolean group) {
+            this.group = group;
         }
 
     }

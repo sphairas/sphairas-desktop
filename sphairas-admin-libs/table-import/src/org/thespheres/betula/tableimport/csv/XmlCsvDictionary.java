@@ -48,8 +48,6 @@ public class XmlCsvDictionary {
         private String assignedKey;
         @XmlAttribute(name = "label", required = true)
         private String label;
-        @XmlAttribute(name = "grouping-key")
-        private Boolean isGroupingKey;
         @XmlValue
         private String value;
 
@@ -77,14 +75,6 @@ public class XmlCsvDictionary {
 
         public String getLabel() {
             return label;
-        }
-
-        public boolean isIsGroupingKey() {
-            return isGroupingKey != null && isGroupingKey;
-        }
-
-        public void setIsGroupingKey(boolean isGroupingKey) {
-            this.isGroupingKey = isGroupingKey;
         }
 
     }

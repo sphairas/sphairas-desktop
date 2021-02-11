@@ -44,7 +44,7 @@ public class ConfigureDictionaryVisualPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        table.setAutoResizeMode(3);
+        table.setHorizontalScrollEnabled(true);
         scrollPane.setViewportView(table);
 
         add(scrollPane, java.awt.BorderLayout.CENTER);
@@ -88,10 +88,10 @@ public class ConfigureDictionaryVisualPanel extends javax.swing.JPanel {
     private org.jdesktop.swingx.JXTable table;
     // End of variables declaration//GEN-END:variables
 
-    void store(XmlCsvImportSettings<?> d) throws IOException {
+    void store(final XmlCsvImportSettings<?> d) throws IOException {
         d.setGrouping(model.useGrouping());
         if (model.changed()) {
-            d.reload();
+            d.reload(null);
             model.reset();
         }
     }

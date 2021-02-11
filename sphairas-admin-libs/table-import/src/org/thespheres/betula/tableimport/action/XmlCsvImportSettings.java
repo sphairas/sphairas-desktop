@@ -98,21 +98,18 @@ public abstract class XmlCsvImportSettings<T extends ImportItem> extends Default
 
     public abstract WizardDescriptor.Iterator<XmlCsvImportSettings<T>> createIterator(WizardDescriptor.Panel<XmlCsvImportSettings<T>> firstPanel);
 
-    synchronized void initialize(ConfigurableImportTarget newConfig) throws IOException {
+    synchronized void initialize(final ConfigurableImportTarget newConfig) throws IOException {
         if (!Objects.equals(config, newConfig)) {
             config = newConfig;
-            for (XmlCsvFile f : csv) {
-                final XmlCsvDictionary d = createDictionary();
-                f.setDictionary(d);
-            }
-            reload();
+            reload(createDictionary());
         }
     }
 
-    public synchronized void reload() throws IOException {
-        Arrays.stream(csv)
-                .forEach(f -> XmlCsvUtil.assignKeys(f, f.getDictionary()));
-        //new String[]{"source-unit", "source-subject", "source-signee", "source-level"}
+    public synchronized void reload(final XmlCsvDictionary dictionary) throws IOException {
+        if (dictionary != null) {
+            Arrays.stream(csv)
+                    .forEach(f -> XmlCsvUtil.assignKeys(f, dictionary));
+        }
         if (useGrouping()) {
             Arrays.stream(csv)
                     .forEach(XmlCsvFileGroupingKey::group);

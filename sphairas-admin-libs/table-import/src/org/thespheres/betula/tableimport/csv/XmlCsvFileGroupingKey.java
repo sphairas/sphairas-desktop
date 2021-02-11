@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.thespheres.betula.tableimport.csv.XmlCsvFile.Column;
 import org.thespheres.betula.tableimport.csv.XmlCsvFile.Line;
 import org.thespheres.betula.tableimport.csv.XmlCsvFile.Value;
 import org.thespheres.betula.util.CollectionUtil;
@@ -62,13 +63,9 @@ public class XmlCsvFileGroupingKey {
     }
 
     public static void group(final XmlCsvFile file) {
-        final XmlCsvDictionary d = file.getDictionary();
-        if (d == null) {
-            return;
-        }
-        final String[] assignedKeys = Arrays.stream(d.getEntries())
-                .filter(XmlCsvDictionary.Entry::isIsGroupingKey)
-                .map(e -> e.getAssignedKey())
+        final String[] assignedKeys = Arrays.stream(file.getColumns())
+                .filter(XmlCsvFile.Column::isGroupingColumn)
+                .map(Column::getAssignedKey)
                 .toArray(String[]::new);
         if (assignedKeys.length == 0) {
             file.setKeys(null);
@@ -83,16 +80,6 @@ public class XmlCsvFileGroupingKey {
             k.setIndex(count.getAndIncrement());
             ll.forEach(l -> l.setGroupingKey(k));
         });
-//        System.out.println("?==================================================");
-//        ret.keySet().stream().forEach(k -> {
-//            System.out.println("Key: " + k.name);
-//            k.keyValuePairs.forEach((s, o) -> {
-//                System.out.println(s);
-//                System.out.println(o.orElse("EMPTY"));
-//                System.out.println("---");
-//            });
-//        });
-//        System.out.println("?==================================================");
         file.setKeys(key);
     }
 
@@ -105,12 +92,6 @@ public class XmlCsvFileGroupingKey {
                             .collect(CollectionUtil.singleton());
                 }));
         return new XmlCsvFileGroupingKey(m);
-    }
-
-    private static XmlCsvFileGroupingKeyElementValue[] marshal(Map<String, Optional<String>> v) throws Exception {
-        return v.entrySet().stream()
-                .map(XmlCsvFileGroupingKeyElementValue::new)
-                .toArray(XmlCsvFileGroupingKeyElementValue[]::new);
     }
 
     public void beforeMarshal(Marshaller marshaller) {
