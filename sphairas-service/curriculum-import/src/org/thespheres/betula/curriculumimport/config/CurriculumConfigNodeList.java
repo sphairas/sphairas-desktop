@@ -22,11 +22,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import javax.swing.Icon;
+import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.Node;
+import org.openide.util.ImageUtilities;
+import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.openide.util.WeakListeners;
@@ -44,7 +49,7 @@ import org.thespheres.betula.ui.util.PlatformUtil;
 @ProviderFileListName(CurriculumConfigNodeList.PROVIDER_FILE_LIST_NAME)
 public class CurriculumConfigNodeList extends ConfigNodeTopComponentNodeList<DataObject> implements PropertyChangeListener, Runnable {
 
-    static final int DELAY = 2000;
+    static final int DELAY = 20 * 1000;
     public static final String PROVIDER_FILE_LIST_NAME = "curriculum-files";
     public static final String NAME = "curriculum";
     public static final String BEMERKUNGEN_CONFIG_NODE_POSITION_KEY = "CurriculumConfigNode.position";
@@ -53,6 +58,7 @@ public class CurriculumConfigNodeList extends ConfigNodeTopComponentNodeList<Dat
     private final List<DataObject> files = new ArrayList<>();
     private final RequestProcessor RP = new RequestProcessor(CurriculumConfigNodeList.class.getName());
     private final RequestProcessor.Task task;
+    private boolean notifyLostFiles = true;
 
     @SuppressWarnings({"LeakingThisInConstructor"})
     private CurriculumConfigNodeList(String provider) {
@@ -134,7 +140,26 @@ public class CurriculumConfigNodeList extends ConfigNodeTopComponentNodeList<Dat
             files.addAll(fileList);
         }
         if (!lost.isEmpty()) {
+            final String ff = lost.stream()
+                    .map(Path::toString)
+                    .collect(Collectors.joining(","));
+            PlatformUtil.getCodeNameBaseLogger(CurriculumConfigNodeList.class).log(Level.WARNING, NbBundle.getMessage(CurriculumConfigNodeList.class, "CurriculumConfigNodeList.lostFiles.logMessage", ff, provider));
+            notifyLostFiles();
             task.schedule(DELAY);
+        }
+    }
+
+    @NbBundle.Messages(value = {"CurriculumConfigNodeList.lostFiles.title=Vermisste Stundentafel-Dateien",
+        "CurriculumConfigNodeList.lostFiles.message=Es werden Stundentafel-Dateien vermisst.",
+        "CurriculumConfigNodeList.lostFiles.logMessage=Missing the following curriculum files in {1}: {0}. Rescheduling node list creation."})
+    void notifyLostFiles() {
+        if (notifyLostFiles) {
+            final Icon ic = ImageUtilities.loadImageIcon("org/thespheres/betula/ui/resources/exclamation--frame.png", true);
+            final String title = NbBundle.getMessage(CurriculumConfigNodeList.class, "CurriculumConfigNodeList.lostFiles.title");
+            final String message = NbBundle.getMessage(CurriculumConfigNodeList.class, "CurriculumConfigNodeList.lostFiles.message");
+            NotificationDisplayer.getDefault()
+                    .notify(title, ic, message, null, NotificationDisplayer.Priority.NORMAL, NotificationDisplayer.Category.WARNING);
+            notifyLostFiles = false;
         }
     }
 

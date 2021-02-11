@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.thespheres.betula.curriculumimport
-OpenIDE-Module-Implementation-Version: 15
+OpenIDE-Module-Implementation-Version: 16
 OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/curriculumimport/Bundle.properties
 
