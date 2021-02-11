@@ -79,12 +79,13 @@ public class ConfigurableImportTargetHelper<I extends AbstractXmlCsvImportItem<?
                     final int rYear = (int) jProp;
                     final NameParser pn2 = createNameParser();
                     if (sourcePU != null) {
-                        final String pu;
                         if (level == null) {
                             generated = pn2.findUnitId(sourcePU, rYear);
                         } else {
                             generated = pn2.findUnitId(sourcePU, rYear, level);
                         }
+                    } else {
+                        generated = null;
                     }
                     if (generated == null && sourceUnit != null) {
                         final NameParserSettings nps = item.getConfiguration().getNameParserSettings();
