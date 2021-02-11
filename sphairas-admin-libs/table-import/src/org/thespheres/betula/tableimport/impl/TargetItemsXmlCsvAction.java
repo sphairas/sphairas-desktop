@@ -8,8 +8,10 @@ package org.thespheres.betula.tableimport.impl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -61,7 +63,7 @@ public class TargetItemsXmlCsvAction extends XmlCsvImportAction<TargetItemsXmlCs
         final ImportTargetsItem[] iti = selected.stream()
                 .map(TargetItemsXmlCsvItem.class::cast)
                 .filter(AbstractXmlCsvImportItem::isSelected)
-                .flatMap(i -> map(i, config, term))
+                .flatMap(i -> map(i, config, term).stream())
                 .toArray(ImportTargetsItem[]::new);
         final TargetItemsUpdaterDescriptions d = createTargetItemsUpdaterDescriptions(config, wiz);
         return new TargetItemsUpdater(iti, config.getWebServiceProvider(), term, Collections.singletonList(new Filter()), d);
@@ -71,21 +73,14 @@ public class TargetItemsXmlCsvAction extends XmlCsvImportAction<TargetItemsXmlCs
     protected void onUpdateFinished(ConfigurableImportTarget config, Set<?> selected, XmlCsvFile[] xml, XmlCsvImportSettings<TargetItemsXmlCsvItem> wiz, AbstractUpdater<?> u) {
     }
 
-    private Stream<ImportTargetsItem> map(final TargetItemsXmlCsvItem i, final ConfigurableImportTarget config, final Term term) {
-        Stream.Builder<ImportTargetsItem> builder = Stream.builder();
-        Lookup.getDefault().lookupAll(ImportTargetsItemMapper.class).stream()
+    private List<ImportTargetsItem> map(final TargetItemsXmlCsvItem i, final ConfigurableImportTarget config, final Term term) {
+        return Lookup.getDefault().lookupAll(ImportTargetsItemMapper.class).stream()
                 .map(ImportTargetsItemMapper.class::cast)
                 .sorted(Comparator.comparingInt(ImportTargetsItemMapper::position))
-                .forEach(mapper -> {
-                    final ImportTargetsItem[] mapped = mapper.map(config, i, term);
-                    if (mapped == null) {
-                        builder.add(i);
-                    } else {
-                        Arrays.stream(mapped)
-                                .forEach(builder::add);
-                    }
-                });
-        return builder.build();
+                .map(mapper -> mapper.map(config, i, term))
+                .filter(Objects::nonNull)
+                .flatMap(Arrays::stream)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), l -> l.isEmpty() ? Collections.singletonList(i) : l));
     }
 
     public static class Filter implements UpdaterFilter<ImportTargetsItem, TargetDocumentProperties> {
@@ -97,7 +92,7 @@ public class TargetItemsXmlCsvAction extends XmlCsvImportAction<TargetItemsXmlCs
 
         @Override
         public boolean accept(ImportTargetsItem iti, TargetDocumentProperties td, StudentId stud) {
-            return td.getPreferredConvention() != null;
+            return td.getPreferredConvention() != null || td.isTextValueTarget();
         }
 
         @Override
