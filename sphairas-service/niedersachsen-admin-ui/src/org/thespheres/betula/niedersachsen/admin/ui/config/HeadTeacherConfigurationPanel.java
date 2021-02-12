@@ -15,51 +15,42 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
-import org.thespheres.betula.ui.util.AbstractListConfigPanel;
 import org.jdesktop.swingx.JXComboBox;
 import org.jdesktop.swingx.renderer.DefaultListRenderer;
 import org.jdesktop.swingx.renderer.StringValue;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.admin.units.RemoteSignee;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.NamingResolver;
 import org.thespheres.betula.services.util.Signees;
-import org.thespheres.betula.ui.ConfigurationPanelComponent;
-import org.thespheres.betula.ui.ConfigurationPanelComponentProvider;
-import org.thespheres.betula.ui.ConfigurationPanelContentTypeRegistration;
+import org.thespheres.betula.ui.util.AbstractListConfigPanel;
 import org.thespheres.betula.ui.util.PlatformUtil;
 
 /**
  *
- * @author boris.heithecker
+ * @author boris.heithecker@gmx.net
  */
-@NbBundle.Messages({"KlassenlehrerConfigurationPanel2.createComboBox.name=Klassenlehrer"})
-public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<RemoteSignee, UnitId> implements StringValue {
+public class HeadTeacherConfigurationPanel extends AbstractListConfigPanel<RemoteSignee, UnitId> implements StringValue {
 
-    private NamingResolver currentNamingResolver;
-    private Signees currentSignees;
+    protected NamingResolver currentNamingResolver;
+    protected Signees currentSignees;
+    protected final String docIdName;
+    protected final String remoteSigneeProperty;
 
     @SuppressWarnings({"LeakingThisInConstructor"})
-    private KlassenlehrerConfigurationPanel2(JXComboBox component) {
+    public HeadTeacherConfigurationPanel(final JXComboBox component, final String docIdName, final String property) {
         super(component);
+        this.docIdName = docIdName;
+        remoteSigneeProperty = property;
         final DefaultListRenderer r = new DefaultListRenderer(this);
         component.setRenderer(r);
     }
 
-    @Override
-    protected UnitId getCurrentValue() {
-        if (current != null) {
-            return current.getClientProperty("primaryUnit", UnitId.class);
-        }
-        return null;
-    }
-
     @Subscribe
     public void onRemoteSigneePropertyChange(final PropertyChangeEvent evt) {
-        if (evt.getSource() instanceof RemoteSignee && "primaryUnit".equals(evt.getPropertyName())) {
+        if (evt.getSource() instanceof RemoteSignee && remoteSigneeProperty.equals(evt.getPropertyName())) {
             final Signee signee = ((RemoteSignee) evt.getSource()).getSignee();
             EventQueue.invokeLater(() -> updateSelectionIfCurrent(signee));
         }
@@ -81,9 +72,17 @@ public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<Re
     }
 
     @Override
-    protected void updateValue(UnitId pu) {
+    protected UnitId getCurrentValue() {
         if (current != null) {
-            final Klassenlehrer kl = Klassenlehrer.find(current.getSignees());
+            return current.getClientProperty(remoteSigneeProperty, UnitId.class);
+        }
+        return null;
+    }
+
+    @Override
+    protected void updateValue(final UnitId pu) {
+        if (current != null) {
+            final HeadTeachers kl = HeadTeachers.find(docIdName, current.getSignees());
             if (kl != null) {
                 kl.post(current.getSignee(), pu);
             }
@@ -91,7 +90,7 @@ public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<Re
     }
 
     @Override
-    protected void onContextChange(Lookup context) {
+    protected void onContextChange(final Lookup context) {
         final RemoteSignee rs = context.lookup(RemoteSignee.class);
         if (Objects.equals(rs, current)) {
             return;
@@ -115,14 +114,14 @@ public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<Re
             final UnitId[] pus;
             if (currentSignees != null) {
                 currentNamingResolver = NamingResolver.find(currentSignees.getProviderUrl());
-                final Klassenlehrer kl = Klassenlehrer.find(currentSignees);
+                final HeadTeachers kl = HeadTeachers.find(docIdName, currentSignees);
                 if (kl != null) {
                     try {
                         //                kl.addChangeListener(this);
                         pus = kl.getUnits();
                     } catch (IOException ex) {
                         currentSignees = null;
-                        PlatformUtil.getCodeNameBaseLogger(KlassenlehrerConfigurationPanel2.class).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+                        PlatformUtil.getCodeNameBaseLogger(HeadTeacherConfigurationPanel.class).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
                         return;
                     }
                 } else {
@@ -162,19 +161,6 @@ public class KlassenlehrerConfigurationPanel2 extends AbstractListConfigPanel<Re
             return uid.getId();
         }
         return "---";
-    }
-
-    @ConfigurationPanelContentTypeRegistration(contentType = "RemoteSignee", position = 5000)
-    public static class Registration implements ConfigurationPanelComponentProvider {
-
-        @Override
-        public ConfigurationPanelComponent createConfigurationPanelComponent() {
-            final JXComboBox cb = new JXComboBox();
-            final String n = NbBundle.getMessage(KlassenlehrerConfigurationPanel2.class, "KlassenlehrerConfigurationPanel2.createComboBox.name");
-            cb.setName(n);
-            return new KlassenlehrerConfigurationPanel2(cb);
-        }
-
     }
 
 }

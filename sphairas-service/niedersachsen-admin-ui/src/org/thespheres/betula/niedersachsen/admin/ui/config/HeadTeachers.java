@@ -18,10 +18,8 @@ import javax.swing.Icon;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.netbeans.spi.project.LookupProvider;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.util.*;
-import org.openide.util.lookup.ServiceProvider;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
 import org.thespheres.betula.admin.units.RemoteSignees;
@@ -37,6 +35,7 @@ import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Entry;
 import org.thespheres.betula.document.Envelope;
 import org.thespheres.betula.document.ExceptionMessage;
+import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.document.util.DocumentUtilities;
 import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
@@ -44,7 +43,6 @@ import org.thespheres.betula.services.WebProvider;
 import org.thespheres.betula.services.jms.JMSTopic;
 import org.thespheres.betula.services.util.ServiceConfiguration;
 import org.thespheres.betula.services.util.Signees;
-import org.thespheres.betula.services.ws.CommonDocuments;
 import org.thespheres.betula.services.ws.Paths;
 import org.thespheres.betula.services.ws.WebServiceProvider;
 import org.thespheres.betula.ui.util.LogLevel;
@@ -55,12 +53,12 @@ import org.thespheres.betula.util.ContainerBuilder;
  *
  * @author boris.heithecker
  */
-@NbBundle.Messages({"Klassenlehrer.status.retry=Enqueuing {0}. retry to load ticket from {1}.",
-    "Klassenlehrer.status.initError.title=Fehler beim Initialisierungen der Klassenlehrer"})
-public class Klassenlehrer {
+@NbBundle.Messages({"HeadTeachers.status.retry=Enqueuing {0}. retry to load ticket from {1}.",
+    "HeadTeachers.status.initError.title=Fehler beim Initialisierungen der Gruppenlehrer"})
+public class HeadTeachers {
 
     private final Listener listener = new Listener();
-    private final static Map<String, Object> INSTANCES = new HashMap<>();
+    private final static Map<String, Map<String, Object>> INSTANCES = new HashMap<>();
     private final Signees signees;
     private final WebServiceProvider service;
     private final Map<UnitId, Set<Signee>> map = new HashMap<>();
@@ -68,16 +66,18 @@ public class Klassenlehrer {
     private final Set<String> ignoreEvents = new HashSet<>();
     private final RequestProcessor.Task reload;
     private final DocumentId klDocument;
+    private String remoteSigneeProperty;
+    private Marker addAllUnitsSelector;
 
-    private Klassenlehrer(final Signees signees) {
+    private HeadTeachers(final String docIdName, final Signees signees) {
         this.signees = signees;
+        this.klDocument = initHeadTeacherDocument(signees.getProviderUrl(), docIdName);
         this.service = WebProvider.find(signees.getProviderUrl(), WebServiceProvider.class);
-        this.klDocument = initKlassenlehrerDocument();
         reload = service.getDefaultRequestProcessor().post(this::reload);
     }
 
-    private DocumentId initKlassenlehrerDocument() {
-        final Configurations cfgs = Configurations.find(signees.getProviderUrl());
+    static DocumentId initHeadTeacherDocument(final String provider, final String docIdName) {
+        final Configurations cfgs = Configurations.find(provider);
         if (cfgs != null) {
             final Configuration<NdsReportBuilderFactory> cfg;
             try {
@@ -87,33 +87,34 @@ public class Klassenlehrer {
             }
             if (cfg != null) {
                 final NdsReportBuilderFactory nrbf = cfg.get();
-                final DocumentId d = nrbf.forName(CommonDocuments.PRIMARY_UNIT_HEAD_TEACHERS_DOCID);
+                final DocumentId d = nrbf.forName(docIdName);
                 if (d != null) {
                     return d;
                 }
             }
         }
-        throw new IllegalStateException("No Klassenlehrer document found for " + this.signees.getProviderUrl());
+        throw new IllegalStateException("No HeadTeachers document found for " + provider);
     }
 
-    static Klassenlehrer find(final Signees signees) {
+    static HeadTeachers find(final String docIdName, final Signees signees) {
         final Object i;
         synchronized (INSTANCES) {
-            i = INSTANCES.computeIfAbsent(signees.getProviderUrl(), key -> {
-                try {
-                    return new Klassenlehrer(signees);
-                } catch (IllegalStateException e) {
-                    return e;
-                }
-            });
+            i = INSTANCES.computeIfAbsent(docIdName, t -> new HashMap<>())
+                    .computeIfAbsent(signees.getProviderUrl(), key -> {
+                        try {
+                            return new HeadTeachers(docIdName, signees);
+                        } catch (final IllegalStateException e) {
+                            return e;
+                        }
+                    });
         }
         if (i instanceof IllegalStateException) {
             return null;
         }
-        return (Klassenlehrer) i;
+        return (HeadTeachers) i;
     }
 
-    private static void load(PrimaryUnitOpenSupport puos) {
+    static void load(final PrimaryUnitOpenSupport puos, final String docIdName, final String remoteSigneeProperty, final Marker addAllUnitsSelector) {
         final String url;
         try {
             url = puos.findBetulaProjectProperties().getProperty("providerURL");
@@ -125,25 +126,35 @@ public class Klassenlehrer {
         try {
             jms = puos.findJMSTopicListenerService(JMSTopic.DOCUMENTS_TOPIC.getJmsResource());
         } catch (IOException ex) {
-            PlatformUtil.getCodeNameBaseLogger(Klassenlehrer.class).log(Level.WARNING, "No JMS Provider", ex);
+            PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(Level.WARNING, "No JMS Provider", ex);
         }
-        final Klassenlehrer kl;
+        final HeadTeachers kl;
         if (url != null) {
             kl = Signees.get(url)
-                    .map(Klassenlehrer::find)
+                    .map(sig -> HeadTeachers.find(docIdName, sig))
                     .orElse(null);
             if (kl == null) {
-                PlatformUtil.getCodeNameBaseLogger(Klassenlehrer.class).log(Level.WARNING, "No Klassenlehrer for {0}.", url);
+                PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(Level.WARNING, "No HeadTeachers for {0}.", url);
             } else if (jms != null) {
                 kl.setJMSProvider(jms);
+                kl.setRemoteSigneeProperty(remoteSigneeProperty);
+                kl.setAddAllUnitsSelector(addAllUnitsSelector);
             }
         } else {
-            PlatformUtil.getCodeNameBaseLogger(Klassenlehrer.class).log(Level.WARNING, "No providerURL property.");
+            PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(Level.WARNING, "No providerURL property.");
         }
     }
 
     private void setJMSProvider(JMSTopicListenerService jms) {
         jms.registerListener(AbstractDocumentEvent.class, listener);
+    }
+
+    private void setRemoteSigneeProperty(final String remoteSigneeProperty) {
+        this.remoteSigneeProperty = remoteSigneeProperty;
+    }
+
+    private void setAddAllUnitsSelector(Marker addAllUnitsSelector) {
+        this.addAllUnitsSelector = addAllUnitsSelector;
     }
 
     UnitId[] getUnits() throws IOException {
@@ -195,6 +206,9 @@ public class Klassenlehrer {
                 ignoreEvents.add(pid);
             }
         }
+        if (addAllUnitsSelector != null) {
+            de.getHints().put("add-all-units-selector", addAllUnitsSelector.toString());
+        }
         Container response = null;
         try {
             response = NetworkSettings.suppressAuthenticationDialog(() -> service.createServicePort().solicit(builder.getContainer()));
@@ -229,8 +243,10 @@ public class Klassenlehrer {
             m.forEach((u, l) -> map.computeIfAbsent(u, uid -> new HashSet<>()).addAll(l));
         }
         cSupport.fireChange();
-        m.forEach((punit, sl) -> sl.stream()
-                .forEach(s -> RemoteSignees.find(signees, s).putClientProperty("primaryUnit", punit)));
+        if (remoteSigneeProperty != null) {
+            m.forEach((punit, sl) -> sl.stream()
+                    .forEach(s -> RemoteSignees.find(signees, s).putClientProperty(remoteSigneeProperty, punit)));
+        }
     }
 
     private static String generatePropagationId() {
@@ -239,17 +255,17 @@ public class Klassenlehrer {
     }
 
     static void notifyError(Exception ex, String message) {
-        PlatformUtil.getCodeNameBaseLogger(Klassenlehrer.class).log(LogLevel.INFO_WARNING, ex.getMessage(), ex);
+        PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(LogLevel.INFO_WARNING, ex.getMessage(), ex);
         Icon ic = ImageUtilities.loadImageIcon("org/thespheres/betula/ui/resources/exclamation-red-frame.png", true);
-        String title = NbBundle.getMessage(Klassenlehrer.class, "Klassenlehrer.status.initError.title");
+        String title = NbBundle.getMessage(HeadTeachers.class, "HeadTeachers.status.initError.title");
         NotificationDisplayer.getDefault().notify(title, ic, message, null, NotificationDisplayer.Priority.HIGH, NotificationDisplayer.Category.WARNING);
     }
 
     static void notifyError(ExceptionMessage em) {
-        PlatformUtil.getCodeNameBaseLogger(Klassenlehrer.class).log(LogLevel.INFO_WARNING, em.getLogMessage());
-        PlatformUtil.getCodeNameBaseLogger(Klassenlehrer.class).log(LogLevel.INFO_WARNING, em.getStackTraceElement());
+        PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(LogLevel.INFO_WARNING, em.getLogMessage());
+        PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(LogLevel.INFO_WARNING, em.getStackTraceElement());
         Icon ic = ImageUtilities.loadImageIcon("org/thespheres/betula/ui/resources/exclamation-red-frame.png", true);
-        String title = NbBundle.getMessage(Klassenlehrer.class, "Klassenlehrer.status.initError.title");
+        String title = NbBundle.getMessage(HeadTeachers.class, "HeadTeachers.status.initError.title");
         NotificationDisplayer.getDefault().notify(title, ic, StringUtils.defaultIfBlank(em.getUserMessage(), ""), null, NotificationDisplayer.Priority.HIGH, NotificationDisplayer.Category.WARNING);
     }
 
@@ -290,19 +306,6 @@ public class Klassenlehrer {
         public void removeNotify() {
         }
 
-    }
-
-    @ServiceProvider(service = LookupProvider.class, path = "Loaders/application/betula-unit-data/Lookup")
-    public static final class ReportsModelRegistration implements LookupProvider {
-
-        @Override
-        public Lookup createAdditionalLookup(Lookup base) {
-            PrimaryUnitOpenSupport puos = base.lookup(PrimaryUnitOpenSupport.class);
-            if (puos != null) {
-                puos.getRP().post(() -> Klassenlehrer.load(puos));
-            }
-            return Lookup.EMPTY;
-        }
     }
 
 }
