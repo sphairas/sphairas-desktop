@@ -65,9 +65,9 @@ public class VCardBuilder extends AbstractComponentBuilder {
         return vCard;
     }
 
-    private boolean checkValue(String name, String value) {
+    private boolean checkValue(String name, String value) throws InvalidComponentException {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Name must not be null or empty");
+            throw new InvalidComponentException("Name must not be null or empty");
         }
         return value != null && !value.isEmpty();
     }
