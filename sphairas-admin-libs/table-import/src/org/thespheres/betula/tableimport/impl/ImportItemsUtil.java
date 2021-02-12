@@ -115,9 +115,10 @@ class ImportItemsUtil {
     }
 
     public static String findGender(final String source) {
-        final String gender = StringUtils.stripToNull(source).toUpperCase();
+        final String gender = StringUtils.stripToNull(source);
         if (gender != null) {
-            switch (gender) {
+            final String gv = gender.toUpperCase();
+            switch (gv) {
                 case "W":
                     return "F";
                 case "M":
