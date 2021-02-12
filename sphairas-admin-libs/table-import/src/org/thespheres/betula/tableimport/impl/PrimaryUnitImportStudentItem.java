@@ -5,11 +5,11 @@
  */
 package org.thespheres.betula.tableimport.impl;
 
-import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Optional;
-import org.openide.util.Exceptions;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.xmlimport.ImportStudentItem;
+import org.thespheres.betula.xmlimport.ImportUtil;
 import org.thespheres.betula.xmlimport.model.XmlStudentItem;
 import org.thespheres.betula.xmlimport.utilities.ImportStudentKey;
 import org.thespheres.ical.InvalidComponentException;
@@ -31,6 +31,7 @@ public class PrimaryUnitImportStudentItem extends ImportStudentItem {
     private Optional<VCard> vCard;
     private final XmlStudentItem source;
     private final ImportStudentKey key;
+    private InvalidComponentException exception;
 
     PrimaryUnitImportStudentItem(ImportStudentKey key, XmlStudentItem stud, String sourceUnit) {
         super(key.toString());
@@ -57,8 +58,8 @@ public class PrimaryUnitImportStudentItem extends ImportStudentItem {
             VCard c = null;
             try {
                 c = createVCardImpl();
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+            } catch (final InvalidComponentException ex) {
+                this.exception = ex;
             }
             vCard = Optional.ofNullable(c);
         }
@@ -70,6 +71,10 @@ public class PrimaryUnitImportStudentItem extends ImportStudentItem {
     }
 
     public boolean isVCardUpdated() {
+        //Never update with erroneous or empty vCard data
+        if (exception != null || vCard.isEmpty()) {
+            return false;
+        }
         return dvVCard == null || !IComponentUtilities.equals(dvVCard, getVCard(), new String[]{"X-STUDENT"});
     }
 
@@ -99,18 +104,25 @@ public class PrimaryUnitImportStudentItem extends ImportStudentItem {
         return getStudentId() != null && getVCard() != null;
     }
 
-    protected VCard createVCardImpl() throws IOException {
+    protected VCard createVCardImpl() throws InvalidComponentException {
+        final String n = ImportItemsUtil.findN(source);
+        final String fn = ImportItemsUtil.findFNfromN(n); //key.getSourceName()
+        final LocalDate dateOfBirth = key.getDateOfBirth();
+        final String sourceGender = source.getSourceGender();
+        if (fn == null || n == null || dateOfBirth == null || sourceGender == null) {
+            return null;
+        }
         final VCardBuilder vb = new VCardBuilder();
         try {
-            final String n = ImportItemsUtil.findN(source);
-            final String fn = ImportItemsUtil.findFNfromN(n); //key.getSourceName()
             vb.addProperty(VCard.FN, fn)
                     .addProperty(VCard.N, n)
-                    .addProperty(VCard.GENDER, ImportItemsUtil.findGender(source.getSourceGender()))
-                    .addProperty(VCard.BDAY, key.getDateOfBirth().format(IComponentUtilities.DATE_FORMATTER))
+                    .addProperty(VCard.BDAY, dateOfBirth.format(IComponentUtilities.DATE_FORMATTER))
+                    .addProperty(VCard.GENDER, ImportItemsUtil.findGender(sourceGender))
                     .addProperty(VCard.BIRTHPLACE, source.getPlaceOfBirth());
-        } catch (InvalidComponentException icex) {
-            throw new IOException(icex);
+        } catch (final InvalidComponentException icex) {
+            final String message = "Fehler beim Parsen von " + vb.toString();
+            ImportUtil.getIO().getErr().println(message);
+            throw icex;
         }
         return vb.toVCard();
     }
