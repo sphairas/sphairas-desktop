@@ -64,7 +64,7 @@ public class MarkerFactory {
         final String[] idParts = parts[1].split("/");
         final String id;
         final String subset;
-        switch (parts.length) {
+        switch (idParts.length) {
             case 1:
                 subset = null;
                 id = idParts[0];
