@@ -9,6 +9,7 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,10 +19,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.document.DocumentId;
+import org.thespheres.betula.document.Marker;
+import org.thespheres.betula.document.MarkerFactory;
 import org.thespheres.betula.services.ServiceConstants;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.util.Signees;
 import org.thespheres.betula.tableimport.action.XmlCsvImportSettings;
+import org.thespheres.betula.tableimport.util.TableImportUtilities;
 import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
@@ -45,8 +49,9 @@ public class PrimaryUnitsXmlCsvItem extends AbstractXmlCsvImportItem<XmlUnitItem
     private final ConfigurableImportTargetHelper helper;
     private final PrimaryUnitImportStudentsSet importStudents = new PrimaryUnitImportStudentsSet(this);
     private IOException importStudentsException;
+    private IllegalArgumentException unparseableMarkersException;
 
-    public PrimaryUnitsXmlCsvItem(String sourceNode, XmlUnitItem source) {
+    public PrimaryUnitsXmlCsvItem(final String sourceNode, final XmlUnitItem source) {
         super(sourceNode, source);
         this.helper = new ConfigurableImportTargetHelper(this);
     }
@@ -56,7 +61,18 @@ public class PrimaryUnitsXmlCsvItem extends AbstractXmlCsvImportItem<XmlUnitItem
         final boolean configChanged = oldCfg == null
                 || !oldCfg.getProviderInfo().equals(config.getProviderInfo());
 
-        uniqueMarkers.add(ServiceConstants.BETULA_PRIMARY_UNIT_MARKER);
+        try {
+            final Marker[] sm = TableImportUtilities.parseSourceMarkers(getSource(), ServiceConstants.BETULA_PRIMARY_UNIT_MARKER.getConvention());
+            if (sm.length != 0) {
+                Arrays.stream(sm)
+                        .forEach(uniqueMarkers::add);
+            } else {
+                uniqueMarkers.add(ServiceConstants.BETULA_PRIMARY_UNIT_MARKER);
+            }
+        } catch (final IllegalArgumentException ex) {
+            unparseableMarkersException = ex;
+            ex.printStackTrace(ImportUtil.getIO().getErr());
+        }
 //
         Term term = (Term) wizard.getProperty(AbstractFileImportAction.TERM);
         try {
@@ -130,8 +146,7 @@ public class PrimaryUnitsXmlCsvItem extends AbstractXmlCsvImportItem<XmlUnitItem
     }
 
     @Override
-    public void setUnitId(UnitId unit
-    ) {
+    public void setUnitId(final UnitId unit) {
         if (getSource().getStudents().isEmpty()) {
             students = null;
         }
@@ -177,7 +192,9 @@ public class PrimaryUnitsXmlCsvItem extends AbstractXmlCsvImportItem<XmlUnitItem
     public boolean isValid() {
         return getDeleteDate() != null
                 && getUnitId() != null
-                && importStudents.isValid();
+                && importStudents.isValid()
+                && importStudentsException == null
+                && unparseableMarkersException == null;
     }
 
     @Override

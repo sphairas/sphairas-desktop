@@ -17,4 +17,5 @@
     <csv:entry assignable-key="signee" assignable-key-label="E-Mail-ID">E-Mail,Unterzeichner</csv:entry>
     <csv:entry assignable-key="signee.prefix">Benutzername,Account,Konto,Anmeldename</csv:entry>
     <csv:entry assignable-key="assessment-convention">Notensystem</csv:entry>
+    <csv:entry assignable-key="marker">Typ,Markierung</csv:entry>
 </csv:xml-csv-dictionary>

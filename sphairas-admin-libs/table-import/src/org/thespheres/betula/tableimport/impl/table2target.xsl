@@ -62,7 +62,7 @@
                                     </xsl:variable>
                                     <xsl:if test="$elname != ''">
                                         
-                                        <xsl:if test="$elname != 'unit.id'">
+                                        <xsl:if test="$elname != 'unit.id' and $elname != 'marker'">
                                             <xsl:element name="{$elname}">
                                                 <xsl:value-of select="."/> 
                                             </xsl:element>             
@@ -80,10 +80,26 @@
                                                     <xsl:value-of select="$authority"/> 
                                                 </xsl:attribute>
                                             </unit>
-                                        </xsl:if>  
+                                        </xsl:if>                                          
                         
                                     </xsl:if>      
                                 </xsl:for-each>
+                                
+                                <xsl:if test="csv:key-value[@assigned-key='marker']">
+                                    
+                                    <xsl:comment>"Source markers"</xsl:comment> 
+                                    
+                                    <source-markers>
+                                        <xsl:for-each select="csv:key-value[@assigned-key='marker']">
+                                            
+                                            <marker>
+                                                <xsl:value-of select="."/>
+                                            </marker>                                        
+                                            
+                                        </xsl:for-each>                                        
+                                    </source-markers>
+
+                                </xsl:if>
                                 
                                 <xsl:choose>
                                     <xsl:when test="$entries = 'true'">
