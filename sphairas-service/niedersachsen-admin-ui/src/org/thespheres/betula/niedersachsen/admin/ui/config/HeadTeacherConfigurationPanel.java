@@ -36,21 +36,19 @@ public class HeadTeacherConfigurationPanel extends AbstractListConfigPanel<Remot
 
     protected NamingResolver currentNamingResolver;
     protected Signees currentSignees;
-    protected final String docIdName;
-    protected final String remoteSigneeProperty;
+    protected final HeadTeachersType type;
 
     @SuppressWarnings({"LeakingThisInConstructor"})
-    public HeadTeacherConfigurationPanel(final JXComboBox component, final String docIdName, final String property) {
+    public HeadTeacherConfigurationPanel(final JXComboBox component, final HeadTeachersType type) {
         super(component);
-        this.docIdName = docIdName;
-        remoteSigneeProperty = property;
+        this.type = type;
         final DefaultListRenderer r = new DefaultListRenderer(this);
         component.setRenderer(r);
     }
 
     @Subscribe
     public void onRemoteSigneePropertyChange(final PropertyChangeEvent evt) {
-        if (evt.getSource() instanceof RemoteSignee && remoteSigneeProperty.equals(evt.getPropertyName())) {
+        if (evt.getSource() instanceof RemoteSignee && type.getRemoteSigneeProperty().equals(evt.getPropertyName())) {
             final Signee signee = ((RemoteSignee) evt.getSource()).getSignee();
             EventQueue.invokeLater(() -> updateSelectionIfCurrent(signee));
         }
@@ -74,7 +72,7 @@ public class HeadTeacherConfigurationPanel extends AbstractListConfigPanel<Remot
     @Override
     protected UnitId getCurrentValue() {
         if (current != null) {
-            return current.getClientProperty(remoteSigneeProperty, UnitId.class);
+            return current.getClientProperty(type.getRemoteSigneeProperty(), UnitId.class);
         }
         return null;
     }
@@ -82,7 +80,7 @@ public class HeadTeacherConfigurationPanel extends AbstractListConfigPanel<Remot
     @Override
     protected void updateValue(final UnitId pu) {
         if (current != null) {
-            final HeadTeachers kl = HeadTeachers.find(docIdName, current.getSignees());
+            final HeadTeachers kl = HeadTeachers.find(current.getSignees(), type);
             if (kl != null) {
                 kl.post(current.getSignee(), pu);
             }
@@ -114,7 +112,7 @@ public class HeadTeacherConfigurationPanel extends AbstractListConfigPanel<Remot
             final UnitId[] pus;
             if (currentSignees != null) {
                 currentNamingResolver = NamingResolver.find(currentSignees.getProviderUrl());
-                final HeadTeachers kl = HeadTeachers.find(docIdName, currentSignees);
+                final HeadTeachers kl = HeadTeachers.find(currentSignees, type);
                 if (kl != null) {
                     try {
                         //                kl.addChangeListener(this);

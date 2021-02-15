@@ -58,7 +58,7 @@ import org.thespheres.betula.util.ContainerBuilder;
 public class HeadTeachers {
 
     private final Listener listener = new Listener();
-    private final static Map<String, Map<String, Object>> INSTANCES = new HashMap<>();
+    private final static Map<HeadTeachersType, Map<String, Object>> INSTANCES = new HashMap<>();
     private final Signees signees;
     private final WebServiceProvider service;
     private final Map<UnitId, Set<Signee>> map = new HashMap<>();
@@ -66,12 +66,12 @@ public class HeadTeachers {
     private final Set<String> ignoreEvents = new HashSet<>();
     private final RequestProcessor.Task reload;
     private final DocumentId klDocument;
-    private String remoteSigneeProperty;
-    private Marker addAllUnitsSelector;
+    private final HeadTeachersType type;
 
-    private HeadTeachers(final String docIdName, final Signees signees) {
+    private HeadTeachers(final Signees signees, final HeadTeachersType type) {
         this.signees = signees;
-        this.klDocument = initHeadTeacherDocument(signees.getProviderUrl(), docIdName);
+        this.type = type;
+        this.klDocument = initHeadTeacherDocument(signees.getProviderUrl(), type.getDocIdName());
         this.service = WebProvider.find(signees.getProviderUrl(), WebServiceProvider.class);
         reload = service.getDefaultRequestProcessor().post(this::reload);
     }
@@ -96,13 +96,13 @@ public class HeadTeachers {
         throw new IllegalStateException("No HeadTeachers document found for " + provider);
     }
 
-    static HeadTeachers find(final String docIdName, final Signees signees) {
+    static HeadTeachers find(final Signees signees, final HeadTeachersType type) {
         final Object i;
         synchronized (INSTANCES) {
-            i = INSTANCES.computeIfAbsent(docIdName, t -> new HashMap<>())
+            i = INSTANCES.computeIfAbsent(type, t -> new HashMap<>())
                     .computeIfAbsent(signees.getProviderUrl(), key -> {
                         try {
-                            return new HeadTeachers(docIdName, signees);
+                            return new HeadTeachers(signees, type);
                         } catch (final IllegalStateException e) {
                             return e;
                         }
@@ -114,7 +114,7 @@ public class HeadTeachers {
         return (HeadTeachers) i;
     }
 
-    static void load(final PrimaryUnitOpenSupport puos, final String docIdName, final String remoteSigneeProperty, final Marker addAllUnitsSelector) {
+    static void load(final PrimaryUnitOpenSupport puos, final HeadTeachersType type) {
         final String url;
         try {
             url = puos.findBetulaProjectProperties().getProperty("providerURL");
@@ -131,14 +131,12 @@ public class HeadTeachers {
         final HeadTeachers kl;
         if (url != null) {
             kl = Signees.get(url)
-                    .map(sig -> HeadTeachers.find(docIdName, sig))
+                    .map(sig -> HeadTeachers.find(sig, type))
                     .orElse(null);
             if (kl == null) {
                 PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(Level.WARNING, "No HeadTeachers for {0}.", url);
             } else if (jms != null) {
                 kl.setJMSProvider(jms);
-                kl.setRemoteSigneeProperty(remoteSigneeProperty);
-                kl.setAddAllUnitsSelector(addAllUnitsSelector);
             }
         } else {
             PlatformUtil.getCodeNameBaseLogger(HeadTeachers.class).log(Level.WARNING, "No providerURL property.");
@@ -147,14 +145,6 @@ public class HeadTeachers {
 
     private void setJMSProvider(JMSTopicListenerService jms) {
         jms.registerListener(AbstractDocumentEvent.class, listener);
-    }
-
-    private void setRemoteSigneeProperty(final String remoteSigneeProperty) {
-        this.remoteSigneeProperty = remoteSigneeProperty;
-    }
-
-    private void setAddAllUnitsSelector(Marker addAllUnitsSelector) {
-        this.addAllUnitsSelector = addAllUnitsSelector;
     }
 
     UnitId[] getUnits() throws IOException {
@@ -206,8 +196,8 @@ public class HeadTeachers {
                 ignoreEvents.add(pid);
             }
         }
-        if (addAllUnitsSelector != null) {
-            de.getHints().put("add-all-units-selector", addAllUnitsSelector.toString());
+        if (type.getAddAllUnitsSelector() != null) {
+            de.getHints().put("add-all-units-selector", type.getAddAllUnitsSelector().toString());
         }
         Container response = null;
         try {
@@ -243,9 +233,9 @@ public class HeadTeachers {
             m.forEach((u, l) -> map.computeIfAbsent(u, uid -> new HashSet<>()).addAll(l));
         }
         cSupport.fireChange();
-        if (remoteSigneeProperty != null) {
+        if (type.getRemoteSigneeProperty() != null) {
             m.forEach((punit, sl) -> sl.stream()
-                    .forEach(s -> RemoteSignees.find(signees, s).putClientProperty(remoteSigneeProperty, punit)));
+                    .forEach(s -> RemoteSignees.find(signees, s).putClientProperty(type.getRemoteSigneeProperty(), punit)));
         }
     }
 

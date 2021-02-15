@@ -12,7 +12,6 @@ import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
 import org.thespheres.betula.document.AbstractMarker;
-import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.services.ws.CommonDocuments;
 import org.thespheres.betula.ui.ConfigurationPanelComponent;
 import org.thespheres.betula.ui.ConfigurationPanelComponentProvider;
@@ -24,8 +23,8 @@ import org.thespheres.betula.ui.ConfigurationPanelContentTypeRegistration;
  */
 public class Lehrkräfte {
 
-    public static final String PRIMARY_UNIT = "primaryUnit";
-    public static final String TUTANDEN = "tutanden";
+    static final HeadTeachersType PRIMARY_UNIT = new HeadTeachersType(CommonDocuments.PRIMARY_UNIT_HEAD_TEACHERS_DOCID, "primaryUnit", null);
+    static final HeadTeachersType TUTANDEN = new HeadTeachersType("tutor-teachers-documentid", "tutanden", new AbstractMarker("betula-db", "tutanden", null));
 
     //Klassenlehrer
     @NbBundle.Messages({"KlassenlehrerRegistration.createComboBox.name=Klassenlehrer/Klassenlehrerin"})
@@ -37,7 +36,7 @@ public class Lehrkräfte {
             final JXComboBox cb = new JXComboBox();
             final String n = NbBundle.getMessage(KlassenlehrerRegistration.class, "KlassenlehrerRegistration.createComboBox.name");
             cb.setName(n);
-            return new HeadTeacherConfigurationPanel(cb, CommonDocuments.PRIMARY_UNIT_HEAD_TEACHERS_DOCID, PRIMARY_UNIT);
+            return new HeadTeacherConfigurationPanel(cb, PRIMARY_UNIT);
         }
 
     }
@@ -49,7 +48,7 @@ public class Lehrkräfte {
         public Lookup createAdditionalLookup(final Lookup base) {
             final PrimaryUnitOpenSupport puos = base.lookup(PrimaryUnitOpenSupport.class);
             if (puos != null) {
-                puos.getRP().post(() -> HeadTeachers.load(puos, CommonDocuments.PRIMARY_UNIT_HEAD_TEACHERS_DOCID, PRIMARY_UNIT, null));
+                puos.getRP().post(() -> HeadTeachers.load(puos, PRIMARY_UNIT));
             }
             return Lookup.EMPTY;
         }
@@ -65,7 +64,7 @@ public class Lehrkräfte {
             final JXComboBox cb = new JXComboBox();
             final String n = NbBundle.getMessage(TutorRegistration.class, "TutorRegistration.createComboBox.name");
             cb.setName(n);
-            return new HeadTeacherConfigurationPanel(cb, "tutor-teachers-documentid", TUTANDEN);
+            return new HeadTeacherConfigurationPanel(cb, TUTANDEN);
         }
 
     }
@@ -77,8 +76,7 @@ public class Lehrkräfte {
         public Lookup createAdditionalLookup(final Lookup base) {
             final PrimaryUnitOpenSupport puos = base.lookup(PrimaryUnitOpenSupport.class);
             if (puos != null) {
-                final Marker tutandenGruppe = new AbstractMarker("betula-db", "tutanden", null);
-                puos.getRP().post(() -> HeadTeachers.load(puos, "tutor-teachers-documentid", TUTANDEN, tutandenGruppe));
+                puos.getRP().post(() -> HeadTeachers.load(puos, TUTANDEN));
             }
             return Lookup.EMPTY;
         }
