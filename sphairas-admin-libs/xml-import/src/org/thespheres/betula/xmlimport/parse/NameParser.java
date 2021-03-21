@@ -145,16 +145,17 @@ public class NameParser {
             sj.add(id);
             uid = sj.toString();
         } else {
-            Matcher m = STUFE_MATCHER.matcher(name);
+            final Matcher m = STUFE_MATCHER.matcher(name);
             if (m.find()) {
-                int stufe = Integer.parseInt(m.group());
+                final int stufe = Integer.parseInt(m.group());
                 if (stufe >= 1 && (checkLevel == null || checkLevel == stufe)) {
                     final String raw = StringUtils.trimToNull(name.substring(m.end()));
-                    String ident = StringUtils.removePattern(raw, "\\A[\\.\\-]*");
+                    final String ident = StringUtils.removePattern(raw, "\\A[\\.\\-]*");
                     uid = createId(stufe, referenzjahr, ident, subject);
                 }
-            } else {//No starting number
-                //TODO: Solution required
+            } else if (checkLevel != null && checkLevel >= baseLevel) {//No starting number
+                final int stufe = checkLevel;
+                uid = createId(stufe, referenzjahr, name, subject);
             }
         }
         if (uid != null) {
