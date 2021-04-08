@@ -19,11 +19,6 @@ public class LSchB {
     private final static class Info implements ProviderInfo {
 
         @Override
-        public String getDescription() {
-            return "Niedersachsen, Betula provider";
-        }
-
-        @Override
         public String getURL() {
             return "mk.niedersachsen.de";
         }
@@ -32,6 +27,6 @@ public class LSchB {
         public String getDisplayName() {
             return "Niedersachsen";
         }
-                
+
     }
 }

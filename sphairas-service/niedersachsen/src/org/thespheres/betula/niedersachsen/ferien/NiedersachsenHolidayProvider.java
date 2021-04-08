@@ -61,11 +61,6 @@ public class NiedersachsenHolidayProvider implements SchemeProvider {
     private final static class Info implements ProviderInfo {
 
         @Override
-        public String getDescription() {
-            return "Niedersachsen, Betula provider";
-        }
-
-        @Override
         public String getURL() {
             return "x.mk.niedersachsen.de";
         }

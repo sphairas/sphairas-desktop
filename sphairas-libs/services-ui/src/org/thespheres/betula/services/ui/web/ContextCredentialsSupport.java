@@ -15,6 +15,7 @@ import org.netbeans.api.keyring.Keyring;
 import org.openide.util.Mutex;
 import org.openide.windows.WindowManager;
 import org.thespheres.betula.services.ProviderRegistry;
+import org.thespheres.betula.services.util.ProviderUtilities;
 import org.thespheres.betula.services.web.ContextCredentials;
 
 /**
@@ -35,7 +36,7 @@ public final class ContextCredentialsSupport implements ContextCredentials.Provi
     }
 
     public static ContextCredentialsSupport createContextCredentialsSupport(String provider, String usernameKey, String passwordKeySuffix) {
-        final String pwKey = ProviderRegistry.getDefault().getCodeNameBase(provider) + "." + passwordKeySuffix;
+        final String pwKey = ProviderRegistry.getDefault().get(provider).getURL() + "." + passwordKeySuffix;
         return new ContextCredentialsSupport(provider, usernameKey, pwKey);
     }
 
@@ -54,7 +55,7 @@ public final class ContextCredentialsSupport implements ContextCredentials.Provi
 
         @SuppressWarnings("LeakingThisInConstructor")
         private Credentials() {
-            preferences = ProviderRegistry.getDefault().findPreferences(provider);
+            preferences = ProviderUtilities.findPreferences(provider);
 //            NbPreferences.forModule(provider.getClass()).addPreferenceChangeListener(this);
             preferences.addPreferenceChangeListener(this);
         }

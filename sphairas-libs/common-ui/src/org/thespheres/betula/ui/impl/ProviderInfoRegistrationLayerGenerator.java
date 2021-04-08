@@ -43,8 +43,6 @@ public class ProviderInfoRegistrationLayerGenerator<C> extends LayerGeneratingPr
                 .methodvalue("instanceCreate", "org.thespheres.betula.services.impl.XmlProviderInfoEntry", "create")
                 .stringvalue("url", r.url())
                 .stringvalue("display-name", r.displayName())
-                .stringvalue("description", r.description())
-                .stringvalue("code-name-base", r.codeNameBase())
                 .write();
     }
 

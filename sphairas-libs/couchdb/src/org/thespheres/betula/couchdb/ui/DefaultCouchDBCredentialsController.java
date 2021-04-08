@@ -11,7 +11,7 @@ import org.netbeans.api.keyring.Keyring;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.thespheres.betula.services.ProviderInfo;
-import org.thespheres.betula.services.ProviderRegistry;
+import org.thespheres.betula.services.util.ProviderUtilities;
 
 /**
  *
@@ -24,7 +24,7 @@ public abstract class DefaultCouchDBCredentialsController extends CouchDBCredent
 
     protected DefaultCouchDBCredentialsController(ProviderInfo pi) {
         this.pi = pi;
-        preferences = ProviderRegistry.getDefault().findPreferences(pi.getURL()); //NbPreferences.forModule(pi.getClass());
+        preferences = ProviderUtilities.findPreferences(pi.getURL());
     }
 
     public ProviderInfo getProviderInfo() {
@@ -79,8 +79,7 @@ public abstract class DefaultCouchDBCredentialsController extends CouchDBCredent
     }
 
     protected String getPasswordKeyringkey() {
-//        return pi.getClass().getName() + "." + getPasswordKeyringKeySuffix();
-        return ProviderRegistry.getDefault().getCodeNameBase(pi.getURL()) + "." + getPasswordKeyringKeySuffix();
+        return pi.getURL() + "." + getPasswordKeyringKeySuffix();
     }
 
     @Override

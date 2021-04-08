@@ -17,8 +17,6 @@ import java.lang.annotation.Target;
  */
 public interface ProviderInfo extends Serializable {
 
-    public String getDescription();
-
     //unique === authority
     public String getURL();
 
@@ -32,9 +30,6 @@ public interface ProviderInfo extends Serializable {
 
         public String displayName();
 
-        public String description() default "";
-
-        public String codeNameBase() default "null";
     }
 
 }

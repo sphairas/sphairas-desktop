@@ -5,7 +5,6 @@
  */
 package org.thespheres.betula.services;
 
-import java.util.prefs.Preferences;
 import org.openide.util.Lookup;
 
 /**
@@ -18,11 +17,6 @@ public interface ProviderRegistry {
         return Lookup.getDefault().lookup(ProviderRegistry.class);
     }
 
-//    public void register(final ProviderInfo info, final String codeNameBase) throws ProviderAlreadyRegistredException;
     public ProviderInfo get(String providerUrl) throws NoProviderException;
-
-    public Preferences findPreferences(String provider) throws NoProviderException;
-
-    public String getCodeNameBase(String provider) throws NoProviderException;
 
 }

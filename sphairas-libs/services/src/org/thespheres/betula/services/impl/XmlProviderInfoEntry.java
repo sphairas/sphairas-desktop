@@ -26,10 +26,6 @@ public class XmlProviderInfoEntry implements ProviderInfo {
     private String url;
     @XmlElement(name = "display-name")
     private String displayName;
-    @XmlElement(name = "display-name")
-    private String description;
-    @XmlAttribute(name = "code-name-base")
-    private String codeNameBase;
 
     public XmlProviderInfoEntry() {
     }
@@ -39,19 +35,10 @@ public class XmlProviderInfoEntry implements ProviderInfo {
         this.displayName = displayName;
     }
 
-    public XmlProviderInfoEntry(String url, String displayName, String codeNameBase) {
-        this.url = url;
-        this.displayName = displayName;
-        this.codeNameBase = codeNameBase;
-    }
-
     public static XmlProviderInfoEntry create(final Map<String, ?> args) {
         final String url = (String) args.get("url");
         final String dn = (String) args.get("display-name");
-        final String desc = (String) args.get("description");
-        final String cnb = (String) args.get("code-name-base");
-        final XmlProviderInfoEntry ret = new XmlProviderInfoEntry(url, dn, cnb);
-        ret.setDescription(desc);
+        final XmlProviderInfoEntry ret = new XmlProviderInfoEntry(url, dn);
         return ret;
     }
 
@@ -60,26 +47,9 @@ public class XmlProviderInfoEntry implements ProviderInfo {
         return url;
     }
 
-    public String getCodeNameBase() {
-        return codeNameBase;
-    }
-
     @Override
     public String getDisplayName() {
         return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Override
@@ -105,7 +75,7 @@ public class XmlProviderInfoEntry implements ProviderInfo {
 
     @Override
     public String toString() {
-        return "XmlProviderInfoEntry{" + "url=" + url + ", displayName=" + displayName + ", description=" + description + ", codeNameBase=" + codeNameBase + '}';
+        return "XmlProviderInfoEntry{" + "url=" + url + ", displayName=" + displayName + '}';
     }
 
 }
