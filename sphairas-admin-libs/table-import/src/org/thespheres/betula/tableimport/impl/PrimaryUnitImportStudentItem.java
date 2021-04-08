@@ -72,7 +72,7 @@ public class PrimaryUnitImportStudentItem extends ImportStudentItem {
 
     public boolean isVCardUpdated() {
         //Never update with erroneous or empty vCard data
-        if (exception != null || vCard.isEmpty()) {
+        if (exception != null || getVCard() == null) {
             return false;
         }
         return dvVCard == null || !IComponentUtilities.equals(dvVCard, getVCard(), new String[]{"X-STUDENT"});
