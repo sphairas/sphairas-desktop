@@ -196,6 +196,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
                 final Integer stufe = cl.stream()
                         .map(c -> c.getId().substring(3))
                         .map(STUFE_STPLITTER::split)
+                        .filter(arr -> arr.length > 0)
                         .map(arr -> arr[0])
                         .filter(StringUtils::isNumeric)
                         .mapToInt(Integer::parseInt)
