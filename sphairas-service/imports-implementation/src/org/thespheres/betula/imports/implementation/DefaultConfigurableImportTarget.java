@@ -136,36 +136,36 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
         return ret;
     }
 
-    @Override //TODO use TranslateID
-    public UnitId initPreferredPrimaryUnitId(final String resolvedName, final int referenzjahr) {
-        String uid;
-        int jahr;
-        boolean jg10 = false;
-        if (resolvedName.startsWith("Q") && resolvedName.length() == 2) {
-            int qp = Integer.parseInt(resolvedName.substring(1, 2));
-            String id = "kgs-abitur" + Integer.toString(referenzjahr + +3 - qp);
-            return new UnitId(authority, id);
-        } else if (resolvedName.startsWith("11.") || resolvedName.startsWith("12.")) {
-            int qp = Integer.parseInt(resolvedName.substring(4, 5));
-            String id = "kgs-abitur" + Integer.toString(referenzjahr + 3 - qp);
-            return new UnitId(authority, id);
-        } else if (resolvedName.startsWith("10") && false) {
-            jg10 = true;
-            uid = resolveJg10uid(resolvedName);
-            jahr = referenzjahr;
-        } else {
-            uid = resolvedName.startsWith("10") ? resolvedName.toLowerCase(Locale.GERMANY).substring(2) : resolvedName.toLowerCase(Locale.GERMANY).substring(1);
-            int stufe = resolvedName.startsWith("10") ? 10 : Integer.parseInt(resolvedName.substring(0, 1));
-            jahr = referenzjahr - (stufe - 5);
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("kgs-klasse-").append(Integer.toString(jahr)).append("-");
-        if (jg10) {
-            sb.append("jg10-");
-        }
-        sb.append(uid);
-        return new UnitId(authority, sb.toString());
-    }
+//    @Override //TODO use TranslateID
+//    public UnitId initPreferredPrimaryUnitId(final String resolvedName, final int referenzjahr) {
+//        String uid;
+//        int jahr;
+//        boolean jg10 = false;
+//        if (resolvedName.startsWith("Q") && resolvedName.length() == 2) {
+//            int qp = Integer.parseInt(resolvedName.substring(1, 2));
+//            String id = "kgs-abitur" + Integer.toString(referenzjahr + +3 - qp);
+//            return new UnitId(authority, id);
+//        } else if (resolvedName.startsWith("11.") || resolvedName.startsWith("12.")) {
+//            int qp = Integer.parseInt(resolvedName.substring(4, 5));
+//            String id = "kgs-abitur" + Integer.toString(referenzjahr + 3 - qp);
+//            return new UnitId(authority, id);
+//        } else if (resolvedName.startsWith("10") && false) {
+//            jg10 = true;
+//            uid = resolveJg10uid(resolvedName);
+//            jahr = referenzjahr;
+//        } else {
+//            uid = resolvedName.startsWith("10") ? resolvedName.toLowerCase(Locale.GERMANY).substring(2) : resolvedName.toLowerCase(Locale.GERMANY).substring(1);
+//            int stufe = resolvedName.startsWith("10") ? 10 : Integer.parseInt(resolvedName.substring(0, 1));
+//            jahr = referenzjahr - (stufe - 5);
+//        }
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("kgs-klasse-").append(Integer.toString(jahr)).append("-");
+//        if (jg10) {
+//            sb.append("jg10-");
+//        }
+//        sb.append(uid);
+//        return new UnitId(authority, sb.toString());
+//    }
 
     private static String resolveJg10uid(String resolvedName) {
         int index = 2;

@@ -30,7 +30,7 @@ public interface SiBankImportTarget extends ImportTarget, CommonTargetProperties
 //    public void initSelectTerms(DefaultComboBoxModel model, int refjahr);
     public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr);
 
-    public UnitId initPreferredPrimaryUnitId(String resolvedName, int referenzjahr);
+//    public UnitId initPreferredPrimaryUnitId(String resolvedName, int referenzjahr);
 
 //    @Deprecated
 //    public BetulaServiceConnector createServiceConnector(WizardDescriptor wiz) throws IOException;

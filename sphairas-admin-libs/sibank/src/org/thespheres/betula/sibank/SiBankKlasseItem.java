@@ -33,6 +33,7 @@ import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.util.Units;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
+import org.thespheres.betula.xmlimport.parse.NameParser;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 import org.thespheres.ical.InvalidComponentException;
@@ -337,7 +338,9 @@ public class SiBankKlasseItem extends ImportTargetsItem implements OutlineModelN
                     if (jProp != null && jProp instanceof Integer) {
                         int rJahr = (int) jProp;//aus untisdaten
                         try {
-                            uid = getConfiguration().initPreferredPrimaryUnitId(getKlasse(), (Integer) rJahr);
+                            final NameParser pn2 = createNameParser();
+                            uid = pn2.findUnitId(getKlasse(), rJahr);
+//                            uid = getConfiguration().initPreferredPrimaryUnitId(getKlasse(), (Integer) rJahr);
 //                            uid = PreferredNames.create(getConfiguration().getAuthority()).initPreferredPrimaryUnitId(getKlasse(), (Integer) rJahr);
                         } catch (Exception e) {
                         }
@@ -361,6 +364,20 @@ public class SiBankKlasseItem extends ImportTargetsItem implements OutlineModelN
                 isInit = true;
             }
             return uid;
+        }
+
+        protected NameParser createNameParser() {
+            final NamingResolver nr = SiBankKlasseItem.this.getConfiguration().getNamingResolver();
+            final String first = nr.properties().get("first-element");
+            final String bl = nr.properties().get("base-level");
+            Integer baseLevel = null;
+            if (bl != null) {
+                try {
+                    baseLevel = Integer.parseInt(bl);
+                } catch (NumberFormatException nfex) {
+                }
+            }
+            return new NameParser(SiBankKlasseItem.this.getConfiguration().getAuthority(), first, baseLevel);
         }
 
         @Override
