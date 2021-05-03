@@ -86,7 +86,9 @@ public class UpdateSGL implements SiBankUpdaterService {
         if (!sglMap.isEmpty()) {
             final DocumentId sglDoc = config.forName(CommonDocuments.STUDENT_CAREERS_DOCID);
             if (sglDoc == null) {
-                throw new IllegalStateException("No student-bildungsgang-documentid set.");
+                final String msg = "Es werden keine Schulzweige aktualisiert, da kein Wert für " + CommonDocuments.STUDENT_CAREERS_DOCID + " vorhanden ist.";
+                ImportUtil.getIO().getErr().println(msg);
+                return null;
             }
             final Template t = builder.createTemplate(null, sglDoc, null, Paths.STUDENTS_MARKERS_PATH, null, null);
             //TODO: set effective dates
