@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -199,6 +200,31 @@ public class AdminUnit implements Unit, ChangeListener {
     @Override
     public void removePropertyChangeListener(PropertyChangeListener l) {
         pSupport.removePropertyChangeListener(l);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.unit);
+        return 79 * hash + Objects.hashCode(this.provider);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AdminUnit other = (AdminUnit) obj;
+        if (!Objects.equals(this.provider, other.provider)) {
+            return false;
+        }
+        return Objects.equals(this.unit, other.unit);
     }
 
 }
