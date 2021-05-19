@@ -92,7 +92,7 @@ public class NdsReportBuilderFactory implements CommonDocuments {
         final Marker[] fach = subject.getSubjectMarkerSet().stream()
                 .toArray(Marker[]::new);
         final Marker realm = subject.getRealmMarker();
-        if (realm != null && "kgs.unterricht".equals(realm.getConvention()) && "wpk".equals(realm.getId()) && realm.getSubset() == null) {
+        if (realm != null && ("kgs.unterricht".equals(realm.getConvention()) || "niedersachsen.unterricht.art".equals(realm.getConvention())) && "wpk".equals(realm.getId()) && realm.getSubset() == null) {
             return 1;
         } else if (fach.length == 1 && fach[0].getConvention().equals(Profile.CONVENTION_NAME)) {
             return 2;
