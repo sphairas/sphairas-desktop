@@ -100,7 +100,7 @@ class TargetDocumentDownloadAction extends AbstractDownloadAction<RemoteTargetAs
         @ActionReference(path = "Loaders/application/betula-remote-target-assessment-document/Actions", position = 52000, separatorBefore = 50000)
     })
     public static Action csvAction() {
-        return new TargetDocumentDownloadAction("text/csv", "csv");
+        return new TargetDocumentDownloadAction("text/csv", "zip");
     }
 
     @Override

@@ -62,7 +62,7 @@ public final class DownloadListen extends PrimaryUnitDownloadAction {
         @ActionReference(path = "Loaders/application/betula-unit-data/ZeugnisSubActions", position = 12100, separatorBefore = 10000) //    @ActionReference(path = "Editors/application/xml-dtd/Popup", position = 4000)      
     })
     public static Action listenCsvAction() {
-        return new DownloadListen(Utilities.actionsGlobalContext(), "text/plain", "csv");
+        return new DownloadListen(Utilities.actionsGlobalContext(), "text/plain", "zip");
     }
 
     private DownloadListen(Lookup context, String mime, String extension) {
