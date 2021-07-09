@@ -53,7 +53,7 @@ public abstract class ASVAssessmentConvention extends AbstractAssessmentConventi
                 return g;
             }
         }
-        throw new GradeParsingException(Teilnahme.NAME, text);
+        throw new GradeParsingException(getName(), text);
     }
 
     @Override
