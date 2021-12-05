@@ -44,7 +44,7 @@ import org.thespheres.betula.ui.util.LogLevel;
 import org.thespheres.betula.ui.util.PlatformUtil;
 
 /**
- *
+ *TargetDocumentDownloadAction.action.disabledName.zip
  * @author boris.heithecker
  */
 @Messages({"TargetDocumentDownloadAction.FileChooser.Title=Ordner",
@@ -52,6 +52,7 @@ import org.thespheres.betula.ui.util.PlatformUtil;
     "TargetDocumentDownloadAction.action.name=Zensurenliste für {0} erstellen ({1})",
     "TargetDocumentDownloadAction.action.disabledName.pdf=Zensurenlisten erstellen (pdf)",
     "TargetDocumentDownloadAction.action.disabledName.csv=Zensurenlisten erstellen (csv)",
+    "TargetDocumentDownloadAction.action.disabledName.zip=Zensurenlisten erstellen (zip)",
     "TargetDocumentDownloadAction.download.filename={0} Zensurenliste ({1,date,d.M.yy HH'h'mm}).{2}",
     "TargetDocumentDownloadAction.download.filename.multipleTargets=Zensurenlisten.zip",
     "TargetDocumentDownloadAction.action.overwriteFile.title=Bestätigen",
