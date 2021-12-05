@@ -99,6 +99,7 @@
             <public-packages>
                 <package>org.thespheres.betula.niedersachsen</package>
                 <package>org.thespheres.betula.niedersachsen.gs</package>
+                <package>org.thespheres.betula.niedersachsen.kgs</package>
                 <package>org.thespheres.betula.niedersachsen.xml</package>
                 <package>org.thespheres.betula.niedersachsen.zeugnis</package>
             </public-packages>

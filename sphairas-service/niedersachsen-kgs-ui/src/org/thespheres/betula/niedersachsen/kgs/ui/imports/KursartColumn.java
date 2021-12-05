@@ -18,6 +18,8 @@ import org.openide.util.NbBundle;
 import org.openide.util.WeakListeners;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerConvention;
+import org.thespheres.betula.niedersachsen.kgs.KGSUnterricht;
+import org.thespheres.betula.niedersachsen.kgs.SGL;
 import org.thespheres.betula.services.CommonStudentProperties;
 import org.thespheres.betula.services.CommonTargetProperties;
 import org.thespheres.betula.services.ws.CommonDocuments;
@@ -47,14 +49,16 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
     private final PCL listener = new PCL();
     private final Map<ITI, MarkerListener> markers = new HashMap<>();
     private ImportTableModel<ITI, AbstractImportWizardSettings<IT>> model;
+    protected IT configuration;
 
-    private KursartColumn() {
+    protected KursartColumn() {
         super("kursart", 220, true, 100, true);
     }
 
     @Override
     public void initialize(IT configuration, AbstractImportWizardSettings<IT> wizard) {
         super.initialize(configuration, wizard);
+        this.configuration = configuration;
         Object p = wizard.getProperty(AbstractSourceOverrides.USER_SOURCE_OVERRIDES);
         if (p instanceof AbstractSourceOverrides) {
 //            this.overrides = (AbstractSourceOverrides<SiBankKursItem, ?, ? extends AbstractLink<UniqueSatzDistinguisher>, UniqueSatzDistinguisher, ?, ?>) p;
@@ -80,6 +84,7 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
     @Override
     protected void initialize(ITI il) {
         super.initialize(il);
+        parseKursart(il);
         final MarkerListener ml = new MarkerListener(il);
         synchronized (markers) {
             markers.put(il, ml);
@@ -87,6 +92,9 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
         final ChangeListener cl = WeakListeners.change(listener, null);
         il.getUniqueMarkerSet().addChangeListener(cl);
         initializeOverrides(il);
+    }
+
+    protected void parseKursart(ITI il) {
     }
 
     private synchronized boolean initializeOverrides(ITI il) {
@@ -189,7 +197,7 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
                     boolean result = initializeOverrides(it);
                     isCheckedOverrides = result;
                 }
-                return beforeValue = it.getUniqueMarkerSet().getUnique("kgs.schulzweige", "kgs.unterricht");
+                return beforeValue = it.getUniqueMarkerSet().getUnique(SGL.NAME, KGSUnterricht.NAME);
             }
             return null;
         }
@@ -206,8 +214,7 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
     }
 
     @ImportTableColumn.Factory.Registrations({
-        @Registration(component = "DefaultCreateDocumentsVisualPanel"),
-        @Registration(component = "SiBankCreateDocumentsVisualPanel")})
+        @Registration(component = "DefaultCreateDocumentsVisualPanel")})
     public static final class Factory extends ImportTableColumn.Factory {
 
         @Override
