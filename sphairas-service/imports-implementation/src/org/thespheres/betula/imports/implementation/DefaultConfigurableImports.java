@@ -68,7 +68,7 @@ public class DefaultConfigurableImports {
         final DefaultConfigurableImportTarget ret = new DefaultConfigurableImportTarget(provider, product, settings, hints);
         ret.initialize(config);
         try {
-            final ImportScripts scripts = loadImportScripts(provider, config, base, "import.js");
+            final ImportScripts scripts = loadImportScripts(provider, product, config, base, "import.js");
             ret.setScripts(scripts);
         } catch (final IOException ioex) {
             PlatformUtil.getCodeNameBaseLogger(DefaultConfigurableImports.class).log(Level.INFO, "No import.js scripts for provider: {0}", provider);
@@ -118,11 +118,11 @@ public class DefaultConfigurableImports {
         return sprops;
     }
 
-    static ImportScripts loadImportScripts(final String provider, final Map<String, String> config, final URL base, final String file) throws IOException {
+    static ImportScripts loadImportScripts(final String provider, final Product product, final Map<String, String> config, final URL base, final String file) throws IOException {
         final URL url = new URL(base, file);
         final URLConnection conn = url.openConnection();
         try (final InputStream is = conn.getInputStream()) {
-            return ImportScripts.create(provider, config, is);
+            return ImportScripts.create(provider, product, config, is);
         }
     }
 }

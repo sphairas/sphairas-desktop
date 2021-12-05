@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.script.Invocable;
@@ -21,8 +22,10 @@ import javax.script.ScriptException;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.thespheres.betula.document.Marker;
+import org.thespheres.betula.document.MarkerFactory;
 import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.xmlimport.ImportUtil;
+import org.thespheres.betula.xmlimport.model.Product;
 
 /**
  *
@@ -32,19 +35,22 @@ import org.thespheres.betula.xmlimport.ImportUtil;
 public class ImportScripts {
 
     public static final String FUNCTION_PARSE_UNIT_NAME = "parseUnitName";
+    public static final String FUNCTION_PARSE_REALM = "parseRealm";
     private final ScriptContext context;
     private final Invocable engine;
     private final String provider;
     private final Map<String, String> configuration = new HashMap<>();
+    private final Product product;
 
-    private ImportScripts(final String provider, final Map<String, String> config, final Invocable engine, final ScriptContext context) {
+    private ImportScripts(final String provider, final Product product, final Map<String, String> config, final Invocable engine, final ScriptContext context) {
         this.provider = provider;
+        this.product = product;
         this.engine = engine;
         this.context = context;
         this.configuration.putAll(config);
     }
 
-    public static ImportScripts create(final String provider, final Map<String, String> config, final InputStream source) throws IOException {
+    public static ImportScripts create(final String provider, final Product product, final Map<String, String> config, final InputStream source) throws IOException {
         final ScriptEngineManager manager = new ScriptEngineManager();
         final ScriptEngine engine = manager.getEngineByName("nashorn");
         try (final Reader fr = new InputStreamReader(source)) {
@@ -52,12 +58,10 @@ public class ImportScripts {
         } catch (final ScriptException ex) {
             throw new IOException(ex);
         }
-        return new ImportScripts(provider, config, (Invocable) engine, engine.getContext());
+        return new ImportScripts(provider, product, config, (Invocable) engine, engine.getContext());
     }
 
     public String parseUnitName(final String resolvedName, final Marker subject, final int referenzjahr, final Integer checkLevel) {
-        context.setWriter(ImportUtil.getIO().getOut());
-        context.setErrorWriter(ImportUtil.getIO().getErr());
         final Map<String, Object> props = new HashMap<>();
         props.put("year", referenzjahr);
         if (subject != null) {
@@ -66,16 +70,41 @@ public class ImportScripts {
         if (checkLevel != null) {
             props.put("level", checkLevel);
         }
+        return tryInvoke(FUNCTION_PARSE_UNIT_NAME, resolvedName, props);
+    }
+
+    public Marker parseRealm(final String resolvedName) {
+        final Map<String, Object> props = new HashMap<>();
+        final String res = tryInvoke(FUNCTION_PARSE_REALM, resolvedName, props);
+        if (res != null) {
+            try {
+                final Marker ret = MarkerFactory.resolve(res);
+                if (!Marker.isNull(ret)) {
+                    return ret;
+                }
+            } catch (final IllegalArgumentException e) {
+                PlatformUtil.getCodeNameBaseLogger(ImportScripts.class).log(Level.WARNING, e.getLocalizedMessage());
+            }
+        }
+        return null;
+    }
+
+    private String tryInvoke(final String function, final String arg, final Map<String, Object> props) throws MissingResourceException {
+        context.setWriter(ImportUtil.getIO().getOut());
+        context.setErrorWriter(ImportUtil.getIO().getErr());
+        if (product != null) {
+            props.put("product", product.getId());
+        }
         props.put("provider", provider);
         props.putAll(this.configuration);
         final Object res;
         try {
-            res = engine.invokeFunction(FUNCTION_PARSE_UNIT_NAME, resolvedName, props);
+            res = engine.invokeFunction(function, arg, props);
         } catch (final ScriptException scex) {
             final String params = props.entrySet().stream()
                     .map(e -> e.getKey() + ":" + e.getValue())
                     .collect(Collectors.joining(";", "\"", "\""));
-            final String message = NbBundle.getMessage(ImportScripts.class, "ImportScripts.ScriptException.message", new Object[]{FUNCTION_PARSE_UNIT_NAME, resolvedName, params, scex.getMessage()});
+            final String message = NbBundle.getMessage(ImportScripts.class, "ImportScripts.ScriptException.message", new Object[]{function, arg, params, scex.getMessage()});
             PlatformUtil.getCodeNameBaseLogger(ImportScripts.class).log(Level.WARNING, message);
             return null;
         } catch (final NoSuchMethodException nsmex) {

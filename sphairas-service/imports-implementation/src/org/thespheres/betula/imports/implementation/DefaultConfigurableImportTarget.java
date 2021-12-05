@@ -11,11 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
-import org.thespheres.betula.*;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.assess.TargetDocument;
 import org.thespheres.betula.document.DocumentId;
-import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.gpuntis.UntisImportConfiguration;
 import org.thespheres.betula.services.LocalFileProperties;
 import org.thespheres.betula.services.LocalProperties;
@@ -31,7 +29,6 @@ import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.model.XmlTargetImportSettings;
 import org.thespheres.betula.xmlimport.parse.ImportScripts;
-import org.thespheres.betula.xmlimport.parse.TranslateID;
 import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 
@@ -120,21 +117,22 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
         }
     }
 
-    @Override
-    public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr) {
-//        return TranslateID.findId(stufe, rjahr, fach, kursnr, "kgs");
-        final String kursid = kursnr != null ? kursnr.substring(1) : null;
-        String uid;
-        if (stufe == 10 && false) {
-            uid = TranslateID.findId(stufe, rjahr, 10, false, fach, kursid, "kgs");
-        } else if (stufe >= 11) {
-            uid = TranslateID.findAbiturId(stufe - 10, rjahr, fach, kursnr, "kgs");
-        } else {
-            uid = TranslateID.findId(stufe, rjahr, fach, kursid, "kgs");
-        }
-        UnitId ret = new UnitId(getAuthority(), uid);
-        return ret;
-    }
+//    @Override// nur noch für kgs im Gebrauch
+//    public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr) {
+////        return TranslateID.findId(stufe, rjahr, fach, kursnr, "kgs");
+//        final String kursid = kursnr != null ? kursnr.substring(1) : null;//Nru für kgs, durch Skript ersetzen
+//        String uid;
+////        if (stufe == 10 && false) {
+////            uid = TranslateID.findId(stufe, rjahr, 10, false, fach, kursid, "kgs");
+////        } else 
+//        if (stufe >= 11) {
+//            uid = TranslateID.findAbiturId(stufe - 10, rjahr, fach, kursnr, "kgs");
+//        } else {
+//            uid = TranslateID.findId(stufe, rjahr, fach, kursid, "kgs");
+//        }
+//        UnitId ret = new UnitId(getAuthority(), uid);
+//        return ret;
+//    }
 
 //    @Override //TODO use TranslateID
 //    public UnitId initPreferredPrimaryUnitId(final String resolvedName, final int referenzjahr) {
@@ -166,7 +164,6 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
 //        sb.append(uid);
 //        return new UnitId(authority, sb.toString());
 //    }
-
     private static String resolveJg10uid(String resolvedName) {
         int index = 2;
         if (resolvedName.length() > 2 && resolvedName.charAt(index) == '.') {
