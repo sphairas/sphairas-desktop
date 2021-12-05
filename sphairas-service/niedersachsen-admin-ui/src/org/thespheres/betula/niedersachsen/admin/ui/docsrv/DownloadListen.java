@@ -34,13 +34,14 @@ import org.thespheres.betula.services.ws.WebServiceProvider;
 
 @Messages({"DownloadListen.action.name=Listen für {0} erstellen ({1})",
     "DownloadListen.action.disabledName.pdf=Listen erstellen (pdf)",
-    "DownloadListen.action.disabledName.csv=Listen erstellen (csv)",
+    "DownloadListen.action.disabledName.csv/zip=Listen erstellen (csv/zip)",
 //    "DownloadListen.download.allezgn.filename={0} Zensuren {1}-{2} ({3,date,dd.MM.yy HH'h'mm}).{4}",
     "DownloadListen.download.allezgn.filename={0} Zensuren {1}-{2}.{4}",
     "DownloadListen.missingHref.exception=Download Listen kann nicht ausgeführt werden, weil in der Konfiguration {0} der Schlüssel \"zgnsrvUrl\" fehlt."})
 public final class DownloadListen extends PrimaryUnitDownloadAction {
 
     private String encoding = "utf-8";
+    private final String archiveExt;
 
     @ActionID(category = "Betula",
             id = "org.thespheres.betula.niedersachsen.admin.ui.docsrv.DownloadListen.listenPdfAction")
@@ -51,28 +52,29 @@ public final class DownloadListen extends PrimaryUnitDownloadAction {
         @ActionReference(path = "Loaders/application/betula-unit-data/ZeugnisSubActions", position = 12000, separatorBefore = 10000) //    @ActionReference(path = "Editors/application/xml-dtd/Popup", position = 4000)      
     })
     public static Action listenPdfAction() {
-        return new DownloadListen(Utilities.actionsGlobalContext(), "application/pdf", "pdf");
+        return new DownloadListen(Utilities.actionsGlobalContext(), "application/pdf", "pdf", null);
     }
 
     @ActionID(category = "Betula",
             id = "org.thespheres.betula.niedersachsen.admin.ui.docsrv.DownloadListen.listenCsvAction")
-    @ActionRegistration(displayName = "#DownloadListen.action.disabledName.csv",
+    @ActionRegistration(displayName = "#DownloadListen.action.disabledName.csv/zip",
             lazy = false)
     @ActionReferences({
         @ActionReference(path = "Loaders/application/betula-unit-data/ZeugnisSubActions", position = 12100, separatorBefore = 10000) //    @ActionReference(path = "Editors/application/xml-dtd/Popup", position = 4000)      
     })
     public static Action listenCsvAction() {
-        return new DownloadListen(Utilities.actionsGlobalContext(), "text/plain", "zip");
+        return new DownloadListen(Utilities.actionsGlobalContext(), "text/plain", "csv/zip", "zip");
     }
 
-    private DownloadListen(Lookup context, String mime, String extension) {
+    private DownloadListen(Lookup context, String mime, String extension, String archiveExt) {
         super(context, mime, extension);
+        this.archiveExt = archiveExt;
         updateName();
     }
 
     @Override
     public Action createContextAwareInstance(Lookup actionContext) {
-        return new DownloadListen(actionContext, mime, extension);
+        return new DownloadListen(actionContext, mime, extension, archiveExt);
     }
 
     @Override
@@ -116,7 +118,8 @@ public final class DownloadListen extends PrimaryUnitDownloadAction {
         String name = rdn.getResolvedName(selectedTerm);
         String jahr = Integer.toString((Integer) selectedTerm.getParameter(NdsTerms.JAHR));
         int hj = (Integer) selectedTerm.getParameter(NdsTerms.HALBJAHR);
-        String file = NbBundle.getMessage(DownloadListen.class, "DownloadListen.download.allezgn.filename", name.replace("/", "_"), jahr, hj, new Date(), extension);
+        final String ext = archiveExt != null ? archiveExt : extension;
+        String file = NbBundle.getMessage(DownloadListen.class, "DownloadListen.download.allezgn.filename", name.replace("/", "_"), jahr, hj, new Date(), ext);
         String fe = URLEncoder.encode(file, "utf-8");
 
         String uri = href
@@ -129,7 +132,7 @@ public final class DownloadListen extends PrimaryUnitDownloadAction {
                 + "&mime=" + mime;
 
         if (encoding != null) {
-            href += "&encoding=" + encoding;
+            uri += "&encoding=" + encoding;
         }
 
 //        FileObject files = FileUtil.createFolder(context.getProjectDirectory(), "Dateien");
