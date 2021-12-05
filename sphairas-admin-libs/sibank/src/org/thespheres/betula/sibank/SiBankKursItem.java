@@ -38,7 +38,9 @@ import org.thespheres.betula.sibank.DatenExportXml.File;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
+import org.thespheres.betula.xmlimport.parse.NameParser;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
+import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 
 /**
@@ -49,7 +51,6 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
 
     public static final String PROP_TARGET_ID = "targetId";
     static final Pattern TARGET_ID_PATTERN = Pattern.compile("[\\w]+[-\\w]*", 0); //Centralize
-    public Marker kursart = null;
     private String targetId;
     private final GeneratedUnitId generatedUnit = new GeneratedUnitId();
     private DocumentId targetDocBase;
@@ -76,14 +77,6 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
 
     public SiBankKursItem(UniqueSatzDistinguisher id, DatenExportXml.File type, SiBankImportData<SiBankKursItem> wizard) {
         this(id, type, wizard, 0);
-    }
-
-    public Marker getKursart() {
-        return kursart;
-    }
-
-    public void setKursart(Marker val) {
-        kursart = val;
     }
 
     @Override
@@ -471,7 +464,8 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
                     Object jProp = getTerm().getParameter("jahr");
                     if (jProp instanceof Integer && getConfiguration() != null) {
 //                        uid = configuration.initPreferredPrimaryUnitId(makeUnique.getStufe(), null, getSubjectMarker(), false, makeUnique.getKursnr(), (int) jProp);
-                        uid = getConfiguration().initPreferredTarget(makeUnique.getStufe(), getSubjectMarker(), makeUnique.getKursnr(), (int) jProp);
+                        final NameParser np = createNameParser();
+                        uid = np.findUnitId(makeUnique.getKursnr(), getSubjectMarker(), (int) jProp, makeUnique.getStufe());
                     }
                 }
 //                if (klasse != null && stufe != -1) {
@@ -491,6 +485,25 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
                 isInit = true;
             }
             return uid;
+        }
+
+        private NameParser createNameParser() {
+            final NamingResolver nr = getConfiguration().getNamingResolver();
+            final String first = nr.properties().get("first-element");
+            final String bl = nr.properties().get("base-level");
+            Integer baseLevel = null;
+            if (bl != null) {
+                try {
+                    baseLevel = Integer.parseInt(bl);
+                } catch (NumberFormatException nfex) {
+                }
+            }
+            final NameParser ret = new NameParser(getConfiguration().getAuthority(), first, baseLevel);
+            final SiBankImportTarget cfg = getConfiguration();
+            if (cfg instanceof ConfigurableImportTarget) {
+                ret.setImportScripts(((ConfigurableImportTarget) cfg).getImportScripts());
+            }
+            return ret;
         }
 
         @Override

@@ -5,8 +5,6 @@
  */
 package org.thespheres.betula.sibank;
 
-import org.thespheres.betula.UnitId;
-import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.services.CommonStudentProperties;
 import org.thespheres.betula.services.CommonTargetProperties;
 import org.thespheres.betula.services.ws.CommonDocuments;
@@ -28,7 +26,7 @@ public interface SiBankImportTarget extends ImportTarget, CommonTargetProperties
 
 //    @Deprecated
 //    public void initSelectTerms(DefaultComboBoxModel model, int refjahr);
-    public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr);
+//    public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr);
 
 //    public UnitId initPreferredPrimaryUnitId(String resolvedName, int referenzjahr);
 
