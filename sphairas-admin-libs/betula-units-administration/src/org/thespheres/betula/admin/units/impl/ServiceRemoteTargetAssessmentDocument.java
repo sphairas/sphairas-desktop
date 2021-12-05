@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -53,10 +54,12 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
 
     private final TargetAssessmentEntry<TermId> entry;
     private final Map<String, Signee> signees = new HashMap<>();
+    private String preferredConvention;
 
     private ServiceRemoteTargetAssessmentDocument(DocumentId d, TargetAssessmentEntry<TermId> e, final Map<StudentId, Map<TermId, RemoteGradeEntry>> values, String provider, JMSTopicListenerService jmsprovider, NamingResolver nr) {
         super(d, provider, values, jmsprovider, nr);
         this.entry = e;
+        this.preferredConvention = entry.getPreferredConvention();
         final Set<Marker> m = entry.getValue().getMarkerSet();
         synchronized (markers) {
             markers.addAll(m);
@@ -93,7 +96,7 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
 
     @Override
     public String getPreferredConvention() {
-        return entry.getPreferredConvention();
+        return preferredConvention;
     }
 
     @Override
@@ -150,7 +153,7 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
     }
 
     @Override
-    protected void updateSigneesAndMarkers() {
+    protected void updateSigneesAndMarkersAndProperties() {
         final TargetAssessmentEntry<TermId> ret;
         try {
             ret = fetchEntry(true);
@@ -161,6 +164,7 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
         }
         updateSignees(ret);
         updateMarkers(ret);
+        updateProperties(ret);
     }
 
     private void updateMarkers(final TargetAssessmentEntry<TermId> ret) {
@@ -192,6 +196,15 @@ public class ServiceRemoteTargetAssessmentDocument extends RemoteTargetAssessmen
         }
         if (fireSigneesChange) {
             pSupport.firePropertyChange(PROP_SIGNEES, null, signees);
+        }
+    }
+
+    private void updateProperties(final TargetAssessmentEntry<TermId> ret) {
+        final String pc = ret.getPreferredConvention();
+        final String old = getPreferredConvention();
+        if (!Objects.equals(old, pc)) {
+            this.preferredConvention = pc;
+            pSupport.firePropertyChange(PROP_PREFERRED_CONVENTIUON, old, pc);
         }
     }
 

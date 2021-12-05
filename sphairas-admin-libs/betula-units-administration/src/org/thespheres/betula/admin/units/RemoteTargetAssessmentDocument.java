@@ -68,6 +68,7 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
 
     public static final String PROP_VALUES = "values";
     public static final String PROP_SIGNEES = "signees";
+    public static final String PROP_PREFERRED_CONVENTIUON = "preferred-convention";
     private final Listener listener = new Listener();
     protected final Set<TermId> termsLoaded = new HashSet<>();//TODO: use this to keep track of loaded term. Provide an option to load an empty RTAD in inital phase. 
     protected final Map<StudentId, Map<TermId, RemoteGradeEntry>> values; // = new HashMap<>();
@@ -118,6 +119,11 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
         return name;
     }
 
+    @Override
+    public String getDisplayName() {
+        return getName().getDisplayName(null);
+    }
+
     public String getPreferredConventionDisplayName() {
         if (prefConDN == null && getPreferredConvention() != null) {
             AssessmentConvention ac = GradeFactory.findConvention(getPreferredConvention());
@@ -134,7 +140,7 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
         return getSignees().get(entitlement);
     }
 
-    protected abstract void updateSigneesAndMarkers();
+    protected abstract void updateSigneesAndMarkersAndProperties();
 
     public Optional<RemoteGradeEntry> selectGradeAccess(StudentId student, TermId term) {
         return Optional.ofNullable(findGradeAccess(student, term));
@@ -319,7 +325,7 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
         private void update(final int retry) {
             assert Util.RP(provider).isRequestProcessorThread();
             try {
-                updateSigneesAndMarkers();
+                updateSigneesAndMarkersAndProperties();
             } catch (Exception e) {
                 if (isRemoteException(e) && retry < Config.getInstance().getRetryTimes().length) {
                     final int num = retry + 1;
@@ -378,7 +384,7 @@ public abstract class RemoteTargetAssessmentDocument extends AbstractTargetAsses
                     }
                 }
             } else if (event.getType().equals(DocumentEventType.CHANGE)) {
-                Util.RP(provider).post(RemoteTargetAssessmentDocument.this::updateSigneesAndMarkers);
+                Util.RP(provider).post(RemoteTargetAssessmentDocument.this::updateSigneesAndMarkersAndProperties);
             }
         }
 

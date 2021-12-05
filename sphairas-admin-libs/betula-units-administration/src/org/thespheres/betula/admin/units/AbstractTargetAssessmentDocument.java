@@ -35,14 +35,16 @@ import org.thespheres.betula.document.model.Subject;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.LocalFileProperties;
 import org.thespheres.betula.services.NamingResolver;
+import org.thespheres.betula.ui.ConfigurationPanelLookupHint;
 import org.thespheres.betula.util.CollectionUtil;
 
 /**
  *
  * @author boris.heithecker
  */
-public abstract class AbstractTargetAssessmentDocument implements TargetDocument {
+public abstract class AbstractTargetAssessmentDocument implements TargetDocument, ConfigurationPanelLookupHint {
 
+    public static final String ABSTRACT_TARGET_ASSESSMENT_HINT = "AbstractTargetAssessmentDocument";
     public static final String PROP_MARKERS = "markers";
     public static final String PROP_TARGETTYPE = "targetType";
     protected final DocumentId document;
@@ -134,6 +136,16 @@ public abstract class AbstractTargetAssessmentDocument implements TargetDocument
     }
 
     public abstract Timestamp timestamp(StudentId student, TermId gradeId);
+
+    @Override
+    public String getContentType() {
+        return ABSTRACT_TARGET_ASSESSMENT_HINT;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return document.getId();
+    }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pSupport.addPropertyChangeListener(listener);
