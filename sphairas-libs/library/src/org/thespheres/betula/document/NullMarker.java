@@ -55,4 +55,9 @@ final class NullMarker implements Marker, Serializable {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        return "null#null";
+    }
+
 }

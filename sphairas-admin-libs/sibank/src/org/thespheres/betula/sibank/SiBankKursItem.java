@@ -251,12 +251,15 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
         if (targetDocBase == null) {
             final UnitId u = getUnitId();
             if (u != null) {
-                final String source = u.getId();
-                final String id = TranslateID.translateUnitToTarget(source, getSubjectMarker(), getCustomDocumentIdIdentifier());
-                targetDocBase = new DocumentId(getConfiguration().getAuthority(), id, DocumentId.Version.LATEST);
-                if (!id.equals(source)) {
-                    final String alt = TranslateID.translateUnitToTarget(source, null, getCustomDocumentIdIdentifier());
-                    final DocumentId altBase = new DocumentId(getConfiguration().getAuthority(), alt, DocumentId.Version.LATEST);
+                //final String source = u.getId();
+                //final String id = TranslateID.translateUnitToTarget(source, getSubjectMarker(), getCustomDocumentIdIdentifier());
+                //targetDocBase = new DocumentId(getConfiguration().getAuthority(), id, DocumentId.Version.LATEST);
+                final NameParser pn2 = generatedUnit.createNameParser();
+                targetDocBase = pn2.translateUnitIdToTargetDocumentBase(u.getId(), getSubjectMarker(), new String[]{getCustomDocumentIdIdentifier()});
+                if (!targetDocBase.getId().equals(u.getId())) {
+                    //final String alt = TranslateID.translateUnitToTarget(source, null, getCustomDocumentIdIdentifier());
+                    //final DocumentId altBase = new DocumentId(getConfiguration().getAuthority(), alt, DocumentId.Version.LATEST);
+                    final DocumentId altBase = pn2.translateUnitIdToTargetDocumentBase(u.getId(), (Marker) null, new String[]{getCustomDocumentIdIdentifier()});
                     targetDocBaseOptions = new DocumentId[]{targetDocBase, altBase};
                 }
             }
