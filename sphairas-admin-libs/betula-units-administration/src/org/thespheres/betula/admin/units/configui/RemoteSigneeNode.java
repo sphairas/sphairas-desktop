@@ -23,7 +23,7 @@ public class RemoteSigneeNode extends AbstractNode {
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public RemoteSigneeNode(final RemoteSignee signee, final SigneesTopComponentModel model) {
         super(Children.create(new RemoteSigneeChildren(signee, model), true), Lookups.fixed(signee, model));
-        setName(signee.toString());
+        setName(signee.getWebServiceProvider() + ":" + signee.getSignee().toString());
         setDisplayName(signee.getCommonName());
         setIconBaseWithExtension("org/thespheres/betula/admin/units/resources/user-business-boss.png");
     }
