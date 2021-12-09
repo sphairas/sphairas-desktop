@@ -205,12 +205,8 @@ public class Signees {
                 .filter(ContentValueEntry.class::isInstance)
                 .map(e -> (ContentValueEntry<Signee>) e)
                 .collect(Collectors.toMap(Entry::getIdentity, Holder::new));
-//                .filter(Entry.class::isInstance)
-//                .map(Entry.class::cast)
-//                .filter(e -> e.getIdentity() instanceof Signee && e.getValue() instanceof String)
-//                .map(e -> (Entry<Signee, String>) e)
-//                .collect(Collectors.toMap(Entry::getIdentity, Entry::getValue));
-        final TreeMap<Signee, Holder> ret = new TreeMap<>(Comparator.comparing(s -> l.containsKey(s) ? l.get(s).getCn(false) : "", COLLATOR));
+        //See contract of TreeMap: keys are equal on grounds of the compareTo method!
+        final TreeMap<Signee, Holder> ret = new TreeMap<>(Comparator.comparing(s -> l.containsKey(s) ? l.get(s).getCn(false) + s.toString() : s.toString(), COLLATOR));
         ret.putAll(l);
         return ret;
     }
