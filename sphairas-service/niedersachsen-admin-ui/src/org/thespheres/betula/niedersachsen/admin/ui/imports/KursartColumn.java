@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thespheres.betula.niedersachsen.kgs.ui.imports;
+package org.thespheres.betula.niedersachsen.admin.ui.imports;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -18,8 +18,7 @@ import org.openide.util.NbBundle;
 import org.openide.util.WeakListeners;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerConvention;
-import org.thespheres.betula.niedersachsen.kgs.KGSUnterricht;
-import org.thespheres.betula.niedersachsen.kgs.SGL;
+import org.thespheres.betula.niedersachsen.Unterricht;
 import org.thespheres.betula.services.CommonStudentProperties;
 import org.thespheres.betula.services.CommonTargetProperties;
 import org.thespheres.betula.services.ws.CommonDocuments;
@@ -50,9 +49,11 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
     private final Map<ITI, MarkerListener> markers = new HashMap<>();
     private ImportTableModel<ITI, AbstractImportWizardSettings<IT>> model;
     protected IT configuration;
+    protected final String[] conventions;
 
-    protected KursartColumn() {
+    protected KursartColumn(String... conventions) {
         super("kursart", 220, true, 100, true);
+        this.conventions = conventions;
     }
 
     @Override
@@ -197,7 +198,7 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
                     boolean result = initializeOverrides(it);
                     isCheckedOverrides = result;
                 }
-                return beforeValue = it.getUniqueMarkerSet().getUnique(SGL.NAME, KGSUnterricht.NAME);
+                return beforeValue = it.getUniqueMarkerSet().getUnique(conventions);
             }
             return null;
         }
@@ -219,7 +220,7 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
 
         @Override
         public ImportTableColumn createInstance() {
-            return new KursartColumn();
+            return new KursartColumn(Unterricht.NAME);
         }
 
     }

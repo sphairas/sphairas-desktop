@@ -7,7 +7,7 @@ package org.thespheres.betula.niedersachsen.kgs.ui.imports.sibank;
 
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.niedersachsen.kgs.*;
-import org.thespheres.betula.niedersachsen.kgs.ui.imports.KursartColumn;
+import org.thespheres.betula.niedersachsen.admin.ui.imports.KursartColumn;
 import org.thespheres.betula.sibank.SiBankImportTarget;
 import org.thespheres.betula.sibank.SiBankKursItem;
 import org.thespheres.betula.xmlimport.uiutil.ImportTableColumn;
@@ -18,6 +18,10 @@ import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
  * @author boris.heithecker@gmx.net
  */
 public class SiBankKursartColumn extends KursartColumn<SiBankImportTarget, SiBankKursItem> {
+
+    public SiBankKursartColumn() {
+        super(SGL.NAME, KGSUnterricht.NAME);
+    }
 
     @Override
     protected void parseKursart(final SiBankKursItem kurs) {
