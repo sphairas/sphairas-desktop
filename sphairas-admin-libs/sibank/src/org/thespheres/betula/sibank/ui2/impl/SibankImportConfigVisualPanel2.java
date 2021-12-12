@@ -65,6 +65,7 @@ class SibankImportConfigVisualPanel2 extends JPanel {
         providerComboBox = new org.jdesktop.swingx.JXComboBox();
         termLabel = new javax.swing.JLabel();
         termsComboBox = new org.jdesktop.swingx.JXComboBox();
+        dryRunBox = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(projectProviderLabel, org.openide.util.NbBundle.getMessage(SibankImportConfigVisualPanel2.class, "SibankImportConfigVisualPanel2.providerLabel.text")); // NOI18N
 
@@ -79,6 +80,8 @@ class SibankImportConfigVisualPanel2 extends JPanel {
 
         termsComboBox.setModel(termsModel);
 
+        org.openide.awt.Mnemonics.setLocalizedText(dryRunBox, org.openide.util.NbBundle.getMessage(SibankImportConfigVisualPanel2.class, "SibankImportConfigVisualPanel2.dryRunBox.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -86,12 +89,17 @@ class SibankImportConfigVisualPanel2 extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(termLabel)
-                    .addComponent(projectProviderLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(termsComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-                    .addComponent(providerComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(termLabel)
+                            .addComponent(projectProviderLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(termsComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                            .addComponent(providerComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(dryRunBox)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -105,6 +113,8 @@ class SibankImportConfigVisualPanel2 extends JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(termLabel)
                     .addComponent(termsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(dryRunBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -117,6 +127,7 @@ class SibankImportConfigVisualPanel2 extends JPanel {
     }//GEN-LAST:event_providerComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox dryRunBox;
     private javax.swing.JLabel projectProviderLabel;
     private org.jdesktop.swingx.JXComboBox providerComboBox;
     private javax.swing.JLabel termLabel;
@@ -124,13 +135,12 @@ class SibankImportConfigVisualPanel2 extends JPanel {
     // End of variables declaration//GEN-END:variables
 
     void store(SiBankImportData d) {
-//        final SiBankImportTarget.Factory f = (SiBankImportTarget.Factory) providerComboBox.getSelectedItem();
         final SiBankImportTarget p = providerModel.findTarget();
         d.putProperty(AbstractFileImportAction.IMPORT_TARGET, p);
         final Term t = (Term) termsComboBox.getSelectedItem();
         d.putProperty(AbstractFileImportAction.TERM, t);
         d.removePropertyChangeListener(termsModel);
-//        providerModel.reset();//Avoid create different import terms
+        d.putProperty(AbstractFileImportAction.PROP_DRY_RUN, dryRunBox.isSelected());
     }
 
     void read(SiBankImportData settings) {
@@ -144,6 +154,11 @@ class SibankImportConfigVisualPanel2 extends JPanel {
         //
         termsModel.init(settings);
         settings.addPropertyChangeListener(termsModel);
+        //
+        final Boolean dr = (Boolean) settings.getProperty(AbstractFileImportAction.PROP_DRY_RUN);
+        if (dr != null) {
+            dryRunBox.setSelected(dr);
+        }
     }
 
     private void initBetulaStudentsLoad(SiBankImportTarget p) {
