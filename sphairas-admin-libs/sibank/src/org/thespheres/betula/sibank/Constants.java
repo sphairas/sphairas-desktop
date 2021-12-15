@@ -24,5 +24,6 @@ public class Constants {
     public static final String IMPORTSTUDENTS = "import.students";
     public static final String IMPORTCLASSES = "import.classes";
     public static final String SIBANKCONFIGURATIONLASTSELECTION_PREF_KEY = "sibank.configuration.last.selection";
+    public static final String SIBANK_PERMIT_ALTSUBJECTNAME = "sibank.permit.altsubjectnames";
 
 }

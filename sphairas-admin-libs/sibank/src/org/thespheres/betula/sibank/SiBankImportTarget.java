@@ -19,44 +19,16 @@ import org.thespheres.betula.xmlimport.ImportTargetFactory;
 public interface SiBankImportTarget extends ImportTarget, CommonTargetProperties, CommonStudentProperties, CommonDocuments {
 
     public static final String LINKS_FILENAME = "sibank-assoziationen.xml";
-//    @Deprecated
-//    public Term getCurrentTerm();
 
     public void checkAssoziationen(SiBankAssoziationenCollection assoziationen);
 
-//    @Deprecated
-//    public void initSelectTerms(DefaultComboBoxModel model, int refjahr);
-//    public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr);
-
-//    public UnitId initPreferredPrimaryUnitId(String resolvedName, int referenzjahr);
-
-//    @Deprecated
-//    public BetulaServiceConnector createServiceConnector(WizardDescriptor wiz) throws IOException;
-//
-//    @Deprecated
-//    public Runnable[] createUpdaters(WizardDescriptor wiz);
-//    @Deprecated
-//    public Class<? extends ImportierterKurs> getImportierterKursImplementationClass();
-//    public KursauswahlOutlineModel createKursauswahlOutlineModel();
-//
-//    public CreateDocumentsTableModel createCreateDocumentsTableModel();
-//
-//    public ImportStudentsTableModel createImportStudentsTableModel();
-//    @Deprecated
-//    public <I extends Identity> I createId(Class<I> aClass, String text);
-    //TODO: remove when SiBank-Import has become independent of remote lookup!
-//    public String getRemoteLookupUrl();
-//    public RemoteLookup getRemoteLookup();
-//    public Marker[] getAvailableKursart();
-//
-//    public Marker[] getAvailableFaecher();
     default public SiBankCreateDocumentsTableModel createCreateDocumentsTableModel2() {
         return new SiBankCreateDocumentsTableModel();
     }
 
     public String getStudentsAuthority(Object... params);
-
-//    public TargetDocumentProperties[] createTargetDocuments(SiBankKursItem lesson);
+    
+    public boolean permitAltSubjectNames();
 
     public static abstract class Factory extends ImportTargetFactory<SiBankImportTarget> {
 

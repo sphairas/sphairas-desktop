@@ -6,7 +6,6 @@
 package org.thespheres.betula.imports.implementation;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +22,7 @@ import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.scheme.spi.TermSchedule;
 import org.thespheres.betula.services.ui.util.dav.URLs;
 import org.thespheres.betula.services.ws.CommonDocuments;
+import org.thespheres.betula.sibank.Constants;
 import org.thespheres.betula.sibank.SiBankAssoziationenCollection;
 import org.thespheres.betula.sibank.SiBankImportTarget;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
@@ -43,6 +43,7 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
     private DocumentId careersDocument;
     private String untisHref;
     private final String davBase;
+    private boolean permitAltSubjects = false;
 
     public DefaultConfigurableImportTarget(String provider, Product prod, XmlTargetImportSettings settings, XmlTargetProcessorHintsSettings hints) {
         super(provider, prod);
@@ -62,6 +63,8 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
         if (!StringUtils.isBlank(careersDocId)) {
             this.careersDocument = new DocumentId(getAuthority(), careersDocId, DocumentId.Version.LATEST);
         }
+        final String m = properties.get(Constants.SIBANK_PERMIT_ALTSUBJECTNAME);
+        permitAltSubjects = Boolean.parseBoolean(m);
     }
 
     void setScripts(final ImportScripts scripts) {
@@ -117,6 +120,11 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
         }
     }
 
+    @Override
+    public boolean permitAltSubjectNames() {
+        return this.permitAltSubjects;
+    }
+
 //    @Override// nur noch für kgs im Gebrauch
 //    public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr) {
 ////        return TranslateID.findId(stufe, rjahr, fach, kursnr, "kgs");
@@ -133,7 +141,6 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
 //        UnitId ret = new UnitId(getAuthority(), uid);
 //        return ret;
 //    }
-
 //    @Override //TODO use TranslateID
 //    public UnitId initPreferredPrimaryUnitId(final String resolvedName, final int referenzjahr) {
 //        String uid;
@@ -164,18 +171,17 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
 //        sb.append(uid);
 //        return new UnitId(authority, sb.toString());
 //    }
-    private static String resolveJg10uid(String resolvedName) {
-        int index = 2;
-        if (resolvedName.length() > 2 && resolvedName.charAt(index) == '.') {
-            index++;
-        }
-        String uid = resolvedName.substring(index).toLowerCase(Locale.GERMANY);
-        if (!uid.startsWith("e")) {
-            uid = "hr" + uid;
-        }
-        return uid;
-    }
-
+//    private static String resolveJg10uid(String resolvedName) {
+//        int index = 2;
+//        if (resolvedName.length() > 2 && resolvedName.charAt(index) == '.') {
+//            index++;
+//        }
+//        String uid = resolvedName.substring(index).toLowerCase(Locale.GERMANY);
+//        if (!uid.startsWith("e")) {
+//            uid = "hr" + uid;
+//        }
+//        return uid;
+//    }
     @Override
     public DocumentId forName(final String name) {
         switch (name) {

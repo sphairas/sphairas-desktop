@@ -35,6 +35,7 @@ import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.util.Signees;
 import org.thespheres.betula.services.util.Units;
 import org.thespheres.betula.sibank.DatenExportXml.File;
+import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
@@ -317,7 +318,7 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
         return delayed.isValid()
                 && getUnitId() != null
                 && getTargetDocumentIdBase() != null
-                && (notEmpty(getSubjectMarkers()) || type.equals(DatenExportXml.File.AGS));
+                && (notEmpty(getSubjectMarkers()) || type.equals(DatenExportXml.File.AGS) || getConfiguration().permitAltSubjectNames());
     }
 
     private static boolean notEmpty(final Marker[] arr) {
@@ -351,6 +352,16 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
 
     public String getCustomDocumentIdIdentifier() {
         return targetId;
+    }
+
+    public void setSubjectAlternativeName(final String n) {
+        final String before = this.subjectAlternativeName;
+        this.subjectAlternativeName = n;
+        try {
+            vSupport.fireVetoableChange(ImportTargetsItem.PROP_SUBJECT_ALT_NAME, before, n);
+        } catch (final PropertyVetoException ex) {
+            this.subjectAlternativeName = before;
+        }
     }
 
     public void setCustomDocumentIdIdentifier(String value) {

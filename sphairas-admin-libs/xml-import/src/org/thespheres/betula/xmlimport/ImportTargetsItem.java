@@ -45,6 +45,7 @@ public abstract class ImportTargetsItem extends ImportItem implements GradeTermT
     public static final String PROP_UNITID = "unitId";
     public static final String PROP_SIGNEE = "signee";
     public static final String PROP_SELECTED_TERM = "selected.term";
+    public static final String PROP_SUBJECT_ALT_NAME = "subject.alternative.name";
     protected StudentId[] students;
     protected String termScheduleProvider;
     private final Set<GradeEntry> grades = new HashSet<>();

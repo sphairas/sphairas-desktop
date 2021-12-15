@@ -16,7 +16,6 @@ import org.thespheres.betula.document.AbstractMarker;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.xmlimport.ImportTarget;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
-import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 
 /**
  *
@@ -79,10 +78,6 @@ public abstract class MultiSubjectColumn<I extends ImportTargetsItem, T extends 
     public void initialize(final T configuration, final W wizard) {
         elements = getTags(configuration);
         final DefaultComboBoxModel<Marker> fcbm = new DefaultComboBoxModel<>(elements);
-        if (configuration instanceof ConfigurableImportTarget) {
-            final ConfigurableImportTarget cit = (ConfigurableImportTarget) configuration;
-//            cit.getProperty("import.multiple.subject")
-        }
         if (permitMultipleSubjects) {
             fcbm.addElement(MULTIPLE_SUBJECTS);
         }
