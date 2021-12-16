@@ -24,12 +24,12 @@ public abstract class NdsNamingResolverProvider implements NamingResolver.Provid
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     protected NdsNamingResolverProvider(final String prov) {
-        this(prov, null, 5, 11);
+        this(prov, null, 5, 11, false);
     }
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
-    protected NdsNamingResolverProvider(final String prov, final String firstElement, int base, int baseAbi) {
-        this.naming = NdsNaming.create(prov, firstElement, base, baseAbi);
+    protected NdsNamingResolverProvider(final String prov, final String firstElement, int base, int baseAbi, boolean permitAlternativeSubjects) {
+        this.naming = NdsNaming.create(prov, firstElement, base, baseAbi, permitAlternativeSubjects);
         this.resolver = new Resolver(prov);
     }
 
@@ -40,12 +40,13 @@ public abstract class NdsNamingResolverProvider implements NamingResolver.Provid
         final Integer b = (Integer) args.get("base-level");
         final int base = (b != null && b > 0) ? b : 5;
         final Integer ba = (Integer) args.get("base-level-abitur");
+        final Boolean altSub = (Boolean) args.get("permit-alternative-subjects");
         final int baseAbi = (ba != null && ba > 0) ? ba : 11;
 
         class ProviderImpl extends NdsNamingResolverProvider {
 
             ProviderImpl() {
-                super(provider, firstElement, base, baseAbi);
+                super(provider, firstElement, base, baseAbi, true);//= altSub != null ? altSub : false;
             }
 
         }
