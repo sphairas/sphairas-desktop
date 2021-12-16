@@ -45,6 +45,10 @@ public class NamingTest {
         if (!PATTERN.matcher(name).matches()) {
             fail("The test case is a prototype.");
         }
+        final String n2 = "irgendwas-2019";
+        if (!PATTERN.matcher(n2).matches()) {
+            fail("Not passed: " + n2);
+        }
     }
 
 }
