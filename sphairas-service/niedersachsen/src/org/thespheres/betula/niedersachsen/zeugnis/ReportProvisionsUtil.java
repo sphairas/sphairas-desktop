@@ -9,9 +9,7 @@ import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.NbBundle;
-import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.Marker;
-import org.thespheres.betula.niedersachsen.ASVAssessmentConvention;
 import org.thespheres.betula.niedersachsen.NdsZeugnisFormular;
 
 /**
@@ -19,16 +17,6 @@ import org.thespheres.betula.niedersachsen.NdsZeugnisFormular;
  * @author boris.heithecker
  */
 public class ReportProvisionsUtil {
-
-    public static boolean requireAvSvReason(final Grade g) {
-        if (g != null) {
-            final String cnv = g.getConvention();
-            if (ASVAssessmentConvention.AV_NAME.equals(cnv) || ASVAssessmentConvention.SV_NAME.equals(cnv)) {
-                return g.getId().equals("d") || g.getId().equals("e");
-            }
-        }
-        return false;
-    }
 
     public static boolean excludeAGField(int level, Marker sgl) {
         return level >= 1 && level <= 4;
