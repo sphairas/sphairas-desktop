@@ -9,7 +9,9 @@ import org.thespheres.betula.niedersachsen.xml.NdsZeugnisSchulvorlage;
 import java.io.IOException;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import org.thespheres.betula.assess.AssessmentConvention;
 import org.thespheres.betula.assess.Grade;
+import org.thespheres.betula.assess.GradeFactory;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.model.MultiSubject;
@@ -34,7 +36,6 @@ public class NdsReportBuilderFactory implements CommonDocuments {
     private static final SubjectOrderDefinition FACH_COMPARATOR_HS;
     private static final SubjectOrderDefinition FACH_COMPARATOR_RS;
     private static final SubjectOrderDefinition FACH_COMPARATOR_GY;
-
     private final NdsZeugnisSchulvorlage template;
 
     static {
@@ -110,8 +111,17 @@ public class NdsReportBuilderFactory implements CommonDocuments {
         return template.forName(name);
     }
 
+    public AssessmentConvention getAvConvention() {
+        return GradeFactory.findConvention(ASVAssessmentConvention.AV_NAME);
+    }
+
+    public AssessmentConvention getSvConvention() {
+        return GradeFactory.findConvention(ASVAssessmentConvention.SV_NAME);
+    }
+
     public boolean requireAVSVReason(final Grade avsv) {
-        if (avsv != null && (ASVAssessmentConvention.AV_NAME.equals(avsv.getConvention()) || ASVAssessmentConvention.SV_NAME.equals(avsv.getConvention()))) {
+        if (avsv != null
+                && (ASVAssessmentConvention.AV_NAME.equals(avsv.getConvention()) || ASVAssessmentConvention.SV_NAME.equals(avsv.getConvention()))) {
             return "d".equals(avsv.getId()) || "e".equals(avsv.getId());
         }
         return false;
