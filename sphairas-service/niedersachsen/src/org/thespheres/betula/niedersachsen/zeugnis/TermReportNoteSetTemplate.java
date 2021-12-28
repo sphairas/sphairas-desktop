@@ -88,10 +88,10 @@ public class TermReportNoteSetTemplate implements Serializable {
     }
 
     public void addElement(int index, Marker[] markers, String displayName) {
-        addElement(index, markers, true, true, 0, displayName);
+        addElement(index, markers, true, false, 0, displayName);
     }
 
-    private void addElement(int index, Marker[] markers, boolean multiple, boolean nillable, int defaultValue, String displayName) {
+    private void addElement(int index, Marker[] markers, boolean multiple, boolean setNillable, int defaultValue, String displayName) {
         synchronized (elements) {
             if (index < 0 || index > elements.size() || markers == null) {
                 throw new IllegalArgumentException();
@@ -99,10 +99,10 @@ public class TermReportNoteSetTemplate implements Serializable {
             if (!multiple && defaultValue >= markers.length) {
                 throw new IllegalArgumentException();
             }
-            if (multiple && !nillable || multiple && defaultValue != 0) {
+            if (multiple && setNillable || multiple && defaultValue != 0) {
                 throw new IllegalArgumentException();
             }
-            final Element el = new Element(markers, multiple, nillable, defaultValue, displayName);
+            final Element el = new Element(markers, multiple, setNillable, defaultValue, displayName);
             elements.add(index, el);
         }
     }
@@ -147,12 +147,12 @@ public class TermReportNoteSetTemplate implements Serializable {
         public Element() {
         }
 
-        private Element(Marker[] m, boolean multiple, boolean nillable, int defaultIndex, String elementDisplayName) {
+        private Element(Marker[] m, boolean multiple, boolean setNillable, int defaultIndex, String elementDisplayName) {
 //            this.position = position;
             this.multiple = multiple;
             this.defaultIndex = defaultIndex;
             this.elementDisplayName = elementDisplayName;
-            this.nillable = nillable;
+            this.nillable = setNillable;
             Arrays.stream(m)
                     .map(ma -> new MarkerItem(ma, this))
                     .forEach(markers::add);
