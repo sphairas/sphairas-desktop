@@ -36,7 +36,7 @@ import org.thespheres.betula.ui.util.WideJXComboBox;
 @Messages({"EditBemerkungenSetModelColumnFactory.always=Immer",
     "EditBemerkungenSetModelColumnFactory.header.hidden=Sichtbar",
     "EditBemerkungenSetModelColumnFactory.header.term=Halbjahr",
-    "EditBemerkungenSetModelColumnFactory.header.level=Jahrgänge",
+    "EditBemerkungenSetModelColumnFactory.header.level=Stufen/Jahrgänge",
     "EditBemerkungenSetModelColumnFactory.header.lastElement=An den Schluss setzen"})
 class EditBemerkungenSetModelColumnFactory extends ColumnFactory {
 
@@ -47,10 +47,11 @@ class EditBemerkungenSetModelColumnFactory extends ColumnFactory {
     private final WideJXComboBox scopeBox;
     private final StringValue scopeStringValue = o -> {
         final Tag val = (Tag) o;
-        if (val == null) {
-            return "";
+        if (Tag.isNull(val)) {
+            return NbBundle.getMessage(EditBemerkungenSetModelColumnFactory.class, "EditBemerkungenSetModelColumnFactory.always");
+        } else {
+            return val.getLongLabel();
         }
-        return Tag.NULL.equals(val) ? NbBundle.getMessage(EditBemerkungenSetModelColumnFactory.class, "EditBemerkungenSetModelColumnFactory.always") : val.getLongLabel();
     };
 
     EditBemerkungenSetModelColumnFactory() {
@@ -110,6 +111,9 @@ class EditBemerkungenSetModelColumnFactory extends ColumnFactory {
                 break;
             case 4:
                 configureLastElementColumn(col);
+                break;
+            default:
+                col.setHeaderValue("");
                 break;
         }
     }
