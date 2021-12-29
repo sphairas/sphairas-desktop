@@ -40,9 +40,12 @@ public final class ElementSettingsAction implements ActionListener {
             if (name != null) {
                 this.context.setElementDisplayName(name);
             }
-            this.context.setMultiple(panel.isMultipleSelection());
+            final boolean multipleSelection = panel.isMultipleSelection();
+            this.context.setMultiple(multipleSelection);
             if (panel.isRequired() != null) {
                 this.context.setNillable(!panel.isRequired());
+            } else if (multipleSelection) {
+                this.context.setNillable(false);
             }
             final EditBemerkungenEnv env = Utilities.actionsGlobalContext().lookup(EditBemerkungenEnv.class);
             if (env != null) {
