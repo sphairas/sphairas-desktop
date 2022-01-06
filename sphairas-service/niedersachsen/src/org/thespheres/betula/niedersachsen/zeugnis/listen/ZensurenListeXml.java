@@ -160,12 +160,21 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
             } catch (ClassCastException cce) {
                 throw new IllegalArgumentException(cce);
             }
-//            fName = ((Marker) value).getLongLabel();
-            fName = ms.size() == 1 ? ms.iterator().next().getLongLabel() : ms.stream()
-                    .sorted(ORDER)
-                    .map(Marker::getLongLabel).collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
-//            pos = ORDER.positionOf((Marker) value);
-            final Marker min = ms.stream().min(ORDER).get();
+            switch (ms.size()) {
+                case 0:
+                    fName = "?";
+                    break;
+                case 1:
+                    fName = ms.iterator().next().getLongLabel();
+                    break;
+                default:
+                    fName = ms.stream()
+                            .sorted(ORDER)
+                            .map(Marker::getLongLabel)
+                            .collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
+                    break;
+            }
+            final Marker min = ms.stream().min(ORDER).orElse(null);
             pos = ORDER.positionOf(min);
         } else if (value instanceof Term) {
 //            keep = true;
@@ -219,7 +228,7 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
             return null;
         }
         final String label = g != null ? g.getShortLabel() : (ifGradeNull != null ? ifGradeNull : null);
-        final Marker min = fach.stream().min(ORDER).get();
+        final Marker min = fach.stream().min(ORDER).orElse(null);
         final ColumnXml ret = new ColumnXml(label, tier, ORDER.positionOf(min));
 //        colset.computeIfAbsent(tier, t -> new HashSet<>()).add(fach);
         colset.computeIfAbsent(ck, k -> mapToColumn(fach, tier, null));

@@ -47,7 +47,7 @@ abstract class ColumnKey {
         }
 
         Marker comparingMarker(Comparator<Marker> comp) {
-            return marker.stream().min(comp).get();
+            return marker.stream().min(comp).orElse(null);
         }
 
         @Override
