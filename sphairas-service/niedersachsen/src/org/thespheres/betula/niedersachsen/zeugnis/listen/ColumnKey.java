@@ -40,10 +40,16 @@ abstract class ColumnKey {
     static class MarkerColumnKey extends ColumnKey {
 
         final Set<Marker> marker;
+        final String alt;
 
-        public MarkerColumnKey(int tier, Set<Marker> marker) {
+        public MarkerColumnKey(int tier, Set<Marker> marker, String alt) {
             super(tier);
             this.marker = marker;
+            this.alt = alt;
+        }
+
+        public MarkerColumnKey(int tier, Set<Marker> marker) {
+            this(tier, marker, null);
         }
 
         Marker comparingMarker(Comparator<Marker> comp) {
@@ -54,6 +60,7 @@ abstract class ColumnKey {
         public int hashCode() {
             int hash = 3;
             hash = 59 * hash + this.tier;
+            hash = 59 * hash + Objects.hashCode(this.alt);
             return 59 * hash + Objects.hashCode(this.marker);
         }
 
@@ -70,6 +77,9 @@ abstract class ColumnKey {
             }
             final MarkerColumnKey other = (MarkerColumnKey) obj;
             if (this.tier != other.tier) {
+                return false;
+            }
+            if (!Objects.equals(this.alt, other.alt)) {
                 return false;
             }
             return Objects.equals(this.marker, other.marker);

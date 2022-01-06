@@ -223,7 +223,16 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
 
     @Override
     public ColumnXml setValue(DataLineXml line, int tier, Set<Marker> fach, Grade g, String ifGradeNull) {
-        MarkerColumnKey ck = new MarkerColumnKey(tier, fach);
+        return setValueImpl(tier, fach, null, g, line, ifGradeNull);
+    }
+
+    @Override
+    public ColumnXml setValue(DataLineXml line, int tier, final String fach, Grade g, String ifGradeNull) {
+        return setValueImpl(tier, Collections.EMPTY_SET, fach, g, line, ifGradeNull);
+    }
+
+    private ColumnXml setValueImpl(int tier, Set<Marker> fach, final String altFach, Grade g, DataLineXml line, String ifGradeNull) {
+        MarkerColumnKey ck = new MarkerColumnKey(tier, fach, altFach);
         if (g == null && line.map.containsKey(ck)) {
             return null;
         }
@@ -231,7 +240,7 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
         final Marker min = fach.stream().min(ORDER).orElse(null);
         final ColumnXml ret = new ColumnXml(label, tier, ORDER.positionOf(min));
 //        colset.computeIfAbsent(tier, t -> new HashSet<>()).add(fach);
-        colset.computeIfAbsent(ck, k -> mapToColumn(fach, tier, null));
+        colset.computeIfAbsent(ck, k -> mapToColumn(fach, tier, altFach));
         line.map.put(ck, ret);
 //        line.values.add(ret);
         return ret;

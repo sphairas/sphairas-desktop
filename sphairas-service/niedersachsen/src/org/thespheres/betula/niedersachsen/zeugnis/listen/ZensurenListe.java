@@ -32,6 +32,8 @@ public interface ZensurenListe<L extends DataLine, F extends Footnote, C extends
 
     C setValue(L line, int tier, Set<Marker> fach, Grade g, String ifGradeNull);
 
+    C setValue(L line, int tier, String fach, Grade g, String ifGradeNull);
+
     interface DataLine {
 
         String getNote();
