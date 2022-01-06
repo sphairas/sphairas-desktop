@@ -80,7 +80,7 @@ public class ZensurenListeCsv implements ZensurenListe<DataLineCsv, FootnoteCsv,
             return null;
         }
         final String label = g != null ? g.getShortLabel() : (ifGradeNull != null ? ifGradeNull : null);
-        final Marker min = fach.stream().min(ORDER).get();
+        final Marker min = fach.stream().min(ORDER).orElse(null);
         final ColumnCsv ret = new ColumnCsv(label, tier, ORDER.positionOf(min));
         line.map.put(ck, ret);
         return ret;
