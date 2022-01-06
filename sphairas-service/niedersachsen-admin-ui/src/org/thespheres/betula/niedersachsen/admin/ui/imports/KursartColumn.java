@@ -8,7 +8,9 @@ package org.thespheres.betula.niedersachsen.admin.ui.imports;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.event.ChangeEvent;
@@ -128,6 +130,16 @@ public class KursartColumn<IT extends ImportTarget & CommonDocuments & CommonStu
                 il.getUniqueMarkerSet().remove(before);
             }
         } else {
+            final Iterator<Marker> it = il.getUniqueMarkerSet().iterator();
+            while (it.hasNext()) {
+                final Marker ma = it.next();
+                final boolean rm = Arrays.stream(conventions)
+                        .anyMatch(ma.getConvention()::equals);
+                if (rm) {
+                    it.remove();
+                }
+
+            }
             il.getUniqueMarkerSet().add(m);
         }
         if (overrides != null) {
