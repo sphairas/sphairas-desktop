@@ -74,8 +74,17 @@ public class ZensurenListeCsv implements ZensurenListe<DataLineCsv, FootnoteCsv,
     }
 
     @Override
+    public ColumnCsv setValue(DataLineCsv line, int tier, String fach, Grade g, String ifGradeNull) {
+        return setValueImpl(tier, Collections.EMPTY_SET, null, g, line, ifGradeNull);
+    }
+
+    @Override
     public ColumnCsv setValue(DataLineCsv line, int tier, Set<Marker> fach, Grade g, String ifGradeNull) {
-        MarkerColumnKey ck = new MarkerColumnKey(tier, fach);
+        return setValueImpl(tier, fach, null, g, line, ifGradeNull);
+    }
+
+    private ColumnCsv setValueImpl(int tier, Set<Marker> fach, String alt, Grade g, DataLineCsv line, String ifGradeNull) {
+        MarkerColumnKey ck = new MarkerColumnKey(tier, fach, alt);
         if (g == null && line.map.containsKey(ck)) {
             return null;
         }
@@ -129,10 +138,15 @@ public class ZensurenListeCsv implements ZensurenListe<DataLineCsv, FootnoteCsv,
     }
 
     private String mapToColumn(MarkerColumnKey key) throws IllegalArgumentException {
-        final String fName = key.marker.size() == 1 ? key.marker.iterator().next().getLongLabel() : key.marker.stream()
-                .sorted(ORDER)
-                .map(Marker::getLongLabel)
-                .collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
+        final String fName;
+        if (key.alt != null) {
+            fName = key.alt;
+        } else {
+            fName = key.marker.size() == 1 ? key.marker.iterator().next().getLongLabel() : key.marker.stream()
+                    .sorted(ORDER)
+                    .map(Marker::getLongLabel)
+                    .collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
+        }
         final StringJoiner sj = new StringJoiner(" ");
         if (key.tier == 1) {
             sj.add(StudentDetailsXml.WPK);
