@@ -127,10 +127,13 @@ public class StudentDetailsXml {
 
     private static Column mapToColumn(ColumnKey.MarkerColumnKey key) throws IllegalArgumentException {
 //        boolean keep = false;
-        String fName = key.marker.size() == 1 ? key.marker.iterator().next().getLongLabel() : key.marker.stream()
-                .sorted(ORDER)
-                .map(Marker::getLongLabel)
-                .collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
+        String fName = key.alt;
+        if (fName == null) {
+            fName = key.marker.size() == 1 ? key.marker.iterator().next().getLongLabel() : key.marker.stream()
+                    .sorted(ORDER)
+                    .map(Marker::getLongLabel)
+                    .collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
+        }
 
 //            if (fName.startsWith("Profil ")) {
 //                fName = fName.replaceAll("Profil ", "");
@@ -168,8 +171,16 @@ public class StudentDetailsXml {
         return ret;
     }
 
+    public ColumnValue setValue(TermDataLine line, int tier, final String fach, Grade g, String ifGradeNull) {
+        return setValueImp(tier, Collections.EMPTY_SET, fach, g, line, ifGradeNull);
+    }
+
     public ColumnValue setValue(TermDataLine line, int tier, Set<Marker> fach, Grade g, String ifGradeNull) {
-        final ColumnKey.MarkerColumnKey k = new ColumnKey.MarkerColumnKey(tier, fach);
+        return setValueImp(tier, fach, null, g, line, ifGradeNull);
+    }
+
+    private ColumnValue setValueImp(int tier, Set<Marker> fach, String fachAlt, Grade g, TermDataLine line, String ifGradeNull) {
+        final ColumnKey.MarkerColumnKey k = new ColumnKey.MarkerColumnKey(tier, fach, fachAlt);
         if (g == null && line.map.containsKey(k)) {
             return null;
         }

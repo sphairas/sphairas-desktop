@@ -48,10 +48,6 @@ abstract class ColumnKey {
             this.alt = alt;
         }
 
-        public MarkerColumnKey(int tier, Set<Marker> marker) {
-            this(tier, marker, null);
-        }
-
         Marker comparingMarker(Comparator<Marker> comp) {
             return marker.stream().min(comp).orElse(null);
         }
