@@ -121,7 +121,27 @@ public class UniqueMarkerSet extends AbstractSet<Marker> {
 
     @Override
     public Iterator<Marker> iterator() {
-        return uniqueMarkers.iterator();
+        final Iterator<Marker> delegate = uniqueMarkers.iterator();
+        class IteratorDelegate implements Iterator<Marker> {
+
+            @Override
+            public boolean hasNext() {
+                return delegate.hasNext();
+            }
+
+            @Override
+            public Marker next() {
+                return delegate.next();
+            }
+
+            @Override
+            public void remove() {
+                delegate.remove();
+                cSupport.fireChange();
+            }
+
+        }
+        return new IteratorDelegate();
     }
 
     @Override
