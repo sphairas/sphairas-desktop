@@ -138,10 +138,10 @@ final class NamingResultImpl extends NamingResolver.Result {
                         ret.add("Schülerfa.");
                         String sfaname = id2.equals("gus") ? "GuS" : StringUtils.capitalize(id2);
                         ret.add(sfaname);
-                        String sgl = elements.get(Naming.SGL);
-                        if (sgl != null) {
-                            ret.add("(" + sgl + ")");
-                        }
+//                        String sgl = elements.get(Naming.SGL);//Deprecated, notuse
+//                        if (sgl != null) {
+//                            ret.add("(" + sgl + ")");
+//                        }
                     } else {
                         ret.add(id1);
                         if (id2 != null) {

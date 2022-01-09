@@ -5,12 +5,15 @@
  */
 package org.thespheres.betula.services.implementation.naming;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.thespheres.betula.Identity;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.document.DocumentId;
@@ -40,7 +43,7 @@ public abstract class Naming {
     public static final String FACH = "fach";
     public static final String START_JAHR = "defining-year";
     public static final String KURS_KLASSE_ID2 = "kurs_id2"; //Schülerfirma
-    public static final String SGL = "sgl";
+//    public static final String SGL = "sgl";
     protected final Map<Identity, NamingResolver.Result> cache = new HashMap<>();
     protected final DocumentsModel baseDocs;
     protected final Map<UnitId, NamingResolver.Result> agNamen = new HashMap<>();
@@ -185,14 +188,20 @@ public abstract class Naming {
             String id1 = parts[pointer++];
             elements.put(KURS_KLASSE_ID, id1);
         }
-        if (parts.length > pointer) {
-            String id2 = parts[pointer++];
+        final List<String> append = new ArrayList<>();
+        while (parts.length > pointer) {
+            final String id2 = parts[pointer++];
+            append.add(id2);
+        }
+        if (!append.isEmpty()) {
+            final String id2 = append.stream()
+                    .collect(Collectors.joining(" "));
             elements.put(KURS_KLASSE_ID2, id2);
         }
-        if (parts.length > pointer) {
-            String sgl = parts[pointer++];
-            elements.put(SGL, sgl);
-        }
+//        if (parts.length > pointer) {
+//            String sgl = parts[pointer++];
+//            elements.put(SGL, sgl);
+//        }
         if (suffix != null) {
             elements.put(SUFFIX, suffix);
         }
