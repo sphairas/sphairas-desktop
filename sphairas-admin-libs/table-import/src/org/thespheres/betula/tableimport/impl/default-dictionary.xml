@@ -13,7 +13,7 @@
     <csv:entry assignable-key="unit.id">Gruppen-Id,Klassen-Id,Kurs-Id</csv:entry>
     <csv:entry assignable-key="student.id">Schüler-Id,IDENTNUMMER</csv:entry>
     <csv:entry assignable-key="source-gender">Geschlecht</csv:entry>
-    <csv:entry assignable-key="subject-alternative-name">Herkunftssprache,Sprache</csv:entry>
+    <csv:entry assignable-key="subject-alternative-name">Herkunftssprache,Sprache,Thema</csv:entry>
     <csv:entry assignable-key="signee" assignable-key-label="E-Mail-ID">E-Mail,Unterzeichner</csv:entry>
     <csv:entry assignable-key="signee.prefix">Benutzername,Account,Konto,Anmeldename</csv:entry>
     <csv:entry assignable-key="assessment-convention">Notensystem</csv:entry>

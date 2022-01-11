@@ -101,6 +101,7 @@ class XmlTargetDataDocumentsTableModel extends ImportTableModel<TargetItemsXmlCs
 
         XmlSubjectColumn() {
             super(200, 125);
+            this.prependNull = true;
         }
 
         @Override

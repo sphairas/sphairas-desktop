@@ -55,7 +55,6 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
     private final TableImportStudentsSet<TargetItemsXmlCsvItem> importStudents = new TableImportStudentsSet<>(this);
     private IOException importStudentsException;
     private final boolean allowNullUnit;
-    protected boolean allowEmptySubject = false;
     private StudentsOrigin studentsSource;
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
@@ -78,7 +77,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         } else if (config.getAssessmentConventions().length > 0) {
             setAssessmentConvention(config.getAssessmentConventions()[0]);
         }
-        
+
         final Term term = (Term) wizard.getProperty(AbstractFileImportAction.TERM);
         try {
             setClientProperty(ImportTargetsItem.PROP_SELECTED_TERM, term);
@@ -301,7 +300,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         return getDeleteDate() != null
                 && (getUnitId() != null || allowNullUnit)
                 && getTargetDocumentIdBase() != null
-                && (!Marker.isNull(getSubjectMarker()) || allowEmptySubject)
+                && (!Marker.isNull(getSubjectMarker()) || StringUtils.isNotBlank(getSubjectAlternativeName()))
                 && importStudents.isValid();
     }
 
