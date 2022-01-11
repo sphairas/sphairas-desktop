@@ -32,7 +32,7 @@ public class NdsZeugnisSchulvorlageTest {
         JAXBContext ctx = JAXBContext.newInstance(NdsZeugnisSchulvorlage.class);
         NdsZeugnisSchulvorlage i = new NdsZeugnisSchulvorlage("www.meine-schule-in-xxx.de");
         i.getLogos().setRight("url('logo_35_25sw.png')");
-        i.setSchoolName2("– Schule für alle –");
+        i.setSchoolName2(new NdsZeugnisSchulvorlage.Subtitle[]{new NdsZeugnisSchulvorlage.Subtitle("– Schule für alle –", "9pt")});
         i.setSchoolName("Schillerschule");
         i.setSchoolLocation("Irgendwo");
 

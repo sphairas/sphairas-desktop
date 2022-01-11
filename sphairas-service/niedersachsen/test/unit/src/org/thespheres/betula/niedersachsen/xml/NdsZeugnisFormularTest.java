@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -31,8 +30,6 @@ import org.junit.Test;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.niedersachsen.NdsZeugnisFormular.Area;
 import org.thespheres.betula.niedersachsen.NdsZeugnisFormular.ZeugnisMappe;
-import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
-import org.thespheres.betula.niedersachsen.zeugnis.ZeugnisData;
 import org.thespheres.betula.xmldefinitions.XmlMarkerConventionDefinition;
 import org.thespheres.betula.xmldefinitions.XmlMarkerDefinition;
 
@@ -84,9 +81,10 @@ public class NdsZeugnisFormularTest {
         i.setPlaceDate("Irgendwo, den 31. Januar 1899");
         i.setSecondPageHeader("Zeugnis für Nora Marie Doppelbiß");
         i.getKopf().setImageRight("jjjj");
-        i.getKopf().setSchoolname2("Schulname Zwei");
+        i.getKopf().addSchoolname2("Schulname Zwei", null);
+        i.getKopf().addSchoolname2("Schulname Zwei klein", "9pt");
         i.getKopf().setDivison("Schulzweig");
-        
+
         i.getKopf().setImageWidth("10mm");
         i.setTemplate("Alleschule");
 
@@ -168,7 +166,6 @@ public class NdsZeugnisFormularTest {
 //        src = new DOMSource(res.getNode());
 //        StreamResult finalres = new StreamResult(System.out);
 //        transformer.transform(src, finalres);
-
     }
 
 }

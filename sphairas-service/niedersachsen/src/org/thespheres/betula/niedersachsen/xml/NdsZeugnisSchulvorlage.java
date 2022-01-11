@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.thespheres.betula.assess.Grade;
@@ -49,8 +50,7 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String schoolName;
     @XmlElement(name = "Schultitel")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    private String schoolName2;
+    private Subtitle[] schoolName2;
     @XmlElement(name = "Schulort")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String schoolLocation;
@@ -108,11 +108,11 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
         this.schoolName = schoolName;
     }
 
-    public String getSchoolName2() {
-        return schoolName2;
+    public Subtitle[] getSchoolName2() {
+        return schoolName2 != null ? schoolName2 : new Subtitle[0];
     }
 
-    public void setSchoolName2(String schoolName2) {
+    public void setSchoolName2(Subtitle[] schoolName2) {
         this.schoolName2 = schoolName2;
     }
 
@@ -321,6 +321,41 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Subtitle {
+
+        @XmlValue
+        private String title;
+
+        @XmlAttribute(name = "Schriftgröße")
+        private String fontSize;
+
+        public Subtitle() {
+        }
+
+        public Subtitle(String title, String fontSize) {
+            this.title = title;
+            this.fontSize = fontSize;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getFontSize() {
+            return fontSize;
+        }
+
+        public void setFontSize(String fontSize) {
+            this.fontSize = fontSize;
         }
 
     }

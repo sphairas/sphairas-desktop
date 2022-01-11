@@ -234,7 +234,7 @@ public class NdsZeugnisFormular {
         @XmlElement(name = "Schulname")
         private String schoolname;
         @XmlElement(name = "Schulname2")
-        private String schoolname2;
+        private List<Subtitle> schoolname2 = new ArrayList<>();
         @XmlElement(name = "LogoLinks")
         private String imageLeft;
         @XmlElement(name = "LogoRechts")
@@ -270,12 +270,12 @@ public class NdsZeugnisFormular {
             this.schoolname = schoolname;
         }
 
-        public String getSchoolname2() {
+        public List<Subtitle> getSchoolname2() {
             return schoolname2;
         }
 
-        public void setSchoolname2(String schoolname2) {
-            this.schoolname2 = schoolname2;
+        public void addSchoolname2(String title, String fontSize) {
+            this.schoolname2.add(new Subtitle(title, fontSize));
         }
 
         public String getImageLeft() {
@@ -387,6 +387,33 @@ public class NdsZeugnisFormular {
 
         public void setStudent(StudentId student) {
             this.student = student;
+        }
+
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Subtitle {
+
+        @XmlValue
+        private String title;
+
+        @XmlAttribute(name = "Schriftgröße")
+        private String fontSize;
+
+        public Subtitle() {
+        }
+
+        public Subtitle(String title, String fontSize) {
+            this.title = title;
+            this.fontSize = fontSize;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getFontSize() {
+            return fontSize;
         }
 
     }
