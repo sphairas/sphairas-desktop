@@ -217,7 +217,11 @@ public abstract class ImportTargetsItem extends ImportItem implements GradeTermT
     }
 
     public void setSubjectMarker(final Marker fach) {
-        this.setSubjectMarker(new Marker[]{fach});
+        if (!Marker.isNull(fach)) {
+            this.setSubjectMarker(new Marker[]{fach});
+        } else {
+            this.setSubjectMarker(new Marker[0]);
+        }
     }
 
     public void setSubjectMarker(final Marker[] fach) {

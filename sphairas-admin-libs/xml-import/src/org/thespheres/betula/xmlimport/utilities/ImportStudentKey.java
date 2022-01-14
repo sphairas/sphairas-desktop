@@ -116,6 +116,9 @@ public final class ImportStudentKey implements Comparable<ImportStudentKey> {
             return false;
         }
         final ImportStudentKey other = (ImportStudentKey) obj;
+        if (this.studentId != null && this.studentId.equals(other.studentId)) {
+            return true;//Two keys must be considered equal regarless of name and dob if StudentIds are equal
+        }
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }

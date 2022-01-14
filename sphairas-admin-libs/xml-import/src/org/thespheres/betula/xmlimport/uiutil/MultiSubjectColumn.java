@@ -60,7 +60,7 @@ public abstract class MultiSubjectColumn<I extends ImportTargetsItem, T extends 
     @Override
     public boolean setColumnValue(I il, Object value) {
         final Marker mValue = (Marker) value;
-        if (!mValue.equals(MULTIPLE_SUBJECTS)) {
+        if (mValue == null || !mValue.equals(MULTIPLE_SUBJECTS)) {
             il.setSubjectMarker((Marker) value);
         } else {
             final Marker[] arr = showDialog(il);
