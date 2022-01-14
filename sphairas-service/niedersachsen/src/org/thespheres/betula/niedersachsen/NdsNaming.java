@@ -75,10 +75,21 @@ class NdsNaming extends Naming {
             }
             if (permitAlternativeSubjects) {
                 elements.put(NdsNaming.FACH, StringUtils.capitalize(type));
+                elements.put(NdsNaming.FACH_KURZ, StringUtils.capitalize(abbreviateSubject(type, 4)));
                 return true;
             }
         }
         return false;
     }
 
+    static String abbreviateSubject(final String str, final int maxWidth) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() <= maxWidth) {
+            return str;
+        } else {
+            return str.substring(0, maxWidth);
+        }
+    }
 }
