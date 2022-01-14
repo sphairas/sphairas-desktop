@@ -279,6 +279,7 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
             final ColumnKey key = e.getKey();
             long nullColCount = list.stream()
                     .map(l -> l.map.get(key))
+//                    .filter(Objects::nonNull)
                     .map(c -> c.value)
                     .filter(Objects::isNull)
                     .count();
@@ -377,7 +378,7 @@ public class ZensurenListeXml implements ZensurenListe<DataLineXml, FootnoteXml,
             this.color = color;
         }
 
-    }
+        }
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class DataLineXml implements Comparable<DataLineXml>, DataLine {
