@@ -78,7 +78,7 @@ public abstract class Naming {
             dm.initialize(pp);
             baseDocs = dm;
         } else {
-            throw new IllegalStateException("Could not instantiated DocumentsModel.");
+            throw new IllegalStateException("Could not instantiate Naming.");
         }
     }
 
