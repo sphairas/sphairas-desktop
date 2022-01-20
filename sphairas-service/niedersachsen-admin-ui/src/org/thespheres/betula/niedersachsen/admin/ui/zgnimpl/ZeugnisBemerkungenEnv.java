@@ -8,6 +8,7 @@ package org.thespheres.betula.niedersachsen.admin.ui.zgnimpl;
 import java.awt.event.ActionListener;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.util.Optional;
 import org.netbeans.api.actions.Closable;
 import org.netbeans.api.actions.Openable;
 import org.netbeans.core.api.multiview.MultiViews;
@@ -55,7 +56,9 @@ public final class ZeugnisBemerkungenEnv implements Serializable, Lookup.Provide
             tc = tcid.getArbitraryComponent();
             if (tc == null) {
                 tc = MultiViews.createCloneableMultiView(MIME, INSTANCE);
-                WindowManager.getDefault().findMode("output").dockInto(tc);
+                final CloneableTopComponent ftc = tc;
+                Optional.ofNullable(WindowManager.getDefault().findMode("output"))
+                        .ifPresent(m -> m.dockInto(ftc));
                 tc.setReference(tcid);
             }
         }
