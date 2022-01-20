@@ -36,8 +36,8 @@ import org.thespheres.betula.niedersachsen.admin.ui.Constants;
     @ActionReference(path = "Loaders/application/betula-unit-context/Actions", position = 30500, separatorBefore = 30000), //    @ActionReference(path = "Editors/application/xml-dtd/Popup", position = 4000)
 })
 @NbBundle.Messages({"SetNEOnEntireTargetView.displayName=Alle „?“-Einträge mit „n.e.“ überschreiben",
-    "SetNEOnEntireTargetView.undoName==Alle „?“-Einträge mit „n.e.“ in Klasse {0}, Liste {1} überschreiben",
-    "SetNEOnEntireTargetView.redoName==Alle „?“-Einträge mit „n.e.“ in Klasse {0}, Liste {1} überschreiben"})
+    "SetNEOnEntireTargetView.undoName=Alle „?“-Einträge mit „n.e.“ in Klasse {0}, Liste {1} überschreiben",
+    "SetNEOnEntireTargetView.redoName=Alle „?“-Einträge mit „n.e.“ in Klasse {0}, Liste {1} überschreiben"})
 //TODO: include term display name in action name, undo redo. no container service! -> only remove entries in target, no version update...
 public class SetNEOnEntireTargetView implements ActionListener {
 
