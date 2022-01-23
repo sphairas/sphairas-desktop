@@ -300,7 +300,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         return getDeleteDate() != null
                 && (getUnitId() != null || allowNullUnit)
                 && getTargetDocumentIdBase() != null
-                && (!Marker.isNull(getSubjectMarker()) || StringUtils.isNotBlank(getSubjectAlternativeName()))
+                && (!Marker.isNull(getSubjectMarker()) || StringUtils.isNotBlank(getSubjectAlternativeName()) || !Marker.isNull(getRealm()))
                 && importStudents.isValid();
     }
 
