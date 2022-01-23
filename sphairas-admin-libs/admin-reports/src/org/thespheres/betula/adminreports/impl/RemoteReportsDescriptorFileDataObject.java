@@ -23,6 +23,7 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 
 @Messages({
@@ -98,6 +99,11 @@ public class RemoteReportsDescriptorFileDataObject extends MultiDataObject imple
     @Override
     protected int associateLookup() {
         return 1;
+    }
+
+    @Override
+    protected Node createNodeDelegate() {
+        return new RemoteReportsFileNode(support.getRemoteReportsModel(), getLookup());
     }
 
     @Override

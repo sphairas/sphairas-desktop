@@ -24,7 +24,7 @@ class RemoteReportsFileNode extends AbstractNode {
         super(Children.LEAF, lkp);
         setName(rrm.getId());
         setDisplayName(rrm.getDisplayName());
-        setIconBaseWithExtension("org/thespheres/betula/admin/units/resources/reports-stack.png");
+        setIconBaseWithExtension("org/thespheres/betula/reports/module/reports-stack.png");
         this.model = rrm;
     }
 

@@ -76,7 +76,6 @@ public class RemoteReportsSupport extends CloneableEditorSupport implements Unit
     private final RemoteReportsModel remoteModel;
     private RemoteSectionsProvider guardedProvider;
     private final RequestProcessor.Task initTask;
-    private RemoteReportsFileNode node;
     private final DescriptorProjectProperties properties;
     private final Listener listener = new Listener();
 
@@ -116,10 +115,7 @@ public class RemoteReportsSupport extends CloneableEditorSupport implements Unit
 
     @Override
     public Node getNodeDelegate() {
-        if (node == null) {
-            node = new RemoteReportsFileNode(getRemoteReportsModel(), getDataObject().getLookup());
-        }
-        return node;
+        return getDataObject().getNodeDelegate();
     }
 
     public Optional<Signees> getSignees() {
