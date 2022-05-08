@@ -242,7 +242,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         return hasUnitDisplayNameOverride();
     }
 
-    protected boolean hasUnitDisplayNameOverride() {
+    public boolean hasUnitDisplayNameOverride() {
         final boolean hasUserDisplayName = getClientProperty(org.thespheres.betula.xmlimport.Constants.PROP_USER_UNIT_DISPLAYNAME) instanceof String;
         final UnitId unitId = getUnitId();
         final boolean isUnitResolvable = unitId != null && !unitId.getId().equals(helper.getUnitDisplayName());

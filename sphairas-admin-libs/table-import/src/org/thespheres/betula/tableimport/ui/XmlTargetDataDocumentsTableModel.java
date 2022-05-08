@@ -5,9 +5,16 @@
  */
 package org.thespheres.betula.tableimport.ui;
 
+import java.awt.Component;
+import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Set;
+import javax.swing.JTable;
+import org.jdesktop.swingx.decorator.ComponentAdapter;
+import org.jdesktop.swingx.decorator.FontHighlighter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.table.TableColumnExt;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.Lookups;
 import org.thespheres.betula.assess.AssessmentConvention;
@@ -43,6 +50,7 @@ class XmlTargetDataDocumentsTableModel extends ImportTableModel<TargetItemsXmlCs
 //        s.add(new NodeColumn(product));
         s.add(new XmlSubjectColumn());
         s.add(new XmlKursartColumn());
+        s.add(new TableUnitDisplayColumn(product));
         s.add(new XmlConventionColumn());
 //        s.add(new UnitColumn(product));
 //        s.add(new DeleteDateColumn());
@@ -158,4 +166,46 @@ class XmlTargetDataDocumentsTableModel extends ImportTableModel<TargetItemsXmlCs
         }
 
     }
+
+    final static class TableUnitDisplayColumn extends DefaultColumns.UnitDisplayColumn<TargetItemsXmlCsvItem, ConfigurableImportTarget, XmlCsvImportSettings<TargetItemsXmlCsvItem>, XmlTargetDataDocumentsTableModel> {
+
+        TableUnitDisplayColumn(String product) {
+            super(product);
+        }
+
+        @Override
+        public void configureTableColumn(XmlTargetDataDocumentsTableModel model, TableColumnExt col) {
+            super.configureTableColumn(model, col);
+            class DisplayNameOverridenPredicate extends FontHighlighter implements HighlightPredicate {
+
+                @SuppressWarnings({"LeakingThisInConstructor",
+                    "OverridableMethodCallInConstructor"})
+                DisplayNameOverridenPredicate() {
+                    setHighlightPredicate(this);
+                }
+
+                @Override
+                protected boolean canHighlight(Component component, ComponentAdapter adapter) {
+                    if (getFont() == null) {
+                        setFont(adapter.getComponent().getFont().deriveFont(Font.BOLD));
+                    }
+                    return super.canHighlight(component, adapter);
+                }
+
+                @Override
+                public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
+                    XmlTargetDataDocumentsTableModel m = (XmlTargetDataDocumentsTableModel) ((JTable) adapter.getComponent()).getModel();
+                    int r = adapter.convertRowIndexToModel(adapter.row);
+                    if (r < m.selected.size()) {
+                        final TargetItemsXmlCsvItem kurs = m.selected.get(r);
+                        return kurs.hasUnitDisplayNameOverride();
+                    }
+                    return false;
+                }
+            }
+            col.addHighlighter(new DisplayNameOverridenPredicate());
+        }
+
+    }
+
 }
