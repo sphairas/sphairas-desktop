@@ -185,16 +185,11 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
         final UnitId unit = null;
         final Map<DocumentId, ServiceRemoteTargetAssessmentDocument> retMap = new HashMap<>();
         for (final DocumentId d : dd) {
+            if (DocumentId.isNull(d)) {
+                continue;
+            }
             final TargetAssessmentEntry<TermId> tae = builder.createTargetAssessmentAction(unit, d, Paths.UNITS_TARGETS_PATH, null, action, true);
-//        if (term == null) {
             addWorkingDateProperties(tae);
-//        } else {
-//            final Entry<TermId, ?> te = new Entry<>(action, term);
-//            builder.add(te, path);
-//            addWorkingDateProperties(tae);
-//            te.getChildren().add(ue);
-//        }
-            //        tae.getHints().put("preferred-security-role", "unitadmin");
         }
         Container response;
         try {
@@ -208,7 +203,6 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
         }
         final List<Envelope> l = DocumentUtilities.findEnvelope(response, path);
         for (final DocumentId d : dd) {
-//        if (term == null) {
             final TargetAssessmentEntry<TermId> ret;
             try {
                 ret = l.stream()
