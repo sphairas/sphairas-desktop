@@ -56,14 +56,14 @@ public class AbstractTag implements Tag, Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Tag)) {
             return false;
         }
-        final AbstractTag other = (AbstractTag) obj;
-        if (!Objects.equals(this.markerConvention, other.markerConvention)) {
+        final Tag other = (Tag) obj;
+        if (!Objects.equals(this.markerConvention, other.getConvention())) {
             return false;
         }
-        return Objects.equals(this.markerId, other.markerId);
+        return Objects.equals(this.markerId, other.getId());
     }
 
     public Object writeReplace() {
