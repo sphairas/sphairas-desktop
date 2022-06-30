@@ -659,14 +659,17 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
             final RemoteStudent remoteStudent = getRemoteStudent();
             final Term t;
             String nSJ = "?";
+            String stufe = "?";
             String nStufe = "?";
             try {
-                t = NdsTerms.fromId(this.term);
+                t = NdsTerms.fromId(term);
                 int jahr = (int) t.getParameter(NdsTerms.JAHR);
-                nSJ = Integer.toString(jahr) + "/" + Integer.toString(++jahr).substring(2);
+                int nJahr = jahr + 1;
+                nSJ = Integer.toString(nJahr) + "/" + Integer.toString(++nJahr).substring(2);
                 NamingResolver.Result r = history.support.findNamingResolverResult();
                 r.addResolverHint("naming.only.level");
-                nStufe = r.getResolvedName(NdsTerms.getTerm(jahr, 1));
+                stufe = r.getResolvedName(NdsTerms.getTerm(jahr, 1));
+                nStufe = r.getResolvedName(NdsTerms.getTerm(nJahr, 1));
             } catch (IllegalAuthorityException | NumberFormatException | IOException ex) {
             }
             final Long g = "F".equals(remoteStudent.getGender()) ? 1l : 0l;
@@ -683,7 +686,7 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
                 Logger.getLogger(getClass().getCanonicalName()).log(Level.INFO, "No zeugniskonferenz date set for unit {0} in term {1}", new Object[]{history.support.getUnitId(), this.term});
                 zkDate = new Date();
             }
-            fArgs = new Object[]{remoteStudent.getGivenNames(), gen, possesiv, zkDate, nStufe, nSJ, g, possesivGen};
+            fArgs = new Object[]{remoteStudent.getGivenNames(), gen, possesiv, zkDate, nStufe, nSJ, g, possesivGen, stufe};
         }
         return fArgs;
     }

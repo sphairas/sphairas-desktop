@@ -349,7 +349,7 @@ public class TermReportNoteSetTemplate implements Serializable {
 
         public static final long serialVersionUID = 1L;
         @XmlElement(name = "display-value")
-        @XmlJavaTypeAdapter(XmlTagAdapter.class)
+        @XmlJavaTypeAdapter(XmlTagAdapterExt.class)
         private final List<Tag> displayHint = new ArrayList<>();
         @XmlAttribute(name = "hidden")
         private Boolean hidden;
