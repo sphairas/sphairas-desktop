@@ -665,7 +665,7 @@ public abstract class ReportData2 extends AbstractReportDocument implements Repo
                 t = NdsTerms.fromId(term);
                 int jahr = (int) t.getParameter(NdsTerms.JAHR);
                 int nJahr = jahr + 1;
-                nSJ = Integer.toString(nJahr) + "/" + Integer.toString(++nJahr).substring(2);
+                nSJ = Integer.toString(nJahr) + "/" + Integer.toString(nJahr + 1).substring(2);
                 NamingResolver.Result r = history.support.findNamingResolverResult();
                 r.addResolverHint("naming.only.level");
                 stufe = r.getResolvedName(NdsTerms.getTerm(jahr, 1));
