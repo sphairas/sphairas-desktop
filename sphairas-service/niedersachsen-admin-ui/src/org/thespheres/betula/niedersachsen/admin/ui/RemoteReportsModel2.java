@@ -114,6 +114,14 @@ public abstract class RemoteReportsModel2 implements History<RemoteStudent, Repo
         }
     }
 
+    public List<ReportData2> getReports(final TermId term, StudentId student) {
+        synchronized (cache) {
+            return cache.getOrDefault(term, (Map<StudentId, List<ReportData2>>) Collections.EMPTY_MAP)
+                    .getOrDefault(student, (List<ReportData2>) Collections.EMPTY_LIST).stream()
+                    .collect(Collectors.toList());
+        }
+    }
+
     public Set<DocumentId> getReportDocuments(final TermId term) {
         synchronized (cache) {
             return cache.get(term).values().stream()

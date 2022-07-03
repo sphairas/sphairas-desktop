@@ -15,8 +15,12 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.TermId;
+import org.thespheres.betula.assess.Grade;
+import org.thespheres.betula.document.model.Subject;
 import org.thespheres.betula.niedersachsen.admin.ui.RemoteReportsModel2;
 import org.thespheres.betula.niedersachsen.admin.ui.ReportData2;
+import org.thespheres.betula.services.IllegalAuthorityException;
+import org.thespheres.betula.services.scheme.PrecedingTermGradeReference;
 import org.thespheres.betula.ui.util.JAXBUtil;
 import org.thespheres.betula.validation.impl.CareerAwareGradeToDoubleConverter;
 import org.thespheres.betula.validation.impl.ZensurenschnittValidation;
@@ -88,4 +92,26 @@ public class ZensurenschnittValidationImpl extends ZensurenschnittValidation<Rep
             fireStop();
         }
     }
+
+    @Override
+    protected Grade adjustGrade(Grade g, ReportData2 r, Subject s) {
+        if (g instanceof PrecedingTermGradeReference) {
+            try {
+                final TermId btid = ((PrecedingTermGradeReference) g).findPrecedingTermId(r.getTerm());
+                if (btid != null) {
+                    final List<ReportData2> rdl = getModel().getReports(btid, r.getStudent());
+                    for (final ReportData2 rd : rdl) {
+                        final Grade beforeGrade = rd.select(s);
+                        if (beforeGrade != null) {
+                            return super.adjustGrade(beforeGrade, r, s);
+                        }
+                    }
+                }
+            } catch (IllegalAuthorityException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return super.adjustGrade(g, r, s);
+    }
+
 }
