@@ -127,12 +127,12 @@ public abstract class ZensurenschnittValidation<Report extends AbstractReportDoc
     protected Double select(Report r, Subject s) {
         Grade grade = r.select(s);
         if (grade != null) {
-            grade = adjustGrade(grade);
+            grade = adjustGrade(grade, r, s);
         }
         return config.getGradeDoubleConverter().toDouble(r, s, grade);
     }
 
-    protected Grade adjustGrade(Grade grade) {
+    protected Grade adjustGrade(Grade grade, Report r, Subject s) {
         if (!grade.getConvention().equals(config.getGradeConvention())) {
             return null;
         }

@@ -44,16 +44,17 @@ class GradeStringValue implements StringValue {
                     if (rtad != null) {
                         try {
                             TermId b = ((PrecedingTermGradeReference) g).findPrecedingTermId(rge.getTermId());
-                            Grade referee = rtad.selectGradeAccess(rge.getStudent(), b).map(RemoteGradeEntry::getGrade).orElse(null);
-                            String sl = shortLabel(referee);
-                            return NbBundle.getMessage(GradeStringValue.class, "GradeStringValue.PrecedingTermGradeReference.shortLabel", sl, g.getShortLabel());
+                            if (b != null) {
+                                Grade referee = rtad.selectGradeAccess(rge.getStudent(), b).map(RemoteGradeEntry::getGrade).orElse(null);
+                                String sl = shortLabel(referee);
+                                return NbBundle.getMessage(GradeStringValue.class, "GradeStringValue.PrecedingTermGradeReference.shortLabel", sl, g.getShortLabel());
+                            }
                         } catch (IllegalAuthorityException ex) {
                             UIExceptions.handle(ex, new Object[]{rtad.getDocumentId(), g});
                         }
                     }
-                } else {
-                    return shortLabel(g);
                 }
+                return shortLabel(g);
             } catch (ClassCastException e) {
             }
         }

@@ -69,6 +69,9 @@ public class Uebertrag extends AbstractAssessmentConvention {
                 illaex.setIllegalIdentity(original);
                 throw illaex;
             }
+            if (original.getId() % 2 != 0) {//Vornoten nur für das zweite Halbjahr
+                return null;
+            }
             return new TermId(LSchB.AUTHORITY, original.getId() - 1);
         }
 
