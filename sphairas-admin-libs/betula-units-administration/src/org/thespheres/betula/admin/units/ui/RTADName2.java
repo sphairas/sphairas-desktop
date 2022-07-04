@@ -10,12 +10,12 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.Collator;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import org.openide.util.NbBundle;
 import org.thespheres.betula.admin.units.RemoteTargetAssessmentDocument;
 import org.thespheres.betula.admin.units.RemoteTargetAssessmentDocumentName;
-import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.document.model.MultiSubject;
 import org.thespheres.betula.services.NamingResolver;
@@ -60,8 +60,7 @@ public class RTADName2 implements PropertyChangeListener, RemoteTargetAssessment
             if (dn_short == null) {
                 dn_short = rtad.getDocumentId().getId();
             }
-            rtad.getUniqueMarker("kgs.unterricht")
-                    .map(Marker::getShortLabel)
+            Optional.ofNullable(rtad.getMultiSubject().getRealmMarker())
                     .ifPresent(s -> dn_short += "*");
         }
         return dn_short;
