@@ -41,6 +41,7 @@ import org.thespheres.betula.TermId;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
 import org.thespheres.betula.admin.units.RemoteStudent;
 import org.thespheres.betula.document.Marker;
+import org.thespheres.betula.niedersachsen.LSchB;
 import org.thespheres.betula.niedersachsen.NdsTerms;
 import org.thespheres.betula.niedersachsen.admin.ui.Constants;
 import org.thespheres.betula.niedersachsen.admin.ui.RemoteReportsModel2;
@@ -104,6 +105,10 @@ public class ZeugnisAngabenModel extends AbstractPluggableTableModel<RemoteRepor
         if (term != null) {
             final TermId tid = term.getScheduledItemId();
             ((RemoteReportsModel2Impl) getItemsModel()).loadTerm(tid, asOf);
+            if (LSchB.AUTHORITY.equals(tid.getAuthority()) && tid.getId() % 2 == 0) {//Falls zweites Halbjahr, Vornoten laden
+                final TermId bTid = new TermId(tid.getAuthority(), tid.getId() - 1);
+                ((RemoteReportsModel2Impl) getItemsModel()).loadTerm(bTid, asOf);
+            }
         }
         cSupport.fireChange();
     }

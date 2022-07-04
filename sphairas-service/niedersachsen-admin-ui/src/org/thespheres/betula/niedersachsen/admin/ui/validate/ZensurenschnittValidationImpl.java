@@ -70,7 +70,7 @@ public class ZensurenschnittValidationImpl extends ZensurenschnittValidation<Rep
         try {
             model.getReportDocuments(stud).stream()
                     .map(model::getReportDocument)
-                    .filter(r -> r.getTerm().equals(term))
+                    //                    .filter(r -> r.getTerm().equals(term))//Wegen Vornoten muss bei Änderungen in jedem Halbjahr validiert werden. 
                     .forEach(this::processOneDocument);
         } finally {
             fireStop();
