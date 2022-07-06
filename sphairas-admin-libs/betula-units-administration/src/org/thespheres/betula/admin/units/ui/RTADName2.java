@@ -60,7 +60,8 @@ public class RTADName2 implements PropertyChangeListener, RemoteTargetAssessment
             if (dn_short == null) {
                 dn_short = rtad.getDocumentId().getId();
             }
-            Optional.ofNullable(rtad.getMultiSubject().getRealmMarker())
+            Optional.ofNullable(rtad.getMultiSubject())
+                    .map(MultiSubject::getRealmMarker)
                     .ifPresent(s -> dn_short += "*");
         }
         return dn_short;
