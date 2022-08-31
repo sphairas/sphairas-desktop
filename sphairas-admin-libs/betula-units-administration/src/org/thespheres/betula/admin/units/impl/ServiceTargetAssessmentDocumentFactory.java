@@ -59,9 +59,9 @@ import org.thespheres.betula.util.ContainerBuilder;
  * @author boris.heithecker
  */
 public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<DocumentId, ServiceRemoteTargetAssessmentDocument> {
-
+    
     private final static Map<String, ServiceTargetAssessmentDocumentFactory> INSTANCES = new HashMap<>();
-
+    
     private final LoadingCache<DocumentId, ServiceRemoteTargetAssessmentDocument> cache = CacheBuilder.newBuilder()
             .weakValues()
             .concurrencyLevel(Util.RP_THROUGHPUT)
@@ -69,17 +69,17 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
             .recordStats()
             .build(this);
     private final WebServiceProvider service;
-
+    
     private ServiceTargetAssessmentDocumentFactory(String provider) {
         service = WebProvider.find(provider, WebServiceProvider.class);
     }
-
+    
     public static ServiceTargetAssessmentDocumentFactory get(final String provider) {
         synchronized (INSTANCES) {
             return INSTANCES.computeIfAbsent(provider, ServiceTargetAssessmentDocumentFactory::new);
         }
     }
-
+    
     public ServiceRemoteTargetAssessmentDocument getTargetAssessmentDocument(final DocumentId document) throws IOException {
         final ServiceRemoteTargetAssessmentDocument get;
         try {
@@ -103,7 +103,7 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
         PlatformUtil.logPerformance("Average load penalty", round);
         return get;
     }
-
+    
     Map<DocumentId, ServiceRemoteTargetAssessmentDocument> getAll(final Set<DocumentId> document) throws IOException {
         final Map<DocumentId, ServiceRemoteTargetAssessmentDocument> get;
         try {
@@ -120,11 +120,11 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
         PlatformUtil.logPerformance("Average load penalty", round);
         return get;
     }
-
+    
     public void removeTargetAssessmentDocument(final DocumentId document) {
         cache.invalidate(document);
     }
-
+    
     static NamingResolver findNamingResolver(final String provider) {
         final String nr = LocalProperties.find(provider).getProperty("naming.providerURL", provider);
         try {
@@ -135,7 +135,7 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
             return null;
         }
     }
-
+    
     static JMSTopicListenerService findJMSTopicListenerService(final String provider) {
         final String np = LocalProperties.find(provider).getProperty("jms.providerURL", provider);
         try {
@@ -145,7 +145,7 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
             return null;
         }
     }
-
+    
     @NbBundle.Messages(value = {"ServiceTargetAssessmentDocumentFactory.notifyNoJMS.title=Keine Server-Benachrichtigungen",
         "ServiceTargetAssessmentDocumentFactory.notifyNoJMS.message=Für die Datenstelle {0} konnten keine Server-Benachrichtigungen abonniert werden."})
     private static void notifyNoJMS(final String p) {
@@ -156,7 +156,7 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
         NotificationDisplayer.getDefault()
                 .notify(title, ic, message, null, NotificationDisplayer.Priority.HIGH, NotificationDisplayer.Category.WARNING);
     }
-
+    
     public static void addWorkingDateProperties(final Entry<?, ?> entry) {
         final WorkingDate wd = Lookup.getDefault().lookup(WorkingDate.class);
         if (wd != null && !wd.isNow()) {
@@ -166,12 +166,12 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
             entry.getHints().put("version.asOf", df);
         }
     }
-
+    
     @Override
     public ServiceRemoteTargetAssessmentDocument load(DocumentId key) throws Exception {
         return create(new DocumentId[]{key}).get(key);
     }
-
+    
     @Override
     public Map<DocumentId, ServiceRemoteTargetAssessmentDocument> loadAll(Iterable<? extends DocumentId> keys) throws Exception {
         return create(StreamSupport.stream(keys.spliterator(), false).toArray(DocumentId[]::new));
@@ -213,6 +213,10 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
                         .collect(CollectionUtil.requireSingleOrNull());
             } catch (Exception e) {
                 throw new IOException(e);
+            }
+            if (ret == null) {
+                PlatformUtil.getCodeNameBaseLogger(ServiceTargetAssessmentDocumentFactory.class).info("Non single result for " + d.toString());
+                continue;
             }
             try {
                 Util.processException(ret, d);
@@ -347,10 +351,10 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
                     .toArray(DocumentId[]::new);
         }
     }
-
+    
     TargetAssessmentEntry<TermId> fetchTargetAssessmentDocument(final DocumentId document) throws IOException {
         final ContainerBuilder builder = new ContainerBuilder();
-
+        
         final String[] path = Paths.UNITS_TARGETS_PATH;
         final Action action = Action.REQUEST_COMPLETION;
         final TargetAssessmentEntry<?> tae = builder.createTargetAssessmentAction(null, document, path, null, action, true);
@@ -373,5 +377,5 @@ public class ServiceTargetAssessmentDocumentFactory extends CacheLoader<Document
                 .filter(t -> t.getIdentity().equals(document))
                 .collect(CollectionUtil.singleOrNull());
     }
-
+    
 }
