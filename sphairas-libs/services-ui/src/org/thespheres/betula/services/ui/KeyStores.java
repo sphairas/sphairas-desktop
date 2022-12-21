@@ -24,12 +24,18 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateNotYetValidException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import javax.security.auth.x500.X500Principal;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,10 +43,13 @@ import javax.swing.JPasswordField;
 import org.netbeans.api.keyring.Keyring;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.awt.NotificationDisplayer;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.thespheres.betula.services.ui.ks.CreateUserCertificateImpl;
+import org.thespheres.betula.ui.util.PlatformUtil;
 
 /**
  *
@@ -70,6 +79,54 @@ public final class KeyStores {
             }
         }
         return instance;
+    }
+
+    @Messages({"KeyStores.check.certInvalid.title=Abgelaufener Schlüssel",
+        "KeyStores.check.certInvalid=Zertifikat mit dem Alias {0} ist ungültig: {1}"})
+    public static void check() throws IllegalStateException {
+        final KeyStore ks;
+        try {
+            ks = KeyStore.getInstance(KeyStores.getKeystoreType());
+        } catch (KeyStoreException ex) {
+            throw new IllegalStateException(ex);
+        }
+        char[] password = Keyring.read(KeyStores.KEYRING_KEYSTORE_PASSWORD_KEY);
+        if (password == null) {
+//            password = KeyStores.showUserKeyStorePasswordDialog();
+            return;
+        }
+        Path p = Paths.get(KeyStores.getKeystore());
+        try (InputStream is = Files.newInputStream(p)) {
+            ks.load(is, password);
+            Enumeration<String> aliases;
+            try {
+                aliases = ks.aliases();
+            } catch (KeyStoreException ex) {
+                throw new IllegalStateException(ex);
+            }
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                try {
+                    final Certificate e = ks.getCertificate(alias);
+                    if (e instanceof X509Certificate) {
+                        try {
+                            ((X509Certificate) e).checkValidity();
+                        } catch (CertificateExpiredException | CertificateNotYetValidException cex) {
+                            final String msg = NbBundle.getMessage(KeyStores.class, "KeyStores.check.certInvalid", alias, cex.getLocalizedMessage());
+                            PlatformUtil.getCodeNameBaseLogger(KeyStores.class).log(Level.INFO, msg);
+                            final Icon ic = ImageUtilities.loadImageIcon("org/thespheres/betula/ui/resources/exclamation-red-frame.png", true);
+                            final String title = NbBundle.getMessage(KeyStores.class, "KeyStores.check.certInvalid.title");
+                            NotificationDisplayer.getDefault()
+                                    .notify(title, ic, msg, null, NotificationDisplayer.Priority.HIGH, NotificationDisplayer.Category.WARNING);
+                        }
+                    }
+                } catch (KeyStoreException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+        } catch (NoSuchAlgorithmException | CertificateException | IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 //    public static void init() throws IllegalStateException {        //if not user initialized, after a fresh install, this will not happen (not open projects, domains deactivated)

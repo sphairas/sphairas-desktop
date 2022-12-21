@@ -162,7 +162,7 @@ public class InstallKeyStores implements Runnable {
 
     static void createTrustStoreInstance(final char[] password) throws IOException {
         final LocalDateTime date = getTrustStoreModuleDateTime();
-        try ( InputStream is = InstallKeyStores.class.getResourceAsStream("/org/thespheres/betula/services/ui/resources/cacerts.jks")) {
+        try (InputStream is = InstallKeyStores.class.getResourceAsStream("/org/thespheres/betula/services/ui/resources/cacerts.jks")) {
             Files.copy(is, CACERTS_PLACE, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ioex) {
             throw ioex;
@@ -173,7 +173,7 @@ public class InstallKeyStores implements Runnable {
         } catch (KeyStoreException ex) {
             throw new IOException(ex);
         }
-        try ( InputStream is = Files.newInputStream(CACERTS_PLACE)) {
+        try (InputStream is = Files.newInputStream(CACERTS_PLACE)) {
             ks.load(is, DEFAULT_PASSWORD.toCharArray());
         } catch (NoSuchAlgorithmException | CertificateException ex) {
             throw new IOException(ex);
@@ -191,7 +191,7 @@ public class InstallKeyStores implements Runnable {
     @Override
     public void run() {
         try {
-//            KeyStores.init();
+            KeyStores.check();
             Privacy.okay();
         } catch (IllegalStateException illex) {
             WindowManager.getDefault().invokeWhenUIReady(this::initUserDialog);
@@ -298,7 +298,6 @@ public class InstallKeyStores implements Runnable {
 //        copyDefaultKeys(aliases, url, password);
 ////        Arrays.fill(password, '0');
 //    }
-
     static void copyDefaultKeys(String[] aliases, URL url, char[] password) throws IOException {
         final KeyStore ks;
         try {
@@ -306,7 +305,7 @@ public class InstallKeyStores implements Runnable {
         } catch (KeyStoreException ex) {
             throw new IOException(ex);
         }
-        try ( InputStream is = url.openStream()) {
+        try (InputStream is = url.openStream()) {
             ks.load(is, DEFAULT_PASSWORD.toCharArray());
         } catch (NoSuchAlgorithmException | CertificateException ex) {
             throw new IOException(ex);
@@ -329,7 +328,7 @@ public class InstallKeyStores implements Runnable {
             throw new IOException(ex);
         }
         Path p = Paths.get(KeyStores.getKeystore());
-        try ( InputStream is = Files.newInputStream(p)) {
+        try (InputStream is = Files.newInputStream(p)) {
             ks2.load(is, password);
             for (Map.Entry<String, KeyStore.Entry> e : keys.entrySet()) {
                 ks2.setEntry(e.getKey(), e.getValue(), new KeyStore.PasswordProtection(password));
