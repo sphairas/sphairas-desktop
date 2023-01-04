@@ -39,6 +39,7 @@ class ClearSigneesTaskVisualPanel extends javax.swing.JPanel {
         this.providerComboBox.setRenderer(new DefaultListRenderer(providerConverter));
         this.termComboBox.setModel(termsModel);
         this.termComboBox.setRenderer(new DefaultListRenderer(termsModel));
+        this.providerSelected(null);
     }
 
     @Override
