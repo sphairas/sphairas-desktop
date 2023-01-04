@@ -44,10 +44,6 @@ public final class DatenExportXml {
     @XmlElement(name = "Satz")
     public List<Satz> satzes = new ArrayList<>();
 
-    public boolean checkPossiblySchuelerFile() {
-        return !satzes.isEmpty() && satzes.get(0).identNummer != null;
-    }
-
     public File guessFile() {
         if (!satzes.isEmpty() && satzes.get(0).identNummer != null && satzes.get(0).fach == null) {
             return File.SCHUELER;
