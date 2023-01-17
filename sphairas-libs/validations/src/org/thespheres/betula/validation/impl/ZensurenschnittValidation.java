@@ -72,7 +72,7 @@ public abstract class ZensurenschnittValidation<Report extends AbstractReportDoc
                 processOneDocument(model.getReportDocument(d));
                 it.remove();
             } catch (Exception e) {
-                Logger.getLogger(ZensurenschnittValidation.class.getCanonicalName()).log(Level.INFO, e.getMessage(), e);
+                Logger.getLogger(ZensurenschnittValidation.class.getCanonicalName()).log(Level.WARNING, e.getMessage(), e);
                 ex.add(e);
             }
         }
