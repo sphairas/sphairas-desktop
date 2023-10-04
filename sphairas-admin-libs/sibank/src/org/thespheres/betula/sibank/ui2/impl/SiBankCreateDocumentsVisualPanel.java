@@ -8,10 +8,14 @@ package org.thespheres.betula.sibank.ui2.impl;
 import org.thespheres.betula.xmlimport.uiutil.CreateDocumentsComponent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -22,6 +26,7 @@ import org.openide.awt.ToolbarPool;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
+import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 import org.thespheres.betula.sibank.SiBankImportData;
@@ -43,6 +48,7 @@ class SiBankCreateDocumentsVisualPanel extends JPanel implements CreateDocuments
     private SiBankCreateDocumentsTableModel model = null;
     private SiBankImportData wizard;
     private static ToolbarPool toolbars;
+    private final JCheckBox keepExistingCheckbox = new JCheckBox("Keine Einträge löschen", false);
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     SiBankCreateDocumentsVisualPanel() {
@@ -55,6 +61,9 @@ class SiBankCreateDocumentsVisualPanel extends JPanel implements CreateDocuments
         Arrays.stream(toolbars().getToolbars()).forEach(toolbarPanel::add);
         add(toolbarPanel, BorderLayout.NORTH);
         add(scrollPanel, BorderLayout.CENTER);
+        //
+        add(keepExistingCheckbox, BorderLayout.PAGE_END);
+        keepExistingCheckbox.addActionListener(new KeepExistingListener());
     }
 
     private synchronized ToolbarPool toolbars() {
@@ -93,13 +102,29 @@ class SiBankCreateDocumentsVisualPanel extends JPanel implements CreateDocuments
     }
 
     @Override
-    public SiBankImportData getSettings() {
+    public SiBankImportData<?> getSettings() {
         return wizard;
     }
 
     @Override
     public String getName() {
         return NbBundle.getMessage(SiBankCreateDocumentsVisualPanel.class, "SiBankCreateDocumentsVisualPanel.step.name");
+    }
+
+    class KeepExistingListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            getSettings().getSelectedNodesProperty().stream()
+                    .forEach(s -> {
+                        try {
+                            s.setClientProperty(SiBankKursItem.PROP_KEEP_EXISTING, keepExistingCheckbox.isSelected());
+                        } catch (PropertyVetoException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+                    });
+        }
+
     }
 
     public static class SiBankCreateDocumentsPanel implements WizardDescriptor.Panel<SiBankImportData> {
