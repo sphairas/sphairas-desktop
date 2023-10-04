@@ -106,7 +106,7 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
 
         if (configChanged) {
             Signees.get(config.getWebServiceProvider().getInfo().getURL())
-                    .flatMap(s -> s.findSignee(getSourceSigneeName()))
+                    .flatMap(s -> s.findSignee(getSourceSigneeName(), true))
                     .ifPresent(this::setSignee);
         }
 
