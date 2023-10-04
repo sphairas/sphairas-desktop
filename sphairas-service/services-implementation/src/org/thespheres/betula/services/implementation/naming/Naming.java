@@ -170,7 +170,12 @@ public abstract class Naming {
             dj = dj.substring("abitur".length());
             stufe = baseAbitur;
         }
-        jahr = Integer.parseInt(dj);
+        try {
+            jahr = Integer.parseInt(dj);
+        } catch (NumberFormatException nfex) {
+            Logger.getLogger(Naming.class.getName()).log(Level.WARNING, nfex.getLocalizedMessage(), nfex);
+            jahr = 0;
+        }
         if (parts.length > pointer) {
             String next = parts[pointer];
             if (next.startsWith("jg")) {
