@@ -189,7 +189,7 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
 
         if (configChanged && getSourceSigneeName() != null) {
             Signees.get(config.getWebServiceProvider().getInfo().getURL())
-                    .flatMap(s -> s.findSignee(getSourceSigneeName()))
+                    .flatMap(s -> s.findSignee(getSourceSigneeName(), true))
                     .ifPresent(this::setSignee);
         }
         termScheduleProvider = config.getTermSchemeProvider().getInfo().getURL();
