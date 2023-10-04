@@ -102,10 +102,35 @@ public class Signees {
     }
 
     public Optional<Signee> findSignee(final String name) {
+        return findSignee(name, false);
+    }
+
+    public Optional<Signee> findSignee(final String name, final boolean excludeInactive) {
         return getSignees().entrySet().stream()
                 .filter(e -> e.getValue().getCn(false).equals(name))
+                .filter(e -> !excludeInactive || isActive(e))
                 .map(Map.Entry::getKey)
-                .collect(CollectionUtil.singleton());
+                //                .collect(CollectionUtil.singleton());
+                .collect(Collectors.collectingAndThen(Collectors.toSet(), Signees::toSet));
+    }
+
+    private static Optional<Signee> toSet(Set<Signee> set) {
+        if (set.size() == 1) {
+            return Optional.of(set.iterator().next());
+        } else {
+            final String msg = set.stream().map(s -> s.getName()).collect(Collectors.joining(","));
+            Logger.getLogger(Signees.class.getName()).log(Level.INFO, "Duplicate " + msg);
+            return Optional.empty();
+        }
+    }
+
+    private static boolean isActive(Map.Entry<Signee, Holder> e) {
+//        return !e.getValue().isInactive();
+        final boolean inactive = e.getValue().isInactive();
+        if (inactive) {
+            Logger.getLogger(Signees.class.getName()).log(Level.INFO, "Found inactive " + e.getValue().getCn(true));
+        }
+        return !inactive;
     }
 
     public String getSignee(Signee signee) {
