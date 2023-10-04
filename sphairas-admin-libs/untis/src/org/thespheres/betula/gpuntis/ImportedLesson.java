@@ -217,7 +217,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
         if (configChanged) {
             final String dirName = ImportUntisUtil.dirName(getLesson().getLessonTeacher());
             Signees.get(config.getWebServiceProvider().getInfo().getURL())
-                    .flatMap(s -> s.findSignee(dirName))
+                    .flatMap(s -> s.findSignee(dirName, true))
                     .ifPresent(this::setSignee);
         }
         units = Units.get(config.getWebServiceProvider().getInfo().getURL());
