@@ -230,7 +230,7 @@ DTSTART;VALUE=DATE:20240131
 SUMMARY:Zeugnisausgabe Jan. 2024
 STATUS:CONFIRMED
 CATEGORIES:zeugnisausgabe
-X-TERM;x-authority=mk.niedersachsen.de:643
+X-TERM;x-authority=mk.niedersachsen.de:647
 UID:20230104T120630Z-5-20523@jupiter@172.17.0.1
 END:VEVENT
 BEGIN:VEVENT
@@ -238,7 +238,7 @@ DTSTART;VALUE=DATE:20240621
 SUMMARY:Zeugnisausgabe Juni 2024
 STATUS:CONFIRMED
 CATEGORIES:zeugnisausgabe
-X-TERM;x-authority=mk.niedersachsen.de:644
+X-TERM;x-authority=mk.niedersachsen.de:648
 UID:20230104T120630Z-9-20523@jupiter@172.17.0.1
 END:VEVENT
 END:VCALENDAR
