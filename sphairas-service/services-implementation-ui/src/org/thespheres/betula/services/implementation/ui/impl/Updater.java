@@ -69,7 +69,12 @@ class Updater implements Runnable {
     }
 
     private synchronized void init() {
-        this.initialized = doInit();
+        try {
+            this.initialized = doInit();
+        } catch (Exception e) {
+//            Exceptions.printStackTrace(e);
+            this.initialized = false;
+        }
     }
 
     private boolean doInit() {
