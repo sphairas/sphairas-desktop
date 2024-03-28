@@ -246,6 +246,9 @@ public class TargetItemsUpdater<I extends ImportTargetsItem> extends AbstractUpd
             }
             final long termBegin = term.getBegin().getTime();
             tae.getHints().put("keep.old.target.entries.after", Long.toString(termBegin));
+            
+            final String hintKeepExisting = td.getProcessorHints().getOrDefault("keep.existing.entries", "false");
+            tae.getHints().put("keep.existing.entries", hintKeepExisting);
         }
         if (tae instanceof TargetAssessmentEntry) {
             importTargetsItem.identities().forEach(t -> {
