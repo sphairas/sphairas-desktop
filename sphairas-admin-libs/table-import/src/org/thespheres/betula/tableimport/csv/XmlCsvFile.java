@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.thespheres.betula.xmlimport.model.Product;
 
 /**
@@ -115,7 +116,7 @@ public class XmlCsvFile {
             Value[] lv = new Value[line.length];
             for (int ci = 0; ci < line.length; ci++) {
                 Column col = cols[ci];
-                lv[ci] = new Value(col, line[ci]);
+                lv[ci] = new Value(col, StringUtils.stripToEmpty(line[ci]));
             }
             lns[c - 1] = new Line(lv);
         }
