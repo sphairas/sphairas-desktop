@@ -35,7 +35,6 @@ import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.util.Signees;
 import org.thespheres.betula.services.util.Units;
 import org.thespheres.betula.sibank.DatenExportXml.File;
-import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
@@ -51,6 +50,7 @@ import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 public class SiBankKursItem extends ImportTargetsItem implements ImportItem.CloneableImport, OutlineModelNode {
 
     public static final String PROP_TARGET_ID = "targetId";
+    public static final String PROP_KEEP_EXISTING = "keep-existing";
     static final Pattern TARGET_ID_PATTERN = Pattern.compile("[\\w]+[-\\w]*", 0); //Centralize
     private String targetId;
     private final GeneratedUnitId generatedUnit = new GeneratedUnitId();
@@ -288,7 +288,13 @@ public class SiBankKursItem extends ImportTargetsItem implements ImportItem.Clon
 
     @Override
     public TargetDocumentProperties[] getImportTargets() {
-        return getConfiguration().createTargetDocuments(this);
+        final TargetDocumentProperties[] ret = getConfiguration().createTargetDocuments(this);
+        final Boolean keepExistingEntries = (Boolean) this.getClientProperty(PROP_KEEP_EXISTING);
+        if (keepExistingEntries != null && keepExistingEntries) {
+            Arrays.stream(ret)
+                    .forEach(td -> td.getProcessorHints().put("keep.existing.entries", "true"));
+        }
+        return ret;
     }
 
     @Override
