@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.thespheres</groupId>
     <artifactId>services</artifactId>
-    <version>0.2.20</version>
+    <version>0.2.22</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
