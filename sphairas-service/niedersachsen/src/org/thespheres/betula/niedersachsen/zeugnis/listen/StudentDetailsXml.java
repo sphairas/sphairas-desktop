@@ -52,6 +52,7 @@ public class StudentDetailsXml {
     @XmlElement(name = "text")
     private List<Text> texts = new ArrayList<>();
     private transient String sortString;
+    private transient String headerFontSize = null;
 //    private final static Collator COLLATOR = Collator.getInstance(Locale.GERMANY);
     private final static SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
 //    @XmlTransient
@@ -75,6 +76,14 @@ public class StudentDetailsXml {
 
     public void setListDate(String ldate) {
         listData.version = ldate;
+    }
+
+    public String getHeaderFontSize() {
+        return headerFontSize;
+    }
+
+    public void setHeaderFontSize(String headerFontSize) {
+        this.headerFontSize = headerFontSize;
     }
 
     public TermDataLine addLine(int line, String termName) {
@@ -118,14 +127,14 @@ public class StudentDetailsXml {
                 .sorted(Comparator.comparing(c -> ORDER.positionOf(c.comparingMarker(ORDER))))
                 .distinct()
                 .peek(allKeys::add)
-                .map(StudentDetailsXml::mapToColumn)
+                .map(k -> mapToColumn(k, getHeaderFontSize()))
                 .forEach(subjects::add);
         list.stream()
                 .forEach(l -> l.beforeMarshal(allKeys));
         Collections.sort(list, Comparator.comparing(l -> l.row));
     }
 
-    private static Column mapToColumn(ColumnKey.MarkerColumnKey key) throws IllegalArgumentException {
+    private Column mapToColumn(ColumnKey.MarkerColumnKey key, String headerFontSize) throws IllegalArgumentException {
 //        boolean keep = false;
         String fName = key.alt;
         if (fName == null) {
@@ -163,10 +172,15 @@ public class StudentDetailsXml {
 //            l += PROFIL_RS.length();
         }
         l += fName.length();
-        if (l > 13) {
-            ret.setFontSize("9pt");//ZGN
+        if (headerFontSize == null) {
+            if (l > 13) {
+                ret.setFontSize("9pt");//ZGN
+            } else {
+                ret.setFontSize("11pt");
+            }
         } else {
-            ret.setFontSize("11pt");
+            ret.setFontSize("20pt");
+//            ret.setFontSize(headerFontSize);
         }
         return ret;
     }
@@ -196,6 +210,17 @@ public class StudentDetailsXml {
         private String name;
         @XmlElement(name = "student-detail-version")
         private String version;
+        @XmlAttribute(name = "font-size", required = false)
+        private String fontSize;
+
+        //Student-detail-name
+        public String getTextFontSize() {
+            return fontSize;
+        }
+
+        public void setTextFontSize(String textFontSize) {
+            this.fontSize = textFontSize;
+        }
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -285,6 +310,8 @@ public class StudentDetailsXml {
         private String note;
         @XmlAttribute(name = "row")
         private final int row;
+        @XmlAttribute(name = "font-size", required = false)
+        private String fontSize;
 
         TermDataLine(int row, String term) {
             this.row = row;
@@ -307,6 +334,14 @@ public class StudentDetailsXml {
             this.hint = studentHint;
         }
 
+        public String getLabelFontSize() {
+            return fontSize;
+        }
+
+        public void setLabelFontSize(String textFontSize) {
+            this.fontSize = textFontSize;
+        }
+
         private void beforeMarshal(final Set<ColumnKey.MarkerColumnKey> allKeys) {
             final Map<ColumnKey.MarkerColumnKey, ColumnValue> all = allKeys.stream()
                     .collect(Collectors.toMap(k -> k, key -> map.computeIfAbsent(key, k -> new ColumnValue(null))));
@@ -324,6 +359,7 @@ public class StudentDetailsXml {
             ret.setLabelLeft(value.getLabelLeft());
             ret.setLabelRight(value.getLabelRight());
             ret.setColor(value.getColor());
+            ret.setFontSize(value.getFontSize());
             return ret;
         }
     }
@@ -357,6 +393,8 @@ public class StudentDetailsXml {
         private String noteHeader;
         @XmlAttribute(name = "position", required = true)
         private int position;
+        @XmlAttribute(name = "font-size", required = false)
+        private String fontSize;
         @XmlValue
         //TODO: adapted CollapsedStringAdapter which leaves \n = 0xA untouched 
         private String noteValue;
@@ -390,6 +428,13 @@ public class StudentDetailsXml {
             this.position = position;
         }
 
+        public String getFontSize() {
+            return fontSize;
+        }
+
+        public void setFontSize(String fontSize) {
+            this.fontSize = fontSize;
+        }
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)

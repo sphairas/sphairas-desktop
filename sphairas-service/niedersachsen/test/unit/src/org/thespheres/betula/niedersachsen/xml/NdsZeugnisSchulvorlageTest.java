@@ -59,6 +59,11 @@ public class NdsZeugnisSchulvorlageTest {
         i.getColorings().add(col1);
         final Coloring col2 = new Coloring("blue", "cnv2", null);
         i.getColorings().add(col2);
+        final NdsZeugnisSchulvorlage.FontSizeValues fsv = new NdsZeugnisSchulvorlage.FontSizeValues();
+        fsv.setText("16pt");
+        fsv.setTableCells("14pt");
+        final NdsZeugnisSchulvorlage.ListDefinition ld = new NdsZeugnisSchulvorlage.ListDefinition("Konferenzvorlage", 0, new String[]{"zeugnisnoten"}, fsv);
+        i.getListDefinitions().add(ld);
 
         Marshaller m = ctx.createMarshaller();
         m.setProperty("jaxb.formatted.output", Boolean.TRUE);

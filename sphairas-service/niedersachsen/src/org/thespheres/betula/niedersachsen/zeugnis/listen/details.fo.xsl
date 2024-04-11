@@ -20,7 +20,17 @@
                 <fo:flow flow-name="body_main">
                     <xsl:if test="details-list-collection/list">
                         <xsl:for-each select="details-list-collection/list">
-                            <fo:block break-before="page" font-size="12pt" font-family="SansSerif" font-weight="bold" space-after="0.1cm">
+                            <fo:block break-before="page" font-family="SansSerif" font-weight="bold" space-after="0.1cm">
+                                <xsl:choose>
+                                    <xsl:when test="@font-size">
+                                        <xsl:attribute name="font-size">
+                                            <xsl:value-of select="@font-size"/>
+                                        </xsl:attribute>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="font-size">12pt</xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose> 
                                 <xsl:value-of select="list-data/student-detail-name"/>
                             </fo:block>
                             <fo:block text-align-last="justify" line-height="2pt" space-after="0.1cm">
@@ -42,14 +52,15 @@
                                     <fo:table-header>
                                         <fo:table-row height="2.2cm">
                                             <fo:table-cell number-columns-spanned="1" display-align="after">
-                                                <fo:block font-size="10pt" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">Halbjahr</fo:block>
+                                                <fo:block font-size="10pt" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">&#x00A0;</fo:block>
+                                                <!--<fo:block font-size="10pt" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">Halbjahr</fo:block>-->
                                             </fo:table-cell>
                                             <xsl:for-each select="subjects/subject">
                                                 <xsl:sort select="@tier" data-type="number" order="ascending"/>
                                                 <xsl:sort select="@order" data-type="number" order="ascending"/>
                                                 <fo:table-cell number-columns-spanned="1" display-align="after">
                                                     <!--width muss! gesetzt sein wie oben height!-->
-                                                    <fo:block-container reference-orientation="90" font-family="SansSerif" display-align="center" width="2.2cm" >                                                                                                 
+                                                    <fo:block-container reference-orientation="90" font-family="SansSerif" display-align="center" width="2.2cm" >                                                                                              
                                                         <fo:block line-height="8pt" padding-before="1pt" padding-after="2pt" wrap-option="wrap" hyphenate="false" hyphenation-remain-character-count="11" hyphenation-push-character-count="3">   
                                                             <xsl:attribute name="font-size">
                                                                 <xsl:value-of select="@font-size"/>
@@ -61,7 +72,7 @@
                                                             </xsl:if>                                                                                            
                                                             <xsl:value-of select="normalize-space(.)"/>        
                                                             <xsl:if test="@label-right">
-                                                                <fo:inline font-size="5" font-style="italic" space-start="0.5pt" baseline-shift="super">
+                                                                <fo:inline font-size="70%" font-style="italic" space-start="0.5pt" baseline-shift="super">
                                                                     <xsl:value-of select="@label-right"/>
                                                                 </fo:inline>
                                                             </xsl:if>                                                    
@@ -76,6 +87,7 @@
                                                     <xsl:number value="count(subjects/subject) + 1"/>
                                                 </xsl:attribute>
                                                 <fo:block text-align-last="justify" line-height="1pt" space-after="0.1cm">
+                                                    <!--TODO: font-size-->
                                                     <fo:leader leader-pattern="rule" color="#ff9a33" rule-thickness="1.0pt" rule-style="solid"/>
                                                 </fo:block>
                                             </fo:table-cell>
@@ -84,15 +96,26 @@
                                     <fo:table-body>
                                         <xsl:for-each select="term-data">
                                             <xsl:sort select="@row" data-type="number" order="ascending"/>
+                                            <!--TODO: height-->
                                             <fo:table-row background-color="#ffffff" height="0.5cm" display-align="after" >
                                                 <xsl:if test="(position() mod 2) = 0">
                                                     <xsl:attribute name="background-color">#FFE0C0</xsl:attribute>
                                                 </xsl:if>
                                                 <fo:table-cell number-columns-spanned="1">
                                                     <fo:block margin-left="0.0cm" margin-right="0.0cm" margin-top="0.0cm" font-size="10pt" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">
+                                                        <xsl:choose>
+                                                            <xsl:when test="@font-size">
+                                                                <xsl:attribute name="font-size">
+                                                                    <xsl:value-of select="@font-size"/>
+                                                                </xsl:attribute>
+                                                            </xsl:when>
+                                                            <xsl:otherwise>
+                                                                <xsl:attribute name="font-size">10pt</xsl:attribute>
+                                                            </xsl:otherwise>
+                                                        </xsl:choose> 
                                                         <xsl:value-of select="term-name"/>
                                                         <xsl:if test="@term-hint">  
-                                                            <fo:inline font-size="5" font-style="italic" baseline-shift="super">
+                                                            <fo:inline font-size="70%" font-style="italic" baseline-shift="super">
                                                                 <xsl:value-of select="@student-hint"/>
                                                             </fo:inline>  
                                                         </xsl:if>     
@@ -102,7 +125,18 @@
                                                     <xsl:sort select="@tier" data-type="number" order="ascending"/>
                                                     <xsl:sort select="@order" data-type="number" order="ascending"/>
                                                     <fo:table-cell number-columns-spanned="1">
-                                                        <fo:block font-size="10pt" font-family="SansSerif" text-align="center">
+                                                        <!--TODO: font-size in Column-->
+                                                        <fo:block font-family="SansSerif" text-align="center">
+                                                            <xsl:choose>
+                                                                <xsl:when test="@font-size">
+                                                                    <xsl:attribute name="font-size">
+                                                                        <xsl:value-of select="@font-size"/>
+                                                                    </xsl:attribute>
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    <xsl:attribute name="font-size">10pt</xsl:attribute>
+                                                                </xsl:otherwise>
+                                                            </xsl:choose> 
                                                             <xsl:choose>
                                                                 <xsl:when test="@color">
                                                                     <xsl:attribute name="color">
@@ -114,13 +148,13 @@
                                                                 </xsl:otherwise>
                                                             </xsl:choose>  
                                                             <xsl:if test="@label-left">
-                                                                <fo:inline font-size="7" space-end="0.5pt" baseline-shift="super" color="#000000">
+                                                                <fo:inline font-size="70%" space-end="0.5pt" baseline-shift="super" color="#000000">
                                                                     <xsl:value-of select="@label-left"/>
                                                                 </fo:inline>
                                                             </xsl:if>                                                     
                                                             <xsl:value-of select="normalize-space(.)"/>      
                                                             <xsl:if test="@label-right">
-                                                                <fo:inline font-size="5" font-style="italic" space-start="0.5pt" baseline-shift="super" color="#000000">
+                                                                <fo:inline font-size="70%" font-style="italic" space-start="0.5pt" baseline-shift="super" color="#000000">
                                                                     <xsl:value-of select="@label-right"/>
                                                                 </fo:inline>
                                                             </xsl:if>                          
@@ -148,8 +182,19 @@
                                 </fo:table>
                                 <xsl:if test="footnote">
                                     <xsl:for-each select="footnote">
-                                        <fo:block font-size="7pt" font-family="SansSerif" space-before="1pt">
-                                            <fo:inline font-size="5" space-end="0.5pt" baseline-shift="super">
+                                        <!--TODO: font-size-->
+                                        <fo:block font-family="SansSerif" space-before="1pt">
+                                            <xsl:choose>
+                                                <xsl:when test="@font-size">
+                                                    <xsl:attribute name="font-size">
+                                                        <xsl:value-of select="@font-size"/>
+                                                    </xsl:attribute>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:attribute name="font-size">7pt</xsl:attribute>
+                                                </xsl:otherwise>
+                                            </xsl:choose> 
+                                            <fo:inline font-size="70%" space-end="0.5pt" baseline-shift="super">
                                                 <xsl:value-of select="@index"/>
                                             </fo:inline>
                                             <xsl:value-of select="normalize-space(.)"/>   
@@ -159,12 +204,32 @@
                                 <xsl:if test="text">
                                     <xsl:for-each select="text">
                                         <xsl:sort select="@position" data-type="number" order="ascending"/>
-                                        <fo:block keep-with-next.within-page="always" space-before="5pt" margin-left="2pt" height="0.5cm" font-weight="bold" font-size="9pt" font-family="SansSerif" text-align="left">
+                                        <fo:block keep-with-next.within-page="always" space-before="5pt" margin-left="2pt" height="0.5cm" font-weight="bold" font-family="SansSerif" text-align="left">
+                                            <xsl:choose>
+                                                <xsl:when test="@font-size">
+                                                    <xsl:attribute name="font-size">
+                                                        <xsl:value-of select="@font-size"/>
+                                                    </xsl:attribute>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:attribute name="font-size">9pt</xsl:attribute>
+                                                </xsl:otherwise>
+                                            </xsl:choose>                                           
                                             <xsl:value-of select="@title"/>
                                         </fo:block>
                                         
                                         <!--https://stackoverflow.com/questions/3661483/inserting-a-line-break-in-a-pdf-generated-from-xsl-fo-using-xslvalue-of-->
-                                        <fo:block min-height="0.6cm" margin-left="2pt" font-size="9pt" font-family="SansSerif" text-align="left" hyphenate="true" linefeed-treatment="preserve">
+                                        <fo:block min-height="0.6cm" margin-left="2pt" font-family="SansSerif" text-align="left" hyphenate="true" linefeed-treatment="preserve">
+                                            <xsl:choose>
+                                                <xsl:when test="@font-size">
+                                                    <xsl:attribute name="font-size">
+                                                        <xsl:value-of select="@font-size"/>
+                                                    </xsl:attribute>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:attribute name="font-size">9pt</xsl:attribute>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                             <xsl:if test="."> 
                                                 <xsl:value-of select="."/> 
                                             </xsl:if>
@@ -178,6 +243,7 @@
                                         </fo:block>                                
                                     </xsl:for-each>
                                 </xsl:if>                                  
+                                <!--TODO: font-size-->
                                 <fo:block space-before="7pt" font-size="7pt" font-family="SansSerif" text-align="right">
                                     <xsl:value-of select="list-data/student-detail-version"/>
                                 </fo:block>

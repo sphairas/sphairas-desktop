@@ -66,6 +66,9 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
     private final Map<String, DocumentId> documents = new HashMap<>();
     @XmlElement(name = "Eigenschaft")
     private final List<Property> properties = new CopyOnWriteArrayList<>();
+    @XmlElementWrapper(name = "Zensurenlisten")
+    @XmlElement(name = "Zensurenliste")
+    private final List<ListDefinition> listDefinitions = new CopyOnWriteArrayList<>();
 
     //JAXB only
     public NdsZeugnisSchulvorlage() {
@@ -143,6 +146,10 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
     public List<Coloring> getColorings() {
         return colorings;
+    }
+
+    public List<ListDefinition> getListDefinitions() {
+        return listDefinitions;
     }
 
     public String getColoring(final Grade g) {
@@ -356,6 +363,111 @@ public class NdsZeugnisSchulvorlage implements Serializable, CommonDocuments {
 
         public void setFontSize(String fontSize) {
             this.fontSize = fontSize;
+        }
+
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class ListDefinition implements Serializable {
+
+        @XmlAttribute(name = "Name")
+        private String name;
+        @XmlAttribute(name = "Vornoten")
+        private Integer preTermsCount;
+        @XmlList
+        @XmlElement(name = "Listen")
+        private String[] targetTypes;
+        @XmlElement(name = "Schriftgrößen")
+        private FontSizeValues fontSizeValues = new FontSizeValues();
+        @XmlElement(name = "Eigenschaft")
+        private final List<Property> properties = new CopyOnWriteArrayList<>();
+
+        public ListDefinition() {
+        }
+
+        public ListDefinition(String name, int preTermsCount, String[] targetTypes, FontSizeValues fontSizeValues) {
+            this.name = name;
+            this.preTermsCount = preTermsCount;
+            this.targetTypes = targetTypes;
+            this.fontSizeValues = fontSizeValues;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getPreTermsCount() {
+            return preTermsCount;
+        }
+
+        public void setPreTermsCount(Integer preTermsCount) {
+            this.preTermsCount = preTermsCount;
+        }
+
+        public String[] getTargetTypes() {
+            return targetTypes;
+        }
+
+        public void setTargetTypes(String[] targetTypes) {
+            this.targetTypes = targetTypes;
+        }
+
+        public FontSizeValues getFontSize() {
+            return fontSizeValues;
+        }
+
+        public void setFontSize(FontSizeValues fontSize) {
+            this.fontSizeValues = fontSize;
+        }
+
+        public Optional<Property> getProperty(final String name) {
+            return properties.stream()
+                    .filter(p -> p.getName().equals(name))
+                    .collect(CollectionUtil.requireSingleton());
+        }
+
+        public void setProperty(final String name, final String value) {
+            final Optional<Property> p = getProperty(name);
+            if (value != null) {
+                p.ifPresentOrElse(prop -> prop.setValue(value), () -> {
+                    final Property prop = new Property(name, value);
+                    properties.add(prop);
+                });
+            } else {
+                p.ifPresent(properties::remove);
+            }
+        }
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class FontSizeValues implements Serializable {
+
+        @XmlAttribute(name = "Text", required = false)
+        private String text;
+        @XmlAttribute(name = "Tabelle", required = false)
+        private String tableCells;
+
+        public FontSizeValues() {
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public String getTableCells() {
+            return tableCells;
+        }
+
+        public void setTableCells(String tableCells) {
+            this.tableCells = tableCells;
         }
 
     }
