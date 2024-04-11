@@ -2,6 +2,7 @@ package org.thespheres.betula.validation.impl;
 
 import java.util.Objects;
 import java.util.Properties;
+import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
@@ -46,43 +47,54 @@ public abstract class ZensurensprungValidation<S extends Student, D extends Unit
         fireStop();
     }
 
-    public void runOneDocument(D document, StudentId filter) {
+    public void runOneDocument(D document, StudentId studentFilter, TermId current) {
         fireStart(1);
-        processOneDocument(document, filter);
+        processOneDocument(document, studentFilter, current);
         fireStop();
     }
 
     protected void processOneDocument(final D rtad) {
-        processOneDocument(rtad, null);
+        processOneDocument(rtad, null, null);
     }
 
-    protected void processOneDocument(final D rtad, final StudentId filter) {
-        model.getTerms().stream().forEach(t -> {
-            //TODO: use config, if set, to find maximum number of identities to skip
-            final TermId before = findPrecedingTerm(t);
-            model.getStudents().stream()
-                    .filter(rs -> filter == null || filter.equals(rs.getStudentId()))
-                    .forEach(rs -> {
-                        final Key k = new Key(rs.getStudentId(), rtad.getDocumentId(), t);
-                        final Grade g = rtad.select(rs.getStudentId(), t);
-                        R r = null;
-                        if (g != null) {
-                            Grade b = rtad.select(rs.getStudentId(), before);
-                            if (b != null) {
-                                r = evaluate(rs, t, rtad, b, g);
-                                if (r != null) {
-                                    setResult(k, r);
+    protected void processOneDocument(final D rtad, final StudentId studFilter, final TermId current) {
+        model.getTerms().stream()
+                .filter(rs -> current == null || current.equals(rs))
+                .forEach(t -> {
+                    //TODO: use config, if set, to find maximum number of identities to skip
+                    final TermId[] before = findPrecedingTerms(t);
+                    model.getStudents().stream()
+                            .filter(rs -> studFilter == null || studFilter.equals(rs.getStudentId()))
+                            .forEach(rs -> {
+                                final Key k = new Key(rs.getStudentId(), rtad.getDocumentId(), t);
+                                final Grade g = rtad.select(rs.getStudentId(), t);
+                                R r = null;
+                                if (g != null) {
+                                    for (TermId tid : before) {
+                                        Grade b = rtad.select(rs.getStudentId(), tid);
+                                        if (isPrecedingCandidate(b)) {
+                                            r = evaluate(rs, t, rtad, b, g);
+                                            if (r != null) {
+                                                setResult(k, r);
+                                            }
+                                            break;
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        if (r == null) {
-                            removeResults(k);
-                        }
-                    });
-        });
+                                if (r == null) {
+                                    removeResults(k);
+                                }
+                            });
+                });
+    }
+
+    protected boolean isPrecedingCandidate(Grade b) {
+        return b instanceof NumberValueGrade;
     }
 
     protected R evaluate(S student, TermId term, D doc, Grade before, Grade current) {
+        before = before instanceof Grade.Biasable ? ((Grade.Biasable) before).getUnbiased() : before;
+        current = current instanceof Grade.Biasable ? ((Grade.Biasable) current).getUnbiased() : current;
         if (before instanceof NumberValueGrade && current instanceof NumberValueGrade) {
             NumberValueGrade nb = (NumberValueGrade) before;
             NumberValueGrade nc = (NumberValueGrade) current;
@@ -95,9 +107,13 @@ public abstract class ZensurensprungValidation<S extends Student, D extends Unit
 
     protected abstract R createResult(S student, TermId term, D doc, Grade before, Grade current);
 
-    protected TermId findPrecedingTerm(TermId t) {
+    protected TermId[] findPrecedingTerms(TermId t) {
         if (t.getId() != 0) {
-            return new TermId(t.getAuthority(), t.getId() - 1);
+            int tid = t.getId();
+            int subtract = (tid % 2 == 1) ? 2 : 3;
+            return IntStream.rangeClosed(1, subtract)
+                    .mapToObj(i -> new TermId(t.getAuthority(), t.getId() - i))
+                    .toArray(TermId[]::new);
         }
         throw new IllegalArgumentException("Cannot find preceding TermId for: " + t.toString());
     }
