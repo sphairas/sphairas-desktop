@@ -33,12 +33,16 @@ import org.thespheres.betula.services.ui.util.dav.URLs;
 import org.thespheres.betula.services.ws.WebServiceProvider;
 
 @Messages({"DownloadDetails.action.name=Detail-Listen für {0} erstellen ({1})",
+    "DownloadDetails.action.custom.name={2} für {0} erstellen ({1})",
     "DownloadDetails.action.disabledName.pdf=Detail-Listen erstellen (pdf)",
+    "DownloadDetails.action.custom.disabledName.pdf={0} erstellen (pdf)",
     //    "DownloadDetails.action.disabledName.xml=Listen erstellen (xml)",
     //    "DownloadDetails.download.allezgn.filename={0} Detail-Listen {1}-{2} ({3,date,dd.MM.yy HH'h'mm}).{4}",
     "DownloadDetails.download.allezgn.filename={0} Detail-Listen {1}-{2}.{4}",
     "DownloadDetails.missingHref.exception=Download Detail-Listen kann nicht ausgeführt werden, weil in der Konfiguration {0} der Schlüssel \"zgnsrvUrl\" fehlt."})
 public final class DownloadDetails extends PrimaryUnitDownloadAction {
+
+    private String template;
 
     @ActionID(
             category = "Betula",
@@ -80,17 +84,26 @@ public final class DownloadDetails extends PrimaryUnitDownloadAction {
         return new DownloadDetails(actionContext, mime, extension);
     }
 
+    public void setTemplate(String template) {
+        this.template = template;
+        updateName();
+    }
+
     @Override
     public String getName() {
-        String name;
+        String ret;
         try {
             term = findCommonTerm();
-            name = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.action.name", new Object[]{term.getDisplayName(), extension});
+            if (template == null) {
+                ret = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.action.name", new Object[]{term.getDisplayName(), extension});
+            } else {
+                ret = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.action.custom.name", new Object[]{term.getDisplayName(), extension, template});
+            }
         } catch (IOException ex) {
             setEnabled(false);
-            name = getDisabledName();
+            ret = getDisabledName();
         }
-        return name;
+        return ret;
     }
 
     @Override
@@ -98,7 +111,11 @@ public final class DownloadDetails extends PrimaryUnitDownloadAction {
         if (extension == null) {
             return null;
         }
-        return NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.action.disabledName." + extension);
+        if (template == null) {
+            return NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.action.disabledName." + extension);
+        } else {
+            return NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.action.custom.disabledName." + extension, template);
+        }
     }
 
     @Override
@@ -118,10 +135,10 @@ public final class DownloadDetails extends PrimaryUnitDownloadAction {
             throw new IOException(ex);
         }
         rdn.addResolverHint("klasse.ohne.schuljahresangabe");
-        String name = rdn.getResolvedName(selectedTerm);
+        String nrr = rdn.getResolvedName(selectedTerm);
         String jahr = Integer.toString((Integer) selectedTerm.getParameter(NdsTerms.JAHR));
         int hj = (Integer) selectedTerm.getParameter(NdsTerms.HALBJAHR);
-        String file = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.download.allezgn.filename", name.replace("/", "_"), jahr, hj, new Date(), extension);
+        String file = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.download.allezgn.filename", nrr.replace("/", "_"), jahr, hj, new Date(), extension);
         String fe = URLEncoder.encode(file, "utf-8");
 
         String uri = href
@@ -134,6 +151,9 @@ public final class DownloadDetails extends PrimaryUnitDownloadAction {
                 + "&mime=" + mime;
         if (false) {
             uri = uri + "&format.details.lists.preterms.count=" + Integer.toString(2);
+        }
+        if (template != null) {
+            uri = uri + "&format.details.lists.template.name=" + URLEncoder.encode(template, "utf-8");
         }
 
 //        FileObject files = FileUtil.createFolder(context.getProjectDirectory(), "Dateien");

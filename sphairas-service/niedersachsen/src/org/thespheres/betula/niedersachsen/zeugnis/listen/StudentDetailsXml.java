@@ -52,7 +52,7 @@ public class StudentDetailsXml {
     @XmlElement(name = "text")
     private List<Text> texts = new ArrayList<>();
     private transient String sortString;
-    private transient String headerFontSize = null;
+    private transient String tableFontSize = null;
 //    private final static Collator COLLATOR = Collator.getInstance(Locale.GERMANY);
     private final static SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
 //    @XmlTransient
@@ -78,12 +78,12 @@ public class StudentDetailsXml {
         listData.version = ldate;
     }
 
-    public String getHeaderFontSize() {
-        return headerFontSize;
+    public String getTableFontSize() {
+        return tableFontSize;
     }
 
-    public void setHeaderFontSize(String headerFontSize) {
-        this.headerFontSize = headerFontSize;
+    public void setTableFontSize(String headerFontSize) {
+        this.tableFontSize = headerFontSize;
     }
 
     public TermDataLine addLine(int line, String termName) {
@@ -127,14 +127,14 @@ public class StudentDetailsXml {
                 .sorted(Comparator.comparing(c -> ORDER.positionOf(c.comparingMarker(ORDER))))
                 .distinct()
                 .peek(allKeys::add)
-                .map(k -> mapToColumn(k, getHeaderFontSize()))
+                .map(this::mapToColumn)
                 .forEach(subjects::add);
         list.stream()
                 .forEach(l -> l.beforeMarshal(allKeys));
         Collections.sort(list, Comparator.comparing(l -> l.row));
     }
 
-    private Column mapToColumn(ColumnKey.MarkerColumnKey key, String headerFontSize) throws IllegalArgumentException {
+    private Column mapToColumn(ColumnKey.MarkerColumnKey key) throws IllegalArgumentException {
 //        boolean keep = false;
         String fName = key.alt;
         if (fName == null) {
@@ -172,15 +172,14 @@ public class StudentDetailsXml {
 //            l += PROFIL_RS.length();
         }
         l += fName.length();
-        if (headerFontSize == null) {
+        if (tableFontSize == null) {
             if (l > 13) {
                 ret.setFontSize("9pt");//ZGN
             } else {
                 ret.setFontSize("11pt");
             }
         } else {
-            ret.setFontSize("20pt");
-//            ret.setFontSize(headerFontSize);
+            ret.setFontSize(tableFontSize);
         }
         return ret;
     }

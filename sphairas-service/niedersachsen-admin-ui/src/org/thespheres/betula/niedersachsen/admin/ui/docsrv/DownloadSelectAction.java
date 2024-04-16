@@ -23,7 +23,11 @@ import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.thespheres.betula.TermId;
 import org.thespheres.betula.admin.units.PrimaryUnitOpenSupport;
+import org.thespheres.betula.adminconfig.Configuration;
+import org.thespheres.betula.adminconfig.Configurations;
 import org.thespheres.betula.niedersachsen.admin.ui.docsrv.DownloadSelectActionPanel.DownloadSelectActionPanelWizardPanel;
+import org.thespheres.betula.niedersachsen.xml.NdsZeugnisSchulvorlage;
+import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.scheme.spi.TermNotFoundException;
@@ -50,27 +54,39 @@ public class DownloadSelectAction implements ActionListener {
     static final String DELEGATE = "delegate";
     private final List<PrimaryUnitOpenSupport> context;
     TermSchedule termSchedule;
+    String provider;
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public DownloadSelectAction(final List<PrimaryUnitOpenSupport> context) throws IOException {
         this.context = context;
-        findCommonTermSchedule();
+        findCommonTermScheduleAndProvider();
     }
 
-    protected void findCommonTermSchedule() throws IOException {
+    protected void findCommonTermScheduleAndProvider() throws IOException {
         TermSchedule found = null;
+        String providerFound = null;
         for (final PrimaryUnitOpenSupport puos : context) {
             final TermSchedule ts = puos.findTermSchedule();
+            final String url = puos.findBetulaProjectProperties().getProperty("providerURL");
             if (found == null) {
                 found = ts;
             } else if (!(found.getName().equals(ts.getName()) && found.getType().equals(ts.getType()))) {
                 throw new IOException("No common term schedule.");
             }
+            if (providerFound == null) {
+                providerFound = url;
+            } else if (!providerFound.equals(url)) {
+                throw new IOException("No common provider.");
+            }
         }
         if (found == null) {
             throw new IOException("No term schedule.");
         }
+        if (providerFound == null) {
+            throw new IOException("No provider.");
+        }
         termSchedule = found;
+        provider = providerFound;
     }
 
     @Override
@@ -109,9 +125,37 @@ public class DownloadSelectAction implements ActionListener {
         acl.add((PrimaryUnitDownloadAction) DownloadZeugnisse.xmlAction());
         acl.add((PrimaryUnitDownloadAction) DownloadListen.listenPdfAction());
         acl.add((PrimaryUnitDownloadAction) DownloadListen.listenCsvAction());
-        acl.add((PrimaryUnitDownloadAction) DownloadDetails.detailsPdfAction());
+        List<NdsZeugnisSchulvorlage.ListDefinition> lists = getDetaillistTemplates(provider);
+        if (lists.isEmpty()) {
+            acl.add((PrimaryUnitDownloadAction) DownloadDetails.detailsPdfAction());
+        } else {
+            lists.stream()
+                    .map(l -> {
+                        DownloadDetails ret = (DownloadDetails) DownloadDetails.detailsPdfAction();
+                        ret.setTemplate(l.getName());
+                        return ret;
+                    })
+                    .map(PrimaryUnitDownloadAction.class::cast)
+                    .forEach(acl::add);
+        }
         acl.add((PrimaryUnitDownloadAction) new DownloadArchive());
         return acl;
+    }
+
+    static List<NdsZeugnisSchulvorlage.ListDefinition> getDetaillistTemplates(String provider) {
+        final Configurations cfgs = Configurations.find(provider);
+        if (cfgs != null) {
+            final Configuration<NdsReportBuilderFactory> cfg;
+            try {
+                cfg = cfgs.readConfiguration("schulvorlage.xml", NdsReportBuilderFactory.class);
+            } catch (IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+            if (cfg != null) {
+                return cfg.get().getSchulvorlage().getListDefinitions();
+            }
+        }
+        throw new IllegalStateException("No NdsZeugnisSchulvorlage.ListDefinition found for " + provider);
     }
 
     List<Term> findSelectableTerms() {

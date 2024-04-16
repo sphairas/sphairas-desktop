@@ -102,7 +102,7 @@
                                                     <xsl:attribute name="background-color">#FFE0C0</xsl:attribute>
                                                 </xsl:if>
                                                 <fo:table-cell number-columns-spanned="1">
-                                                    <fo:block margin-left="0.0cm" margin-right="0.0cm" margin-top="0.0cm" font-size="10pt" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">
+                                                    <fo:block margin-left="0.0cm" margin-right="0.0cm" margin-top="0.0cm" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">
                                                         <xsl:choose>
                                                             <xsl:when test="@font-size">
                                                                 <xsl:attribute name="font-size">
