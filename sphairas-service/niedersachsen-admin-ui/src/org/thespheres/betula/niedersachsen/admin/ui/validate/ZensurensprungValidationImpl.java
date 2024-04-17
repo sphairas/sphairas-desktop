@@ -69,7 +69,7 @@ public class ZensurensprungValidationImpl extends ZensurensprungValidation<Remot
 
     private void postRunOneDocument(RemoteTargetAssessmentDocument d, StudentId stud) {
         if (d != null) {
-            RP2.post(() -> runOneDocument(d, stud));
+            RP2.post(() -> runOneDocument(d, stud, null));
         }
     }
 
