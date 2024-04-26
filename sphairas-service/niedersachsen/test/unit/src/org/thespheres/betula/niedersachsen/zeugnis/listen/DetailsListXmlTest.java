@@ -120,7 +120,7 @@ public class DetailsListXmlTest {
         } catch (IOException ex) {
             throw ex;
         }
-        Files.write(Paths.get("/home/boris/ttttest.pdf"), out);
+//        Files.write(Paths.get("test.pdf"), out);
         System.out.println("Out length: " + out.length);
         assertTrue(out.length == 7036);
     }
