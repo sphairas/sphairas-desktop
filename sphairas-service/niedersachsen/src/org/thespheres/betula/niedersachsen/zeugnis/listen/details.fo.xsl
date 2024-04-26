@@ -20,6 +20,8 @@
                 <fo:flow flow-name="body_main">
                     <xsl:if test="details-list-collection/list">
                         <xsl:for-each select="details-list-collection/list">
+                            <xsl:variable name="subject-column-width" select="@subject-column-width"/> 
+                            <xsl:variable name="subject-column-height" select="@subject-column-height"/> 
                             <fo:block break-before="page" font-family="SansSerif" font-weight="bold" space-after="0.1cm">
                                 <xsl:choose>
                                     <xsl:when test="@font-size">
@@ -46,12 +48,26 @@
                                         </xsl:if>   
                                     </fo:table-column>
                                     <xsl:for-each select="subjects/subject">
-                                        <fo:table-column column-width="0.7cm"/>
+                                        <fo:table-column>
+                                            <xsl:choose>
+                                                <xsl:when test="$subject-column-width != ''">
+                                                    <xsl:attribute name="column-width">
+                                                        <xsl:value-of select="$subject-column-width"/>
+                                                    </xsl:attribute>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:attribute name="column-width">0.7cm</xsl:attribute>
+                                                </xsl:otherwise>
+                                            </xsl:choose> 
+                                        </fo:table-column>
                                     </xsl:for-each>
                                     <fo:table-column/>
                                     <fo:table-header>
-                                        <fo:table-row height="2.2cm">
-                                            <fo:table-cell number-columns-spanned="1" display-align="after">
+                                        <fo:table-row>
+                                            <xsl:if test="$subject-column-width = ''" >
+                                                <xsl:attribute name="height">2.5cm</xsl:attribute>
+                                            </xsl:if>
+                                            <fo:table-cell number-rows-spanned="2" number-columns-spanned="1" display-align="after">
                                                 <fo:block font-size="10pt" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">&#x00A0;</fo:block>
                                                 <!--<fo:block font-size="10pt" font-family="SansSerif" color="#000000" text-align="left" padding-left="2pt">Halbjahr</fo:block>-->
                                             </fo:table-cell>
@@ -60,11 +76,21 @@
                                                 <xsl:sort select="@order" data-type="number" order="ascending"/>
                                                 <fo:table-cell number-columns-spanned="1" display-align="after">
                                                     <!--width muss! gesetzt sein wie oben height!-->
-                                                    <fo:block-container reference-orientation="90" font-family="SansSerif" display-align="center" width="2.2cm" >                                                                                              
-                                                        <fo:block line-height="8pt" padding-before="1pt" padding-after="2pt" wrap-option="wrap" hyphenate="false" hyphenation-remain-character-count="11" hyphenation-push-character-count="3">   
+                                                    <xsl:if test="@tier &lt; 2">
+                                                        <xsl:attribute name="number-rows-spanned">2</xsl:attribute>
+                                                    </xsl:if>
+                                                    <fo:block-container font-family="SansSerif" display-align="center" >                                                                                                                                                      
+                                                        <xsl:if test="$subject-column-width = ''">
+                                                            <xsl:attribute name="reference-orientation">90</xsl:attribute>
+                                                            <xsl:attribute name="width">2.5cm</xsl:attribute>
+                                                        </xsl:if>
+                                                        <fo:block margin-top="4pt" line-height="8pt" padding-before="1pt" padding-after="2pt" wrap-option="wrap" hyphenate="false" hyphenation-remain-character-count="11" hyphenation-push-character-count="3">   
                                                             <xsl:attribute name="font-size">
                                                                 <xsl:value-of select="@font-size"/>
-                                                            </xsl:attribute>     
+                                                            </xsl:attribute> 
+                                                            <xsl:if test="$subject-column-width != ''">
+                                                                <xsl:attribute name="text-align">center</xsl:attribute>
+                                                            </xsl:if>    
                                                             <xsl:if test="@label-left">
                                                                 <fo:inline font-size="5" font-style="italic" space-end="0.5pt" baseline-shift="super">
                                                                     <xsl:value-of select="@label-left"/>
@@ -80,6 +106,26 @@
                                                     </fo:block-container>
                                                 </fo:table-cell>
                                             </xsl:for-each>
+                                        </fo:table-row>
+                                        <fo:table-row>
+                                            <fo:table-cell display-align="after">
+                                                <xsl:attribute name="number-columns-spanned">
+                                                    <xsl:value-of select="count(//subjects/subject[@tier &gt; 1])"/>
+                                                </xsl:attribute>
+                                                <fo:block margin-top="2pt" margin-bottom="-2pt" font-family="SansSerif" color="#000000" text-align="center" >
+                                                    <xsl:choose>
+                                                        <xsl:when test="@table-font-size != ''">
+                                                            <xsl:attribute name="font-size">
+                                                                <xsl:value-of select="@table-font-size"/>
+                                                            </xsl:attribute>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:attribute name="font-size">11pt</xsl:attribute>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose> 
+                                                    WPK 
+                                                </fo:block>
+                                            </fo:table-cell>
                                         </fo:table-row>
                                         <fo:table-row background-color="#ffffff" height="0.3cm">
                                             <fo:table-cell>

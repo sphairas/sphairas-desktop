@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -23,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlValue;
+import org.apache.commons.lang3.StringUtils;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.niedersachsen.zeugnis.NdsReportBuilderFactory;
@@ -35,7 +38,8 @@ import org.thespheres.betula.niedersachsen.zeugnis.SubjectOrderDefinition;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StudentDetailsXml {
-
+    
+    final static Pattern measurePattern = Pattern.compile("^(\\d+)(?=[cm]m$)");
     static final String WPK = "WPK";
 //    private static final String PROFIL_RS = "Profil";
     @XmlElement(name = "list-data")
@@ -52,7 +56,13 @@ public class StudentDetailsXml {
     @XmlElement(name = "text")
     private List<Text> texts = new ArrayList<>();
     private transient String sortString;
-    private transient String tableFontSize = null;
+    @XmlAttribute(name = "table-font-size")
+    private String tableFontSize = "";
+    private transient boolean useShortLabel = false;
+    @XmlAttribute(name = "subject-column-width")
+    private String subjectColumnWidth = "";
+    @XmlAttribute(name = "subject-column-height")
+    private String subjectColumnHeight = "";
 //    private final static Collator COLLATOR = Collator.getInstance(Locale.GERMANY);
     private final static SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
 //    @XmlTransient
@@ -61,37 +71,69 @@ public class StudentDetailsXml {
     public String getSortString() {
         return sortString;
     }
-
+    
     public void setSortString(String sort) {
         this.sortString = sort;
     }
-
+    
     public String getListName() {
         return listData.name;
     }
-
+    
     public void setListName(String lname) {
         listData.name = lname;
     }
-
+    
     public void setListDate(String ldate) {
         listData.version = ldate;
     }
-
+    
+    public String getFirstColumnWidth() {
+        return firstColumnWidth;
+    }
+    
+    public void setFirstColumnWidth(String firstColumnWidth) {
+        this.firstColumnWidth = firstColumnWidth;
+    }
+    
+    public String getSubjectColumnWidth() {
+        return subjectColumnWidth;
+    }
+    
+    public void setSubjectColumnWidth(String subjectColumnWidth) {
+        this.subjectColumnWidth = StringUtils.isNotBlank(subjectColumnWidth) ? subjectColumnWidth : "";
+    }
+    
+    public String getSubjectColumnHeight() {
+        return subjectColumnHeight;
+    }
+    
+    public void setSubjectColumnHeight(String subjectColumnHeight) {
+        this.subjectColumnHeight = StringUtils.isNotBlank(subjectColumnHeight) ? subjectColumnHeight : "";
+    }
+    
     public String getTableFontSize() {
         return tableFontSize;
     }
-
+    
     public void setTableFontSize(String headerFontSize) {
-        this.tableFontSize = headerFontSize;
+        this.tableFontSize = StringUtils.isNotBlank(headerFontSize) ? headerFontSize : "";
     }
-
+    
+    public boolean isUseShortLabel() {
+        return useShortLabel;
+    }
+    
+    public void setUseShortLabel(boolean useShortLabel) {
+        this.useShortLabel = useShortLabel;
+    }
+    
     public TermDataLine addLine(int line, String termName) {
         TermDataLine ret = new TermDataLine(line, termName);
         list.add(ret);
         return ret;
     }
-
+    
     public Text addText(String u, int position) {
         for (Text t : getTexts()) {
             if (t.getPosition() == position) {
@@ -103,22 +145,22 @@ public class StudentDetailsXml {
         texts.add(toAdd);
         return toAdd;
     }
-
+    
     public List<Text> getTexts() {
         return texts;
     }
-
+    
     public Footnote addFootnote(String text) {
         Footnote ret = new Footnote(text);
         footnotes.add(ret);
         ret.setIndex(footnotes.indexOf(ret));
         return ret;
     }
-
+    
     public List<Footnote> getFootnotes() {
         return footnotes;
     }
-
+    
     public void beforeMarshal(Marshaller marshaller) {
         final Set<ColumnKey.MarkerColumnKey> allKeys = new HashSet<>();
         list.stream()
@@ -133,46 +175,51 @@ public class StudentDetailsXml {
                 .forEach(l -> l.beforeMarshal(allKeys));
         Collections.sort(list, Comparator.comparing(l -> l.row));
     }
-
+    
     private Column mapToColumn(ColumnKey.MarkerColumnKey key) throws IllegalArgumentException {
-//        boolean keep = false;
         String fName = key.alt;
         if (fName == null) {
-            fName = key.marker.size() == 1 ? key.marker.iterator().next().getLongLabel() : key.marker.stream()
-                    .sorted(ORDER)
-                    .map(Marker::getLongLabel)
-                    .collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
+            if (key.marker.size() == 1) {
+                Marker m = key.marker.iterator().next();
+                fName = isUseShortLabel() ? m.getShortLabel() : m.getLongLabel();
+            } else {
+                fName = key.marker.stream()
+                        .sorted(ORDER)
+                        .map(m -> isUseShortLabel() ? m.getShortLabel() : m.getLongLabel())
+                        .collect(NdsReportBuilderFactory.SUBJECT_JOINING_COLLECTOR);
+            }
         }
-
-//            if (fName.startsWith("Profil ")) {
-//                fName = fName.replaceAll("Profil ", "");
-//            }
-//            int ws = 0;
-//            while ((ws = fName.indexOf("\u0020", ws)) != -1) {
-//            }
         String[] wsp = fName.split("\u0020");
-        StringJoiner wsj = new StringJoiner("\u00A0");
-        for (int i = 0; i < wsp.length - 1; i++) {
-            wsj.add(wsp[i]);
+        if (wsp.length > 1) {
+            StringJoiner wsj = new StringJoiner("\u00A0");
+            for (int i = 0; i < wsp.length - 1; i++) {
+                wsj.add(wsp[i]);
+            }
+            fName = wsj.toString() + "\u0020" + wsp[wsp.length - 1];
         }
-        fName = wsj.toString() + "\u0020" + wsp[wsp.length - 1];
-//            if (fName.indexOf(" ") < 11) {
-//                fName = fName.replaceFirst(" ", "\u00A0"); /// \u200B
-//            }
+        final String scw = getSubjectColumnWidth();
+        if (StringUtils.isNotBlank(scw)) {
+            Matcher m = measurePattern.matcher(scw);
+            if (m.find()) {
+                String g = m.group();
+                double w = Double.parseDouble(g);
+                String u = scw.substring(scw.length() - 2, scw.length());
+                if (u.equals("cm")) {
+                    w = w * 10d;
+                }
+                int nc = (int) (w / 3) + 1;
+                final int end = Math.min(nc, fName.length());
+                fName = fName.substring(0, end);
+            }
+        }
         Column ret = new Column(fName, key.tier, ORDER.positionOf(key.comparingMarker(ORDER)));
-//        if (keep) {
-//            ret.keepTogetherWithinLine = "always";
-//        }
         int l = 0;
-        if (key.tier == 1) {
-            l += WPK.length();
-            ret.setLabelLeft(WPK);
-        } else if (key.tier == 2) {
-//            ret.setLabelLeft(PROFIL_RS);
-//            l += PROFIL_RS.length();
-        }
+//        if (key.tier == 1) {
+//            l += WPK.length();
+//            ret.setLabelLeft(WPK);
+//        } 
         l += fName.length();
-        if (tableFontSize == null) {
+        if (StringUtils.isBlank(tableFontSize)) {
             if (l > 13) {
                 ret.setFontSize("9pt");//ZGN
             } else {
@@ -183,15 +230,15 @@ public class StudentDetailsXml {
         }
         return ret;
     }
-
+    
     public ColumnValue setValue(TermDataLine line, int tier, final String fach, Grade g, String ifGradeNull) {
         return setValueImp(tier, Collections.EMPTY_SET, fach, g, line, ifGradeNull);
     }
-
+    
     public ColumnValue setValue(TermDataLine line, int tier, Set<Marker> fach, Grade g, String ifGradeNull) {
         return setValueImp(tier, fach, null, g, line, ifGradeNull);
     }
-
+    
     private ColumnValue setValueImp(int tier, Set<Marker> fach, String fachAlt, Grade g, TermDataLine line, String ifGradeNull) {
         final ColumnKey.MarkerColumnKey k = new ColumnKey.MarkerColumnKey(tier, fach, fachAlt);
         if (g == null && line.map.containsKey(k)) {
@@ -202,9 +249,9 @@ public class StudentDetailsXml {
         line.map.put(k, ret);
         return ret;
     }
-
+    
     private static class ListData {
-
+        
         @XmlElement(name = "student-detail-name")
         private String name;
         @XmlElement(name = "student-detail-version")
@@ -216,15 +263,15 @@ public class StudentDetailsXml {
         public String getTextFontSize() {
             return fontSize;
         }
-
+        
         public void setTextFontSize(String textFontSize) {
             this.fontSize = textFontSize;
         }
     }
-
+    
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class ColumnValue {
-
+        
         @XmlAttribute(name = "label-left")
         private String left;
         @XmlAttribute(name = "label-right")
@@ -235,68 +282,68 @@ public class StudentDetailsXml {
         private String fontSize;
         @XmlAttribute(name = "color", required = false)
         private String color;
-
+        
         private ColumnValue(String value) {
             this.value = value;
         }
-
+        
         public String getLabelLeft() {
             return left;
         }
-
+        
         public void setLabelLeft(String level) {
             this.left = level;
         }
-
+        
         public String getLabelRight() {
             return this.right;
         }
-
+        
         public void setLabelRight(String lbl) {
             this.right = lbl;
         }
-
+        
         public String getFontSize() {
             return fontSize;
         }
-
+        
         public void setFontSize(String fontSize) {
             this.fontSize = fontSize;
         }
-
+        
         public String getColor() {
             return color;
         }
-
+        
         public void setColor(String color) {
             this.color = color;
         }
     }
-
+    
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Column extends ColumnValue implements Comparable<Column> {
-
+        
         @XmlAttribute(name = "tier", required = true)
         private int tier = 0;
         @XmlAttribute(name = "order", required = true)
         private int order = Integer.MAX_VALUE;
-
+        
         private Column(String longLabel, int tier, int order) {
             super(longLabel);
             this.tier = tier;
             this.order = order;
         }
-
+        
         @Override
         public int compareTo(Column o) {
             return this.order - o.order;
         }
-
+        
     }
-
+    
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class TermDataLine {
-
+        
         @XmlElement(name = "term-name")
         private String term;
         @XmlAttribute(name = "term-hint")
@@ -311,36 +358,36 @@ public class StudentDetailsXml {
         private final int row;
         @XmlAttribute(name = "font-size", required = false)
         private String fontSize;
-
+        
         TermDataLine(int row, String term) {
             this.row = row;
             this.term = term;
         }
-
+        
         public String getNote() {
             return note;
         }
-
+        
         public void setNote(String note) {
             this.note = note;
         }
-
+        
         public String getStudentHint() {
             return hint;
         }
-
+        
         public void setStudentHint(String studentHint) {
             this.hint = studentHint;
         }
-
+        
         public String getLabelFontSize() {
             return fontSize;
         }
-
+        
         public void setLabelFontSize(String textFontSize) {
             this.fontSize = textFontSize;
         }
-
+        
         private void beforeMarshal(final Set<ColumnKey.MarkerColumnKey> allKeys) {
             final Map<ColumnKey.MarkerColumnKey, ColumnValue> all = allKeys.stream()
                     .collect(Collectors.toMap(k -> k, key -> map.computeIfAbsent(key, k -> new ColumnValue(null))));
@@ -350,9 +397,9 @@ public class StudentDetailsXml {
                     .distinct()
                     .map(e -> mapToColumn(e.getKey(), e.getValue()))
                     .forEach(values::add);
-
+            
         }
-
+        
         private static Column mapToColumn(ColumnKey.MarkerColumnKey key, ColumnValue value) throws IllegalArgumentException {
             final Column ret = new Column(value.value, key.tier, ORDER.positionOf(key.comparingMarker(ORDER)));
             ret.setLabelLeft(value.getLabelLeft());
@@ -362,32 +409,32 @@ public class StudentDetailsXml {
             return ret;
         }
     }
-
+    
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Note {
-
+        
         @XmlAttribute(name = "font-size", required = false)
         private String fontSize;
         @XmlValue
         private String value;
-
+        
         private Note(String value) {
             this.value = value;
         }
-
+        
         public String getFontSize() {
             return fontSize;
         }
-
+        
         public void setFontSize(String fontSize) {
             this.fontSize = fontSize;
         }
-
+        
     }
-
+    
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Text {
-
+        
         @XmlAttribute(name = "title", required = true)
         private String noteHeader;
         @XmlAttribute(name = "position", required = true)
@@ -401,79 +448,79 @@ public class StudentDetailsXml {
         //JAXB only
         public Text() {
         }
-
+        
         public Text(String noteHeader, int position) {
             this.noteHeader = noteHeader;
             this.position = position;
         }
-
+        
         public String getNoteHeader() {
             return noteHeader;
         }
-
+        
         public String getNoteValue() {
             return noteValue;
         }
-
+        
         public void setValue(String noteValue) {
             this.noteValue = noteValue;
         }
-
+        
         public int getPosition() {
             return position;
         }
-
+        
         public void setPosition(int position) {
             this.position = position;
         }
-
+        
         public String getFontSize() {
             return fontSize;
         }
-
+        
         public void setFontSize(String fontSize) {
             this.fontSize = fontSize;
         }
     }
-
+    
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Footnote {
-
+        
         @XmlValue
         private String value;
         @XmlAttribute(name = "index")
         private String index;
         @XmlAttribute(name = "hint")
         private String hint;
-
+        
         Footnote(String value) {
             this.value = value;
         }
-
+        
         public String getValue() {
             return value;
         }
-
+        
         public void setValue(String value) {
             this.value = value;
         }
-
+        
         public String getIndex() {
             return index;
         }
-
+        
         void setIndex(int index) {
             this.index = Integer.toString(index + 1) + ".)";
         }
-
+        
         public String getHint() {
             return hint;
         }
-
+        
         public void setHint(String hint) {
             this.hint = hint;
         }
-
+        
     }
-
+    
 }

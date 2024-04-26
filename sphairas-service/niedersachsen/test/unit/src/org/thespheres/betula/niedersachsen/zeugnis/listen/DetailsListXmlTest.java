@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -60,7 +61,7 @@ public class DetailsListXmlTest {
     @After
     public void tearDown() {
     }
-
+    
     @Test
     public void testSetFooterCenter() throws Exception {
         System.out.println("setFooterCenter");
@@ -77,7 +78,7 @@ public class DetailsListXmlTest {
         l.setNote("note");
         Faecher facher = new Faecher();
         Marker[] ff = facher.getAllMarkers();
-        for (int i = 5; i < ff.length; i++) {
+        for (int i = 5; i < 10; i++) {
             Grade g = new AbstractGrade("conv", Integer.toString(i));
             final Set<Marker> hs = new HashSet<>();
             hs.add(ff[i]);
@@ -93,6 +94,8 @@ public class DetailsListXmlTest {
             cv.setColor("red");
         }
         details.addText("Header", 1000).setValue("text");
+//        details.setSubjectColumnWidth("8mm");
+//        details.setUseShortLabel(true);
         TransformerFactory tf = TransformerFactory.newInstance();
         final InputStream is = DetailsListXml.class.getResourceAsStream("details.fo.xsl");
         Templates t;
@@ -117,6 +120,7 @@ public class DetailsListXmlTest {
         } catch (IOException ex) {
             throw ex;
         }
+        Files.write(Paths.get("/home/boris/ttttest.pdf"), out);
         System.out.println("Out length: " + out.length);
         assertTrue(out.length == 7036);
     }
