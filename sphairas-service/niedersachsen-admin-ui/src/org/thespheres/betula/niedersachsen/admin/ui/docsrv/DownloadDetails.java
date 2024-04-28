@@ -39,6 +39,7 @@ import org.thespheres.betula.services.ws.WebServiceProvider;
     //    "DownloadDetails.action.disabledName.xml=Listen erstellen (xml)",
     //    "DownloadDetails.download.allezgn.filename={0} Detail-Listen {1}-{2} ({3,date,dd.MM.yy HH'h'mm}).{4}",
     "DownloadDetails.download.allezgn.filename={0} Detail-Listen {1}-{2}.{4}",
+    "DownloadDetails.download.allezgn.custom.filename={0} {5} {1}-{2}.{4}",
     "DownloadDetails.missingHref.exception=Download Detail-Listen kann nicht ausgeführt werden, weil in der Konfiguration {0} der Schlüssel \"zgnsrvUrl\" fehlt."})
 public final class DownloadDetails extends PrimaryUnitDownloadAction {
 
@@ -138,7 +139,12 @@ public final class DownloadDetails extends PrimaryUnitDownloadAction {
         String nrr = rdn.getResolvedName(selectedTerm);
         String jahr = Integer.toString((Integer) selectedTerm.getParameter(NdsTerms.JAHR));
         int hj = (Integer) selectedTerm.getParameter(NdsTerms.HALBJAHR);
-        String file = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.download.allezgn.filename", nrr.replace("/", "_"), jahr, hj, new Date(), extension);
+        String file;
+        if (template == null) {
+            file = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.download.allezgn.filename", nrr.replace("/", "_"), jahr, hj, new Date(), extension);
+        } else {
+            file = NbBundle.getMessage(DownloadDetails.class, "DownloadDetails.download.allezgn.custom.filename", nrr.replace("/", "_"), jahr, hj, new Date(), extension, template);
+        }
         String fe = URLEncoder.encode(file, "utf-8");
 
         String uri = href
