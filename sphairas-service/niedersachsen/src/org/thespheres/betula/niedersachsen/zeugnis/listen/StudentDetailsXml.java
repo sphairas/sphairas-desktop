@@ -180,7 +180,9 @@ public class StudentDetailsXml {
     private Column mapToColumn(ColumnKey.MarkerColumnKey key) throws IllegalArgumentException {
         String fName = key.alt;
         if (fName == null) {
-            if (key.marker.size() == 1) {
+            if (key.marker.isEmpty()) {
+                fName = NdsReportBuilderFactory.SUBJECT_NO_NAME;
+            } else if (key.marker.size() == 1) {
                 Marker m = key.marker.iterator().next();
                 fName = isUseShortLabel() ? m.getShortLabel() : m.getLongLabel();
             } else {

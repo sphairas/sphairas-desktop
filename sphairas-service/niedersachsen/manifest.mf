@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
-OpenIDE-Module-Implementation-Version: 2
+OpenIDE-Module-Implementation-Version: 3
 OpenIDE-Module-Layer: org/thespheres/betula/niedersachsen/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/thespheres/betula/niedersachsen/Bundle.properties
 OpenIDE-Module: org.thespheres.betula.niedersachsen

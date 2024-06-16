@@ -31,6 +31,7 @@ public class NdsReportBuilderFactory implements CommonDocuments {
 
     public static final String SIGNEE_BEMERKUNGEN_FILE = "signee/bemerkungen.xml";
     public static final String SCHULVORLAGE_FILE = "schulvorlage.xml";
+    public static final String SUBJECT_NO_NAME = "(Ohne Bezeichnung)";
     public static final Collector<CharSequence, ?, String> SUBJECT_JOINING_COLLECTOR = Collectors.joining(" - ", "(", ")"); //Collectors.joining(", ", "(", ")");
     public static final SubjectOrderDefinition FACH_COMPARATOR;
     private static final SubjectOrderDefinition FACH_COMPARATOR_HS;
