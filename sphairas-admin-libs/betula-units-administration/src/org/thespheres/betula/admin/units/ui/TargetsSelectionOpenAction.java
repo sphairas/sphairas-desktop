@@ -19,7 +19,7 @@ import org.thespheres.betula.admin.units.RemoteSignee;
 import org.thespheres.betula.admin.units.RemoteSignee.DocumentInfo;
 import org.thespheres.betula.admin.units.RemoteTargetAssessmentDocument;
 import org.thespheres.betula.admin.units.SigneesTopComponentModel;
-import org.thespheres.betula.admin.units.TargetsSelectionElementEnv2;
+import org.thespheres.betula.admin.units.TargetsSelectionElementEnv;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.model.DocumentsModel;
 import org.thespheres.betula.services.LocalProperties;
@@ -55,7 +55,7 @@ public final class TargetsSelectionOpenAction extends MultiContextAction {
     }
 
     public static void actionPerformed(final Set<DocumentId> l, final String provider) {
-        final TargetsSelectionElementEnv2 env = new TargetsSelectionElementEnv2(provider);
+        final TargetsSelectionElementEnv env = new TargetsSelectionElementEnv(provider);
         final LocalProperties lm = LocalProperties.find(provider);
         final DocumentsModel dm = new DocumentsModel();
         dm.initialize(lm.getProperties());

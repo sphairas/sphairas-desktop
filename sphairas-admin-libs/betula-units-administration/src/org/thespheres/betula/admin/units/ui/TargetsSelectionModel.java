@@ -33,9 +33,10 @@ import org.openide.util.NbBundle;
 import org.thespheres.betula.StudentId;
 import org.thespheres.betula.TermId;
 import org.thespheres.betula.Unit;
+import org.thespheres.betula.admin.units.RemoteGradeEntry;
 import org.thespheres.betula.admin.units.RemoteStudents;
 import org.thespheres.betula.admin.units.RemoteTargetAssessmentDocument;
-import org.thespheres.betula.admin.units.TargetsSelectionElementEnv2;
+import org.thespheres.betula.admin.units.TargetsSelectionElementEnv;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.assess.GradeTermTargetAssessment;
 import org.thespheres.betula.document.Timestamp;
@@ -54,6 +55,7 @@ import org.thespheres.betula.util.CollectionUtil;
  *
  * @author boris.heithecker
  */
+@NbBundle.Messages({"TargetsSelectionModel.csv.header.primaryUnit=Klasse"})
 public class TargetsSelectionModel extends AbstractTableModel implements ItemListener, ExportToCSVOption, TargetsElementModel {
 
     public static final String TABLE_PROP_CURRENT_TARGETTYPE = "current.target.type";
@@ -63,13 +65,13 @@ public class TargetsSelectionModel extends AbstractTableModel implements ItemLis
     private Term currentTerm;
     private final PropertyChangeSupport pSupport = new PropertyChangeSupport(this);
     private final SortedSet<Term> terms = new TreeSet<>((t1, t2) -> t1.getBeginDate().compareTo(t2.getBeginDate()));
-    private final TargetsSelectionElementEnv2 env;
+    private final TargetsSelectionElementEnv env;
     private final WeakReference<TargetsSelectionElement> component;
     private String displayName;
     private List<RemoteTargetAssessmentDocument> lastTargets;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    TargetsSelectionModel(final TargetsSelectionElementEnv2 env, TargetsSelectionElement cmp) {
+    TargetsSelectionModel(final TargetsSelectionElementEnv env, TargetsSelectionElement cmp) {
         this.env = env;
         this.component = new WeakReference(cmp);
     }
@@ -340,23 +342,24 @@ public class TargetsSelectionModel extends AbstractTableModel implements ItemLis
         StringBuilder sb = new StringBuilder();
         StringJoiner header = new StringJoiner(";", "", "\n");
         header.add(NbBundle.getMessage(TargetsForStudentsModel.class, "TargetsSelectionModel.export.csv.name"));
-        for (int j = 0; j < getRemoteTargetAssessmentDocumentsSize() - 1; j++) {
-            String val = Optional.ofNullable(getRemoteTargetAssessmentDocumentAtListIndex(j))
-                    .map(rtad -> rtad.getName().getDisplayName(currentTerm))
-                    .orElse("");
-            header.add(val);
+        header.add(NbBundle.getMessage(TargetsSelectionModel.class, "TargetsSelectionModel.csv.header.primaryUnit"));
+        for (RemoteTargetAssessmentDocument t : targets) {
+            String lbl = t.getName().getColumnLabel() + " " + currentTerm.getDisplayName();
+            header.add(lbl);
         }
         sb.append(header.toString());
         for (int i = 0; i < getRowCount(); i++) {
             StringJoiner sj = new StringJoiner(";", "", "\n");
             RemoteStudent rs = students.get(i);
             sj.add(rs.getDirectoryName());
-            for (int j = 0; j < getRemoteTargetAssessmentDocumentsSize() - 1; j++) {
-                String val = Optional.ofNullable(getRemoteTargetAssessmentDocumentAtListIndex(j))
-                        .flatMap(rtad -> rtad.selectGradeAccess(rs.getStudentId(), currentTerm.getScheduledItemId()))
+            Unit pu = rs.getClientProperty(RemoteStudents.PROP_PRIMARY_UNIT, Unit.class);
+            sj.add(pu != null ? pu.getDisplayName() : "---");
+
+            for (RemoteTargetAssessmentDocument t : targets) {
+                String val = t.selectGradeAccess(rs.getStudentId(), currentTerm.getScheduledItemId())
                         .filter(ga -> !ga.isUnconfirmed())
-                        .map(ga -> ga.getGrade().getShortLabel())
-                        .orElse("");
+                        .map(RemoteGradeEntry::getGrade)
+                        .map(Grade::getShortLabel).orElse("");
                 sj.add(val);
             }
             sb.append(sj.toString());

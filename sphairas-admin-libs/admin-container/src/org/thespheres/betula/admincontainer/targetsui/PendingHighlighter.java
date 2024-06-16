@@ -20,7 +20,7 @@ import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.thespheres.betula.admin.units.AbstractUnitOpenSupport;
 import org.thespheres.betula.admin.units.RemoteGradeEntry;
-import org.thespheres.betula.admin.units.TargetsSelectionElementEnv2;
+import org.thespheres.betula.admin.units.TargetsSelectionElementEnv;
 import org.thespheres.betula.assess.Grade;
 import org.thespheres.betula.ui.swingx.HighlighterInstanceFactory;
 import org.thespheres.betula.util.CollectionUtil;
@@ -94,14 +94,14 @@ abstract class PendingHighlighter extends ColorHighlighter implements HighlightP
         @Override
         public Highlighter createHighlighter(JXTable table, TopComponent tc) {
             return new PendingHighlighter(tc.getLookup()) {
-                private final Lookup.Result<TargetsSelectionElementEnv2> result = tc.getLookup().lookupResult(TargetsSelectionElementEnv2.class);
+                private final Lookup.Result<TargetsSelectionElementEnv> result = tc.getLookup().lookupResult(TargetsSelectionElementEnv.class);
                 private Object pending;
 
                 @Override
                 protected Grade getPending() throws IOException {
                     if (pending == null) {
                         try {
-                            final TargetsSelectionElementEnv2 env = result.allInstances().stream()
+                            final TargetsSelectionElementEnv env = result.allInstances().stream()
                                     .collect(CollectionUtil.requireSingleOrNull());
                             final ConfigurableImportTarget t = TargetsUtil.findCommonImportTarget(env.getProvider());
                             pending = t.getDefaultValue(null, null);

@@ -5,7 +5,7 @@
  */
 package org.thespheres.betula.admin.units.ui;
 
-import org.thespheres.betula.admin.units.TargetsSelectionElementEnv2;
+import org.thespheres.betula.admin.units.TargetsSelectionElementEnv;
 import org.thespheres.betula.ui.swingx.AbstractTableElement;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -47,6 +47,9 @@ import org.jdesktop.swingx.renderer.DefaultListRenderer;
 import org.jdesktop.swingx.renderer.StringValue;
 import org.netbeans.api.editor.mimelookup.MimeLookup;
 import org.netbeans.core.spi.multiview.MultiViewElement;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.Actions;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -142,7 +145,7 @@ public class TargetsSelectionElement extends AbstractTableElement implements Ser
 
     public TargetsSelectionElement(final Lookup context) throws IOException {
         this();
-        final TargetsSelectionElementEnv2 e = context.lookup(TargetsSelectionElementEnv2.class);
+        final TargetsSelectionElementEnv e = context.lookup(TargetsSelectionElementEnv.class);
         if (e == null) {
             throw new IOException();
         }
@@ -151,8 +154,8 @@ public class TargetsSelectionElement extends AbstractTableElement implements Ser
         initializeComponent();
     }
 
-    private TargetsSelectionElementEnv2 getEnv() {
-        return getNode().getLookup().lookup(TargetsSelectionElementEnv2.class);
+    private TargetsSelectionElementEnv getEnv() {
+        return getNode().getLookup().lookup(TargetsSelectionElementEnv.class);
     }
 
     private void initializeComponent() throws IOException {
@@ -201,6 +204,8 @@ public class TargetsSelectionElement extends AbstractTableElement implements Ser
 
         EventQueue.invokeLater(this::initTermBox);
 
+        ic.add(model);
+        
         Mutex.EVENT.writeAccess(() -> {
             model.getLastTargets().forEach(ic::remove);
             model.getTargets().forEach(ic::add);
@@ -388,8 +393,8 @@ public class TargetsSelectionElement extends AbstractTableElement implements Ser
     public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
         super.readExternal(oi);
         Object o = oi.readObject();
-        if (o instanceof TargetsSelectionElementEnv2) {
-            final TargetsSelectionElementEnv2 e = (TargetsSelectionElementEnv2) o;
+        if (o instanceof TargetsSelectionElementEnv) {
+            final TargetsSelectionElementEnv e = (TargetsSelectionElementEnv) o;
             if (e == null) {
                 throw new IOException();
             }

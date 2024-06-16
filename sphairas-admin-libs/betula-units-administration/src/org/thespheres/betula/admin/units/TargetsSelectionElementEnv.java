@@ -17,8 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.swing.event.ChangeListener;
 import org.netbeans.core.api.multiview.MultiViews;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.ChangeSupport;
 import org.openide.util.Lookup;
@@ -28,6 +26,7 @@ import org.thespheres.betula.StudentId;
 import org.thespheres.betula.TermId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.admin.units.ui.TargetsSelectionElement;
+import org.thespheres.betula.admin.units.ui.TargetsSelectionTargetNode;
 import org.thespheres.betula.admin.units.util.OpenSupportProperties;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Marker;
@@ -37,15 +36,15 @@ import org.thespheres.betula.services.LocalProperties;
  *
  * @author boris.heithecker
  */
-public class TargetsSelectionElementEnv2 extends AbstractUnitOpenSupport.AbstractEnv implements Serializable, Lookup.Provider {
+public class TargetsSelectionElementEnv extends AbstractUnitOpenSupport.AbstractEnv implements Serializable, Lookup.Provider {
 
     private final String provider;
     private final List<DocumentId> targets = new ArrayList<>();
     private transient ChangeSupport cSupport;
-    static Map<TargetsSelectionElementEnv2, TargetsSelectionOpenSupport> MAP = new HashMap<>();
+    static Map<TargetsSelectionElementEnv, TargetsSelectionOpenSupport> MAP = new HashMap<>();
     private transient Lookup lkp;
 
-    public TargetsSelectionElementEnv2(String provider) {
+    public TargetsSelectionElementEnv(String provider) {
         this.provider = provider;
     }
 
@@ -123,7 +122,7 @@ public class TargetsSelectionElementEnv2 extends AbstractUnitOpenSupport.Abstrac
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final TargetsSelectionElementEnv2 other = (TargetsSelectionElementEnv2) obj;
+        final TargetsSelectionElementEnv other = (TargetsSelectionElementEnv) obj;
         if (!Objects.equals(this.provider, other.provider)) {
             return false;
         }
@@ -132,15 +131,15 @@ public class TargetsSelectionElementEnv2 extends AbstractUnitOpenSupport.Abstrac
 
     public static class TargetsSelectionOpenSupport extends AbstractUnitOpenSupport {
 
-        private RemoteUnitsModel[] rum = new RemoteUnitsModel[]{null};
+        private final RemoteUnitsModel[] rum = new RemoteUnitsModel[]{null};
 
-        TargetsSelectionOpenSupport(final TargetsSelectionElementEnv2 env) {
+        TargetsSelectionOpenSupport(final TargetsSelectionElementEnv env) {
             super(env, new SelectionProps(env));
         }
 
         @Override
         protected CloneableTopComponent createCloneableTopComponent() {
-            return MultiViews.createCloneableMultiView(TargetsSelectionElement.MIME, (TargetsSelectionElementEnv2) env);
+            return MultiViews.createCloneableMultiView(TargetsSelectionElement.MIME, (TargetsSelectionElementEnv) env);
         }
 
         @Override
@@ -185,10 +184,14 @@ public class TargetsSelectionElementEnv2 extends AbstractUnitOpenSupport.Abstrac
             return rum[0];
         }
 
+//        @Override
+//        public String getContentType() {
+//            return TargetsSelectionElement.MIME;
+//        }
+
         @Override
         protected Node createNodeDelegate() {
-            return new AbstractNode(Children.LEAF) {
-            };
+            return new TargetsSelectionTargetNode(((TargetsSelectionElementEnv) env).targets, ((TargetsSelectionElementEnv) env).provider);
         }
 
     }
@@ -197,12 +200,12 @@ public class TargetsSelectionElementEnv2 extends AbstractUnitOpenSupport.Abstrac
 
         private final String provider;
 
-        SelectionProps(final TargetsSelectionElementEnv2 env) {
+        SelectionProps(final TargetsSelectionElementEnv env) {
             super(findName(env));
             this.provider = env.getProvider();
         }
 
-        private static String findName(final TargetsSelectionElementEnv2 env) {
+        private static String findName(final TargetsSelectionElementEnv env) {
             return env.getTargets().stream()
                     .map(d -> d.toString())
                     .collect(Collectors.joining(" "));
