@@ -37,6 +37,8 @@ import org.thespheres.betula.admindocsrv.Encode;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.scheme.spi.Term;
+import org.thespheres.betula.services.ui.ConfigurationException;
+import org.thespheres.betula.services.ui.util.dav.URLs;
 import org.thespheres.betula.services.util.JavaUtilities;
 import org.thespheres.betula.services.ws.WebServiceProvider;
 import org.thespheres.betula.ui.util.FileChooserBuilderWithHint;
@@ -44,7 +46,8 @@ import org.thespheres.betula.ui.util.LogLevel;
 import org.thespheres.betula.ui.util.PlatformUtil;
 
 /**
- *TargetDocumentDownloadAction.action.disabledName.zip
+ * TargetDocumentDownloadAction.action.disabledName.zip
+ *
  * @author boris.heithecker
  */
 @Messages({"TargetDocumentDownloadAction.FileChooser.Title=Ordner",
@@ -216,10 +219,11 @@ class TargetDocumentDownloadAction extends AbstractDownloadAction<RemoteTargetAs
     }
 
     protected void downLoad(RemoteTargetAssessmentDocument context, LocalProperties properties, Term tid, WebServiceProvider service, Path path) throws IOException {
-        String href = properties.getProperty("zgnsrvUrl");
-        if (href == null) {
-            final String msg = NbBundle.getMessage(AbstractDownloadAction.class, "AbstractDownloadAction.missingHref.exception", properties.getName());
-            throw new IOException(msg);
+        final String href;
+        try {
+            href = URLs.reports(properties);
+        } catch (ConfigurationException cfex) {
+            throw new IOException(cfex);
         }
         final String name = context.getName().getDisplayName(term);
         final String fName = NbBundle.getMessage(TargetDocumentDownloadAction.class, "TargetDocumentDownloadAction.download.filename", name.replace("/", "_"), new Date(), extension);
