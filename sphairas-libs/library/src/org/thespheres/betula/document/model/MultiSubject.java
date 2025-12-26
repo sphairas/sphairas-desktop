@@ -18,46 +18,46 @@ import org.thespheres.betula.document.Marker;
  * @author boris.heithecker
  */
 public class MultiSubject {
-    
+
     private final Set<Marker> subjectMarker = new HashSet<>();
     private final Map<String, Marker> discrimator = new HashMap<>();
-    
+
     public MultiSubject(final Marker realmMarker) {
         this.discrimator.put("realm", realmMarker);
     }
-    
+
     public MultiSubject(final Marker realmMarker, final Collection<Marker> subjects) {
         this(realmMarker);
         subjects.forEach(subjectMarker::add);
     }
-    
+
     public Set<Marker> getSubjectMarkerSet() {
         return subjectMarker;
     }
-    
+
     public boolean isSingleSubject() {
         return subjectMarker.size() == 1;
     }
-    
+
     public Marker getSingleSubject() {
         return isSingleSubject() ? subjectMarker.stream().findAny().get() : null;
     }
-    
+
     public Marker getRealmMarker() {
         return discrimator.get("realm");
     }
-    
+
     public Map<String, Marker> getDiscrimatorMap() {
         return discrimator;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 89 * hash + Objects.hashCode(this.subjectMarker);
         return 89 * hash + Objects.hashCode(this.discrimator);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -72,5 +72,5 @@ public class MultiSubject {
         }
         return Objects.equals(this.discrimator, other.discrimator);
     }
-    
+
 }

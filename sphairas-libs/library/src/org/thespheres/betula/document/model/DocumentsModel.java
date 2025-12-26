@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.document.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,7 @@ import org.thespheres.betula.document.Marker;
  *
  * @author boris.heithecker
  */
-public class DocumentsModel extends GroupingByIdentity<DocumentId, DocumentId> {
+public class DocumentsModel extends GroupingByIdentity<DocumentId, DocumentId> implements Serializable {
 
     public static final String PROP_DOCUMENT_SUFFIXES = "documents.model.suffixes";
     public static final String PROP_DOCUMENT_PRIMARY_SUFFIX = "documents.model.primary.suffix";
