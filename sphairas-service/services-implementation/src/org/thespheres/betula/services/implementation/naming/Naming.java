@@ -173,7 +173,8 @@ public abstract class Naming {
         try {
             jahr = Integer.parseInt(dj);
         } catch (NumberFormatException nfex) {
-            Logger.getLogger(Naming.class.getName()).log(Level.WARNING, nfex.getLocalizedMessage(), nfex);
+            final String msg = "Beim Auflösen des Namens " + identity.toString() + "ist ein Fehler aufgetreten. Ursache: " + nfex.getLocalizedMessage();
+            Logger.getLogger(Naming.class.getName()).log(Level.WARNING, msg, nfex);
             jahr = 0;
         }
         if (parts.length > pointer) {
