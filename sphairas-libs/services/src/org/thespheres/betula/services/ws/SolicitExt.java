@@ -7,6 +7,7 @@ package org.thespheres.betula.services.ws;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.thespheres.betula.document.Container;
 
@@ -14,6 +15,7 @@ import org.thespheres.betula.document.Container;
  *
  * @author boris.heithecker
  */
+@XmlRootElement(name = "solicit", namespace = "http://web.service.betula.thespheres.org/")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "solicit", propOrder = {
     "container"
