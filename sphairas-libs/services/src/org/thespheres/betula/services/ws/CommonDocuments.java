@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.services.ws;
 
+import java.io.Serializable;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.services.ProviderInfo;
 
@@ -12,7 +13,7 @@ import org.thespheres.betula.services.ProviderInfo;
  *
  * @author boris.heithecker
  */
-public interface CommonDocuments {
+public interface CommonDocuments extends Serializable {
 
     public static final String STUDENT_CAREERS_DOCID = "student-bildungsgang-documentid";
     public static final String COMMON_NAMES_DOCID = "common-names-documentid";

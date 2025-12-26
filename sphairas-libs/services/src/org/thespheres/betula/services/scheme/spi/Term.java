@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.services.scheme.spi;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import org.thespheres.betula.TermId;
@@ -13,7 +14,7 @@ import java.util.Date;
  *
  * @author boris.heithecker
  */
-public interface Term extends ScheduledItem<TermId, TermSchedule> {
+public interface Term extends ScheduledItem<TermId, TermSchedule>, Serializable {
 
     default public Date getBegin() {
         return Date.from(getBeginDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());

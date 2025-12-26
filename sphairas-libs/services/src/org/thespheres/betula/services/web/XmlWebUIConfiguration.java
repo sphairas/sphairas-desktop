@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.services.web;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,7 +23,7 @@ import org.thespheres.betula.util.PropertyMapAdapter;
  */
 @XmlRootElement(name = "web-ui-configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XmlWebUIConfiguration implements WebUIConfiguration {
+public class XmlWebUIConfiguration implements WebUIConfiguration, Serializable {
 
     @XmlAttribute(name = "name")
     private String name;
