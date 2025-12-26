@@ -50,6 +50,7 @@ import org.thespheres.betula.services.dav.Multistatus;
 import org.thespheres.betula.services.ui.util.dav.HttpCopy;
 import org.thespheres.betula.services.ui.util.dav.HttpPropfind;
 import org.thespheres.betula.services.ui.util.dav.MultiStatusSupport;
+import org.thespheres.betula.services.ui.web.SSLUtil;
 import org.thespheres.betula.services.web.ContextCredentials;
 import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmldefinitions.XmlMarkerConventionDefinition;
@@ -385,7 +386,7 @@ public class HttpUtilities {
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
             final HostnameVerifier hostnameVerifier = ws.getHostnameVerifier();
-            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         return builder.build();
@@ -420,7 +421,7 @@ public class HttpUtilities {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();
@@ -494,7 +495,7 @@ public class HttpUtilities {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();
@@ -574,7 +575,7 @@ public class HttpUtilities {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();

@@ -40,6 +40,8 @@ import org.thespheres.betula.services.ws.api.BetulaServiceClient;
  */
 public class SSLUtil {
 
+    public static final String SSL_VERSION = "TLSv1.3";
+
     private static void initPKCS11() {
         final String cfg = NbPreferences.forModule(KeyStores.class).get(MODULE_PREFERENCES_OPENSC_CONFIG_LOCATION_KEY, null);
         if (cfg != null) {
@@ -63,7 +65,7 @@ public class SSLUtil {
         char[] password = null;
         SSLContext ctx = null;
         try {
-            ctx = SSLContext.getInstance("TLSv1.3"); //.getInstance("SSLv3");  //TLSv1.2
+            ctx = SSLContext.getInstance(SSL_VERSION); //.getInstance("SSLv3");  //TLSv1.2
             final KeyManagerFactory kstorefac = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             final Path kspath = Paths.get(KeyStores.getKeystore());
             final KeyStore kstore = KeyStore.getInstance(KeyStores.getKeystoreType());

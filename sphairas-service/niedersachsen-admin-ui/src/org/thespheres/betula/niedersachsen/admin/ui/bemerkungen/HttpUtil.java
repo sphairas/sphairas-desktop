@@ -34,6 +34,7 @@ import org.openide.util.EditableProperties;
 import org.openide.util.NetworkSettings;
 import org.thespheres.betula.niedersachsen.zeugnis.TermReportNoteSetTemplate;
 import org.thespheres.betula.services.WebProvider;
+import org.thespheres.betula.services.ui.web.SSLUtil;
 import org.thespheres.betula.services.web.ContextCredentials;
 
 /**
@@ -159,7 +160,7 @@ class HttpUtil {
 
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
 
@@ -230,7 +231,7 @@ class HttpUtil {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();
@@ -308,7 +309,7 @@ class HttpUtil {
 
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
 

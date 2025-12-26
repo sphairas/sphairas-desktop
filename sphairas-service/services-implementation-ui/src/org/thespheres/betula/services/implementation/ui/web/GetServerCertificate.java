@@ -37,6 +37,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.EntityUtils;
 import org.openide.util.NetworkSettings;
+import org.thespheres.betula.services.ui.web.SSLUtil;
 
 /**
  *
@@ -165,7 +166,7 @@ public class GetServerCertificate {
 
     private static CloseableHttpClient buildHttpClient() {
         final HttpClientBuilder builder = HttpClients.custom();
-        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getTrustAllSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getTrustAllSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         builder.setSSLSocketFactory(sslsf);
         builder.addInterceptorLast((HttpResponse response, HttpContext context) -> {
             final ManagedHttpClientConnection routedConnection = (ManagedHttpClientConnection) context.getAttribute(HttpCoreContext.HTTP_CONNECTION);
@@ -181,7 +182,7 @@ public class GetServerCertificate {
     private static SSLContext getTrustAllSSLContext() throws IllegalStateException {
         if (sslContext == null) {
             try {
-                final SSLContext ctx = SSLContext.getInstance("TLSv1.2");
+                final SSLContext ctx = SSLContext.getInstance(SSLUtil.SSL_VERSION);
                 final TrustManager[] trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
 

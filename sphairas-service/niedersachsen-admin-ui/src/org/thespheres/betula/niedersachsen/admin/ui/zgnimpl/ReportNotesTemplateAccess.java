@@ -27,6 +27,7 @@ import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.thespheres.betula.niedersachsen.zeugnis.TermReportNoteSetTemplate;
 import org.thespheres.betula.services.WebProvider;
+import org.thespheres.betula.services.ui.web.SSLUtil;
 import org.thespheres.betula.services.util.ServiceConfiguration;
 import org.thespheres.betula.services.ws.WebServiceProvider;
 import org.thespheres.betula.ui.util.PlatformUtil;
@@ -93,7 +94,7 @@ class ReportNotesTemplateAccess implements Runnable {
 
     protected TermReportNoteSetTemplate findReportNotesTemplate() throws IOException {
 
-        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         final CloseableHttpClient httpclient
                 = //                .setDefaultCredentialsProvider(credsProvider)
                 HttpClients.custom().setSSLSocketFactory(sslsf).build();
@@ -140,7 +141,7 @@ class ReportNotesTemplateAccess implements Runnable {
     }
 
     protected String findLastModified() throws IOException {
-        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         final CloseableHttpClient httpclient
                 = //                .setDefaultCredentialsProvider(credsProvider)
                 HttpClients.custom().setSSLSocketFactory(sslsf).build();

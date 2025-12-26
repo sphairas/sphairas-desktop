@@ -28,6 +28,7 @@ import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.scheme.spi.TermSchedule;
 import org.thespheres.betula.services.ws.WebServiceProvider;
 import org.thespheres.betula.services.WorkingDate;
+import org.thespheres.betula.services.ui.web.SSLUtil;
 import org.thespheres.betula.ui.util.WorkingDateSensitiveAction;
 
 /**
@@ -78,7 +79,7 @@ public abstract class AbstractDownloadAction<C> extends WorkingDateSensitiveActi
                 HttpClients.custom();
         if (wsp instanceof WebProvider.SSL) {
             final SSLContext sc = ((WebProvider.SSL) wsp).getSSLContext();
-            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sc, new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sc, new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();
