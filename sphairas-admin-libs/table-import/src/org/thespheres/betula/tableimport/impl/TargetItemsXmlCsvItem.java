@@ -262,6 +262,16 @@ public class TargetItemsXmlCsvItem extends AbstractXmlCsvImportItem<XmlTargetIte
         return helper.getUnitDisplayName();
     }
 
+    public void setSubjectAlternativeName(final String n) {
+        final String before = this.subjectAlternativeName;
+        this.subjectAlternativeName = n;
+        try {
+            vSupport.fireVetoableChange(ImportTargetsItem.PROP_SUBJECT_ALT_NAME, before, n);
+        } catch (final PropertyVetoException ex) {
+            this.subjectAlternativeName = before;
+        }
+    }
+
     @Override
     public void setAssessmentConvention(AssessmentConvention ac) {
         super.setAssessmentConvention(ac);

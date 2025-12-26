@@ -31,6 +31,7 @@ import org.thespheres.betula.services.scheme.spi.TermSchedule;
 import org.thespheres.betula.services.util.Units;
 import org.thespheres.betula.ui.util.PlatformUtil;
 import org.thespheres.betula.util.CollectionUtil;
+import org.thespheres.betula.xmlimport.Constants;
 import org.thespheres.betula.xmlimport.ImportTargetFactory;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.Product;
@@ -46,6 +47,7 @@ public class ConfigurableImportTarget extends AbstractImportTarget implements Im
     private XmlTargetImportSettings defaultGrades;
     protected final Map<String, String> properties = new HashMap<>();
     private final DocumentsModel dtdb = new DocumentsModel();
+    protected boolean permitAltSubjects = false;
 
     static {
         try {
@@ -87,6 +89,9 @@ public class ConfigurableImportTarget extends AbstractImportTarget implements Im
         dtdb.initialize(properties);
         //initialize defaultGrades: register layer file (overridable) load
         this.properties.putAll(properties);
+
+        final String m = properties.get(Constants.XMLIMPORT_PERMIT_ALTSUBJECTNAME);
+        permitAltSubjects = Boolean.parseBoolean(m);
     }
 
     @Override
@@ -156,6 +161,10 @@ public class ConfigurableImportTarget extends AbstractImportTarget implements Im
 
     public ImportScripts getImportScripts() {
         return importScripts;
+    }
+
+    public boolean permitAltSubjectNames() {
+        return this.permitAltSubjects;
     }
 
     public static ConfigurableImportTarget find(final String url) {

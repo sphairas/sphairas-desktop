@@ -43,7 +43,6 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
     private DocumentId careersDocument;
     private String untisHref;
     private final String davBase;
-    private boolean permitAltSubjects = false;
 
     public DefaultConfigurableImportTarget(String provider, Product prod, XmlTargetImportSettings settings, XmlTargetProcessorHintsSettings hints) {
         super(provider, prod);
@@ -118,11 +117,6 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
 //            }
             }
         }
-    }
-
-    @Override
-    public boolean permitAltSubjectNames() {
-        return this.permitAltSubjects;
     }
 
 //    @Override// nur noch für kgs im Gebrauch

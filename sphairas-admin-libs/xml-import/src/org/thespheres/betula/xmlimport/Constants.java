@@ -13,6 +13,7 @@ public class Constants {
 
     public static final String PROP_STUDENT_CAREER = "student-career";
     public static final String PROP_USER_UNIT_DISPLAYNAME = "user.unit.display.name";
+    public static final String XMLIMPORT_PERMIT_ALTSUBJECTNAME = "xml-import.permit.altsubjectnames";
 
     private Constants() {
     }

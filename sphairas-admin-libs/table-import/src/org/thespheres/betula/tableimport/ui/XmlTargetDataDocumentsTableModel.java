@@ -11,6 +11,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Set;
 import javax.swing.JTable;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.decorator.FontHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -18,6 +19,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.Lookups;
 import org.thespheres.betula.assess.AssessmentConvention;
+import org.thespheres.betula.document.AbstractMarker;
 import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.MarkerConvention;
 import org.thespheres.betula.tableimport.action.XmlCsvImportSettings;
@@ -107,9 +109,45 @@ class XmlTargetDataDocumentsTableModel extends ImportTableModel<TargetItemsXmlCs
 
     final static class XmlSubjectColumn extends MultiSubjectColumn<TargetItemsXmlCsvItem, ConfigurableImportTarget, XmlCsvImportSettings<TargetItemsXmlCsvItem>, XmlTargetDataDocumentsTableModel> {
 
+        protected boolean permitAltSubjectNames;
+
         XmlSubjectColumn() {
             super(200, 125);
             this.prependNull = true;
+        }
+
+        @Override
+        public void initialize(final ConfigurableImportTarget config, final XmlCsvImportSettings<TargetItemsXmlCsvItem> wizard) {
+            super.initialize(config, wizard);
+            permitAltSubjectNames = config.permitAltSubjectNames();
+            this.box.setEditable(this.permitAltSubjectNames);
+        }
+
+        @Override
+        public Marker getColumnValue(final TargetItemsXmlCsvItem il) {
+            if (!StringUtils.isBlank(il.getSubjectAlternativeName())) {
+                return new AbstractMarker("null", "ALTERNATIVE_SUBJECT_NAME", null) {
+                    @Override
+                    public String getLongLabel(Object... formattingArgs) {
+                        return il.getSubjectAlternativeName();
+                    }
+
+                };
+            }
+            return super.getColumnValue(il);
+        }
+
+        @Override
+        public boolean setColumnValue(final TargetItemsXmlCsvItem il, final Object value) {
+            if (!(value instanceof Marker) && this.permitAltSubjectNames) {
+                final String v = (String) value;
+                final String n = StringUtils.trimToNull(v);
+                il.setSubjectAlternativeName(n);
+                il.setSubjectMarker(new Marker[0]);
+                return false;
+            } else {
+                return super.setColumnValue(il, value);
+            }
         }
 
         @Override
