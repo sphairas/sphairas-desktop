@@ -7,6 +7,7 @@ package org.thespheres.betula.niedersachsen.zeugnis;
 
 import org.thespheres.betula.niedersachsen.xml.NdsZeugnisSchulvorlage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.thespheres.betula.assess.AssessmentConvention;
@@ -25,7 +26,7 @@ import org.thespheres.betula.services.ws.CommonDocuments;
  *
  * @author boris.heithecker
  */
-public class NdsReportBuilderFactory implements CommonDocuments {
+public class NdsReportBuilderFactory implements CommonDocuments, Serializable {
 
     public static final String SGL_NAME = "sgl-name";
 
