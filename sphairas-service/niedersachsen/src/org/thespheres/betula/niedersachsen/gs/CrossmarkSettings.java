@@ -5,6 +5,7 @@
  */
 package org.thespheres.betula.niedersachsen.gs;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,7 +30,7 @@ import org.thespheres.betula.util.CollectionUtil;
  */
 @XmlRootElement(name = "niedersachsen-grundschule-ankreuzzeugnisse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CrossmarkSettings {
+public class CrossmarkSettings implements Serializable {
 
     @XmlElement(name = "assessment-convention")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
