@@ -5,7 +5,9 @@
  */
 package org.thespheres.betula.niedersachsen.zeugnis.listen;
 
+import java.text.Collator;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import org.thespheres.betula.TermId;
@@ -37,7 +39,7 @@ abstract class ColumnKey {
      *
      * @author boris.heithecker
      */
-    static class MarkerColumnKey extends ColumnKey {
+    static class MarkerColumnKey extends ColumnKey implements Comparable<MarkerColumnKey> {
 
         final Set<Marker> marker;
         final String alt;
@@ -50,6 +52,36 @@ abstract class ColumnKey {
 
         Marker comparingMarker(Comparator<Marker> comp) {
             return marker.stream().min(comp).orElse(null);
+        }
+
+        @Override
+        public int compareTo(MarkerColumnKey o) {
+            if (comparingMarker(StudentDetailsXml.ORDER) != null) {
+                if (o.comparingMarker(StudentDetailsXml.ORDER) != null) {
+                    return StudentDetailsXml.ORDER.positionOf(comparingMarker(StudentDetailsXml.ORDER)) - StudentDetailsXml.ORDER.positionOf(o.comparingMarker(StudentDetailsXml.ORDER));
+                } else {
+                    return -1;
+                }
+            } else if (alt == null) {
+                if (o.comparingMarker(StudentDetailsXml.ORDER) == null) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+            if (alt != null) {
+                if (o.alt != null) {
+                    return Collator.getInstance(Locale.getDefault()).compare(alt, o.alt);
+                } else {
+                    return -1;
+                }
+            } else {
+                if (o.alt == null) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }
         }
 
         @Override
@@ -80,6 +112,7 @@ abstract class ColumnKey {
             }
             return Objects.equals(this.marker, other.marker);
         }
+
     }
 
     static class TermColumnKey extends ColumnKey {

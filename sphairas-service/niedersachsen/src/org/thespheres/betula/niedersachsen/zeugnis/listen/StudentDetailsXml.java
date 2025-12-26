@@ -65,7 +65,7 @@ public class StudentDetailsXml {
     @XmlAttribute(name = "subject-column-height")
     private String subjectColumnHeight = DEFAULT_SUBJECT_COLUMN_HEIGHT;
 //    private final static Collator COLLATOR = Collator.getInstance(Locale.GERMANY);
-    private final static SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
+    final static SubjectOrderDefinition ORDER = NdsReportConstants.FACH_COMPARATOR;
 //    @XmlTransient
 //    private final Map<ColumnKey, ColumnValue> colmap = new HashMap<>();
 
@@ -167,7 +167,7 @@ public class StudentDetailsXml {
         list.stream()
                 .flatMap(l -> l.map.keySet().stream())
                 .sorted(Comparator.comparing(c -> c.tier))
-                .sorted(Comparator.comparing(c -> ORDER.positionOf(c.comparingMarker(ORDER))))
+                .sorted(Comparator.naturalOrder())
                 .distinct()
                 .peek(allKeys::add)
                 .map(this::mapToColumn)
@@ -396,7 +396,7 @@ public class StudentDetailsXml {
                     .collect(Collectors.toMap(k -> k, key -> map.computeIfAbsent(key, k -> new ColumnValue(null))));
             all.entrySet().stream()
                     .sorted(Comparator.comparing(e -> e.getKey().tier))
-                    .sorted(Comparator.comparing(e -> ORDER.positionOf(e.getKey().comparingMarker(ORDER))))
+                    .sorted(Comparator.comparing(e -> e.getKey()))
                     .distinct()
                     .map(e -> mapToColumn(e.getKey(), e.getValue()))
                     .forEach(values::add);
