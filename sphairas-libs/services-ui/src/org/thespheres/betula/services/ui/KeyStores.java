@@ -387,7 +387,7 @@ public final class KeyStores {
         KeyStores.storeKeyStore(trustStore, tspath, password);
     }
 
-    public static String createSelfSignedUserCertificate(final String cn, final String hostName, final Path csrOut, final boolean addToKeyStore) throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
+    public static String createSelfSignedUserCertificate(final String cn, final String hostName, final Path csrOut, final boolean addToKeyStore) throws Exception {
         //"CN=Duke, OU=JavaSoft, O=Sun Microsystems, C=US"
         final X500Principal principal = new X500Principal("CN=user");
         final CreateUserCertificateImpl cuci = new CreateUserCertificateImpl(principal);

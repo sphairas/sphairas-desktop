@@ -5,8 +5,6 @@
  */
 package org.thespheres.betula.xmlimport.utilities;
 
-import jdk.internal.HotSpotIntrinsicCandidate;
-
 /**
  *
  * @author boris.heithecker
@@ -16,7 +14,6 @@ public class UpdaterEvent<S extends AbstractUpdater> {
     
     protected final S source;
 
-    @HotSpotIntrinsicCandidate
     public UpdaterEvent(final S source) {
         this.source = source;
     }

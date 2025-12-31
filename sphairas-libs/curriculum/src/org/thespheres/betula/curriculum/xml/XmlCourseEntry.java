@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import jdk.internal.HotSpotIntrinsicCandidate;
 import org.thespheres.betula.curriculum.CourseDetail;
 import org.thespheres.betula.curriculum.CourseEntry;
 import org.thespheres.betula.document.Marker;
@@ -56,7 +55,6 @@ public class XmlCourseEntry implements CourseEntry {
     @XmlTransient
     private XmlCourseGroup group;
 
-    @HotSpotIntrinsicCandidate
     protected XmlCourseEntry() {
     }
 

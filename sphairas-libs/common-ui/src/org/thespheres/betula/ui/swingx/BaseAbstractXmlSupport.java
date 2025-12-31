@@ -8,7 +8,6 @@ package org.thespheres.betula.ui.swingx;
 import java.io.IOException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import jdk.internal.HotSpotIntrinsicCandidate;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileEvent;
 import org.openide.loaders.DataObject;
@@ -34,7 +33,6 @@ public abstract class BaseAbstractXmlSupport implements Lookup.Provider, Seriali
     protected final RequestProcessor.Task loadTask;
     private long time = 0l;
 
-    @HotSpotIntrinsicCandidate
     protected BaseAbstractXmlSupport(final XMLDataObject xmldo) {
         this.xmlDataObject = xmldo;
         xmlDataObject.getPrimaryFile().addFileChangeListener(fileListener);

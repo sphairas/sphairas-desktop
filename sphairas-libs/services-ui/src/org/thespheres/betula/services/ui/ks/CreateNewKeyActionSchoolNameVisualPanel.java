@@ -9,17 +9,22 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import javax.security.auth.x500.X500Principal;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.openide.WizardDescriptor;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.thespheres.betula.services.ui.util.dav.ResourcesUtil;
-import sun.security.x509.X500Name;
 
 /**
  *
@@ -53,16 +58,31 @@ public class CreateNewKeyActionSchoolNameVisualPanel extends javax.swing.JPanel 
         }
         if (cert != null) {
             X509Certificate x509 = (X509Certificate) cert;
-            final javax.security.auth.x500.X500Principal p = x509.getSubjectX500Principal();
-            try {
-                X500Name n = new X500Name(p.getName());
-                this.schoolNameTextField.setText(n.getOrganization());
-                this.stateTextField.setText(n.getState());
-                this.countryTextField.setText(n.getCountry());
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            final X500Principal p = x509.getSubjectX500Principal();
+            // Convert standard Java Principal to Bouncy Castle X500Name
+            // We use .getEncoded() to ensure we parse the ASN.1 structure directly, 
+            // rather than relying on String parsing which can be buggy.
+            X500Name n = X500Name.getInstance(p.getEncoded());
+
+            // Extract the fields using the helper method defined below
+            this.schoolNameTextField.setText(getRDNValue(n, BCStyle.O));  // Organization
+            this.stateTextField.setText(getRDNValue(n, BCStyle.ST));      // State
+            this.countryTextField.setText(getRDNValue(n, BCStyle.C));     // Country
         }
+    }
+
+    /**
+     * Helper method to extract a specific part (OID) from the X500Name. Returns
+     * null or empty string if not found.
+     */
+    private String getRDNValue(X500Name name, ASN1ObjectIdentifier id) {
+        RDN[] rdns = name.getRDNs(id);
+        if (rdns.length > 0) {
+            // Get the first occurrence (usually there is only one Organization, Country, etc.)
+            // IETFUtils converts the ASN.1 value to a clean Java String
+            return IETFUtils.valueToString(rdns[0].getFirst().getValue());
+        }
+        return "";
     }
 
     /**

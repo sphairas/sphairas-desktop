@@ -344,3 +344,7 @@
 /sphairas-service/dev/nbproject/private/
 /sphairas-service/niedersachsen-gymnasium-ui/build/
 /sphairas-service/niedersachsen-gymnasium-ui/nbproject/private/
+/sphairas-common/bouncy-castle/nbproject/private/
+/sphairas-common/bouncy-castle/build/
+/sphairas-common/bouncy-castle/release/modules/ext/*
+/sphairas-common/bouncy-castle/external/*
