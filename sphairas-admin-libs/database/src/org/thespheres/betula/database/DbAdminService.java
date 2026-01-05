@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thespheres.betula.admin.database.service;
+package org.thespheres.betula.database;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -11,8 +11,6 @@ import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.soap.Addressing;
-import org.thespheres.betula.database.DBAdminTask;
-import org.thespheres.betula.database.DBAdminTaskResult;
 
 /**
  *

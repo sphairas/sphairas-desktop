@@ -18,7 +18,7 @@ import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 import org.thespheres.betula.TermId;
-import org.thespheres.betula.admin.database.DbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.AbstractDbAdminServiceProvider;
 import org.thespheres.betula.database.DBAdminTask;
 import org.thespheres.betula.document.model.DocumentsModel;
 import org.thespheres.betula.services.IllegalAuthorityException;
@@ -47,7 +47,7 @@ class DeleteTaskVisualPanel extends javax.swing.JPanel {
 
     DeleteTaskVisualPanel() {
         initComponents();
-        DbAdminServiceProvider.findAllProviders().stream()
+        AbstractDbAdminServiceProvider.findAllProviders().stream()
                 .forEach(providerModel::addElement);
         this.providerComboBox.setModel(providerModel);
         this.providerComboBox.setRenderer(new DefaultListRenderer(providerConverter));
@@ -100,7 +100,7 @@ class DeleteTaskVisualPanel extends javax.swing.JPanel {
 
         maxEntriesTextField.setColumns(8);
         maxEntriesTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        maxEntriesTextField.setText(org.openide.util.NbBundle.getMessage(DeleteTaskVisualPanel.class, "DeleteTaskVisualPanel.maxEntriesTextField.text_1")); // NOI18N
+        maxEntriesTextField.setText(org.openide.util.NbBundle.getMessage(DeleteTaskVisualPanel.class, "DeleteTaskVisualPanel.maxEntriesTextField.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -270,8 +270,6 @@ class DeleteTaskVisualPanel extends javax.swing.JPanel {
             final DBAdminTask task = (DBAdminTask) wiz.getProperty(DeleteTask.PROP_TASK);
             getComponent().maxDocTextField.setValue(task.getArg("max-documents", Integer.class, 1000).longValue());
             getComponent().maxEntriesTextField.setValue(task.getArg("max-entries", Integer.class, 1000).longValue());
-            getComponent().providerModel.removeAllElements();
-            getComponent().providerModel.addElement(null);
         }
 
         @Override

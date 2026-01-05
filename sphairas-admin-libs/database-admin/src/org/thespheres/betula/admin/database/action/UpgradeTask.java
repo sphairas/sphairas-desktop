@@ -16,7 +16,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
-import org.thespheres.betula.admin.database.DbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.DbAdminServiceProvider;
 import org.thespheres.betula.admin.database.action.UpgradeTaskVisualPanel.UpgradeTaskPanel;
 import org.thespheres.betula.database.DBAdminTask;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportWizard;

@@ -127,6 +127,16 @@ public class LocalFileProperties implements CommonTargetProperties, CommonStuden
 //        is.close();
     }
 
+    protected void addProperty(String name, String value) {
+        if (initialized) {
+            throw new IllegalArgumentException("Cannot add property on LocalFileProperties after initialization.");
+        }
+        if (getPropertyInsecure(name) != null) {
+            throw new IllegalArgumentException("Cannot override property \"" + name + "\".");
+        }
+        internal.setProperty(name, value);
+    }
+
     protected boolean isInitialized() {
         return initialized;
     }

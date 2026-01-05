@@ -72,6 +72,11 @@ public final class DocumentId extends Identity<String> implements Serializable {
         return sj.toString();
     }
 
+    //For automatic jax.rs resolution
+    public static DocumentId valueOf(final String input) {
+        return resolve(input);
+    }
+
     public static DocumentId resolve(final String input) {
         return Identities.resolve(input, (a, i, v) -> new DocumentId(a, i, Version.parse(v)), null, null);
     }

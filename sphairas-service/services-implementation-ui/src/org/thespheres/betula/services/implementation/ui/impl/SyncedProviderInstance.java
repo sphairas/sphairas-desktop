@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.net.ssl.HostnameVerifier;
@@ -41,12 +42,14 @@ import org.thespheres.betula.services.WebProvider;
 import org.thespheres.betula.services.client.jms.JMSListener;
 import org.thespheres.betula.services.client.jms.JMSTopicListenerService;
 import org.thespheres.betula.services.implementation.ui.impl.LocalFilePropertiesProviderImpl.FilePropertiesImpl;
+import org.thespheres.betula.services.implementation.ui.web.AdminRESTProvider;
 import org.thespheres.betula.services.implementation.ui.web.SSLWebServiceProvider;
 import org.thespheres.betula.services.jms.AppResourceEvent;
 import org.thespheres.betula.services.ui.util.AppProperties;
 import org.thespheres.betula.services.ui.util.HttpUtilities;
 import org.thespheres.betula.services.ui.util.dav.URLs;
 import org.thespheres.betula.services.ui.web.SSLUtil;
+import org.thespheres.betula.services.ws.WebServiceProvider;
 import org.thespheres.betula.ui.util.PlatformUtil;
 
 /**
@@ -60,11 +63,13 @@ public class SyncedProviderInstance {
     private static final Map<String, SyncedProviderInstance> INSTANCES = new ConcurrentHashMap<>();
     private static boolean initialized;
     public static final String HOST_PROP = "host";
+    public static final String SERVER_VERSION_PROP = "server.version";
     private final String provider;
     private final Path baseDir;
     private final FilePropertiesImpl[] properties = new FilePropertiesImpl[]{null};
-    private final SSLWebServiceProvider[] serviceProvider = new SSLWebServiceProvider[]{null};
+    private final WebServiceProvider[] serviceProvider = new WebServiceProvider[]{null};
     private final PlatformWsJMSTopicListenerServiceProvider[] jmsProvider = new PlatformWsJMSTopicListenerServiceProvider[]{null};
+    private String serverVersion = "1";
     final RequestProcessor eventsrp = new RequestProcessor("EVENTS", 1);
     final EventBus events = new AsyncEventBus(eventsrp);
     final ConfigurationEventBusImpl cfgbus = new ConfigurationEventBusImpl();
@@ -132,6 +137,7 @@ public class SyncedProviderInstance {
                 lu.addTaskListener(t -> add.enqueue(delay));
                 //TODO: fire change
             }
+            add.fetchServerVersion();
             INSTANCES.put(provider, add);
         }
     }
@@ -139,7 +145,7 @@ public class SyncedProviderInstance {
     @NbBundle.Messages("checkProvider.message=Remote ({0}) and local ({1}) names not equal.")
     private void checkProvider() {
         try {
-            final String name = providerName();
+            final String name = fetchProviderInfoFromServer(p -> URI.create(URLs.providerName(p)), false);
             if (name != null && !name.equals(provider)) {
                 final String msg = NbBundle.getMessage(SyncedProviderInstance.class, "checkProvider.message", name, provider);
                 throw new IllegalStateException(msg);
@@ -149,7 +155,18 @@ public class SyncedProviderInstance {
         }
     }
 
-    private String providerName() throws IOException {
+    private void fetchServerVersion() {
+        try {
+            final String version = fetchProviderInfoFromServer(p -> URI.create(URLs.serverVersion(p)), true);
+            if (version != null) {
+                this.serverVersion = version;
+            }
+        } catch (IOException ex) {
+            PlatformUtil.getCodeNameBaseLogger(SyncedProviderInstance.class).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+        }
+    }
+
+    private String fetchProviderInfoFromServer(final Function<LocalProperties, URI> uri, final boolean ignoreNotFound) throws IOException {
         //We can't use this.findLocalFileProperties() because INSTANCES aren't initialized yet
         final Path user = baseDir.resolve(LocalFileProperties.USER_PROPERTIES_FILE);
         final Map<String, String> m = Files.readAllLines(user).stream()
@@ -173,8 +190,6 @@ public class SyncedProviderInstance {
 
         }
         final LocalProperties prop = new Prop();
-        final String url = URLs.providerName(prop);
-        final URI uri = URI.create(url);
         final String certAlias = AppProperties.privateKeyAlias(prop, provider);
         final SSLContext ssl = SSLUtil.createSSLContext(certAlias);
         final String hostname = prop.getProperty("host-common-name");
@@ -205,11 +220,15 @@ public class SyncedProviderInstance {
             }
 
         }
-        return HttpUtilities.get(new Web(), uri, null, false);
+        return HttpUtilities.get(new Web(), uri.apply(prop), null, ignoreNotFound);
     }
 
     public String getProvider() {
         return provider;
+    }
+
+    public String getServerVersion() {
+        return serverVersion;
     }
 
     public Path getBaseDir() {
@@ -243,7 +262,7 @@ public class SyncedProviderInstance {
             if (properties[0] == null) {
                 final Path p = baseDir.resolve("default.properties");
                 try {
-                    properties[0] = new LocalFilePropertiesProviderImpl.FilePropertiesImpl(provider, p, null);
+                    properties[0] = new LocalFilePropertiesProviderImpl.FilePropertiesImpl(provider, p, null, this);
                     events.register(properties[0]);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
@@ -272,11 +291,20 @@ public class SyncedProviderInstance {
     }
 
     public <W extends WebProvider> W findWebProvider(final Class<W> subType) {
-        if (subType.isAssignableFrom(SSLWebServiceProvider.class)) {
-            if (serviceProvider[0] == null) {
-                serviceProvider[0] = SSLWebServiceProvider.create(provider, findLocalFileProperties());
+        if ("2".equals(serverVersion)) {
+            if (subType.isAssignableFrom(AdminRESTProvider.class)) {
+                if (serviceProvider[0] == null) {
+                    serviceProvider[0] = AdminRESTProvider.create(provider, findLocalFileProperties());
+                }
+                return (W) serviceProvider[0];
             }
-            return (W) serviceProvider[0];
+        } else {
+            if (subType.isAssignableFrom(SSLWebServiceProvider.class)) {
+                if (serviceProvider[0] == null) {
+                    serviceProvider[0] = SSLWebServiceProvider.create(provider, findLocalFileProperties());
+                }
+                return (W) serviceProvider[0];
+            }
         }
         return null;
     }

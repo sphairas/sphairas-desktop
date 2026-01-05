@@ -4,6 +4,7 @@
  */
 package org.thespheres.betula.admin.database.service;
 
+import org.thespheres.betula.database.DbAdminService;
 import java.net.URL;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;

@@ -16,8 +16,9 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
-import org.thespheres.betula.admin.database.DbAdminServiceProvider;
 import org.thespheres.betula.admin.database.action.DeleteTaskVisualPanel.DeleteTaskPanel;
+import org.thespheres.betula.admin.database.service.AbstractDbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.AdminServiceProviders;
 import org.thespheres.betula.database.DBAdminTask;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportWizard;
@@ -60,7 +61,7 @@ public final class DeleteTask implements ActionListener {
         if (DialogDisplayer.getDefault().notify(wd) == WizardDescriptor.FINISH_OPTION) {
             final ProviderInfo info = (ProviderInfo) wd.getProperty(DeleteTask.PROP_PROVIDER);
             if (info != null) {
-                final DbAdminServiceProvider provider = DbAdminServiceProvider.create(info);
+                final AbstractDbAdminServiceProvider provider = AdminServiceProviders.create(info);
                 final TaskRunner tr = new TaskRunner(provider, task);
                 tr.sp.getDefaultRequestProcessor().post(tr);
             }

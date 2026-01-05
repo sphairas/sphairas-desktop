@@ -134,21 +134,21 @@ public final class RecordId extends Identity<String> implements Serializable {
             switch (disc) {
                 case 'T':
                     try {
-                    LocalDateTime val = LocalDateTime.parse(id, DTF);
-                    parsed = new Parsed(val);
-                } catch (DateTimeParseException e) {
-                    parsed = e;
-                }
-                break;
+                        LocalDateTime val = LocalDateTime.parse(id, DTF);
+                        parsed = new Parsed(val);
+                    } catch (DateTimeParseException e) {
+                        parsed = e;
+                    }
+                    break;
                 case 'P':
                     try {
-                    String pval = id.substring(10);
-                    LocalDate val = LocalDate.parse(pval.substring(0, 10), DF);
-                    parsed = new Parsed(val, pval);
-                } catch (DateTimeParseException | NumberFormatException e) {
-                    throw new IllegalArgumentException(e);
-                }
-                break;
+                        String pval = id.substring(10);
+                        LocalDate val = LocalDate.parse(pval.substring(0, 10), DF);
+                        parsed = new Parsed(val, pval);
+                    } catch (DateTimeParseException | NumberFormatException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                    break;
                 default:
                     parsed = new IllegalStateException();
                     break;
@@ -158,6 +158,11 @@ public final class RecordId extends Identity<String> implements Serializable {
             throw (RuntimeException) parsed;
         }
         return (Parsed) parsed;
+    }
+
+    //For automatic jax.rs resolution
+    public static RecordId valueOf(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new RecordId(a, i), null, null);
     }
 
     //Legacy cases

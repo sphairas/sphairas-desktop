@@ -14,7 +14,7 @@ import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
-import org.thespheres.betula.admin.database.DbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.AbstractDbAdminServiceProvider;
 import org.thespheres.betula.database.DBAdminTask;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.scheme.spi.Term;
@@ -33,7 +33,7 @@ class ClearSigneesTaskVisualPanel extends javax.swing.JPanel {
 
     ClearSigneesTaskVisualPanel() {
         initComponents();
-        DbAdminServiceProvider.findAllProviders().stream()
+        AbstractDbAdminServiceProvider.findAllProviders().stream()
                 .forEach(providerModel::addElement);
         this.providerComboBox.setModel(providerModel);
         this.providerComboBox.setRenderer(new DefaultListRenderer(providerConverter));

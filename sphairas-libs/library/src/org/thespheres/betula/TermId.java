@@ -45,6 +45,11 @@ public class TermId extends Identity<Integer> implements Serializable {
         return authority;
     }
 
+    //For automatic jax.rs resolution
+    public static TermId valueOf(final String input) {
+        return resolve(input);
+    }
+
     public static TermId resolve(final String input) {
         return Identities.resolve(input, (a, i, v) -> new TermId(a, Integer.parseInt(i)), null, null);
     }

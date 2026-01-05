@@ -52,6 +52,11 @@ public final class StudentId extends Identity<Long> implements Serializable {
         return id;
     }
 
+    //For automatic jax.rs resolution
+    public static StudentId valueOf(final String input) {
+        return resolve(input);
+    }
+
     public static StudentId resolve(final String input) {
         return Identities.resolve(input, (a, i, v) -> new StudentId(a, Long.parseLong(i)), null, null);
     }

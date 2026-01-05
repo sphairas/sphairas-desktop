@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.thespheres.betula.Identity;
+import org.thespheres.betula.document.util.Identities;
 
 /**
  *
@@ -46,4 +47,8 @@ public class Language extends Identity<String> implements Serializable {
         return authority;
     }
 
+    //For automatic jax.rs resolution
+    public static Language Language(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new Language(a, i), null, null);
+    }
 }

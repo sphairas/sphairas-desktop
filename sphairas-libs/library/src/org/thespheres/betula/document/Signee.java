@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.thespheres.betula.Identity;
+import org.thespheres.betula.document.util.Identities;
 
 /**
  *
@@ -84,6 +85,11 @@ public final class Signee extends Identity<String> implements Serializable, Prin
     @Override
     public String getName() {
         return getId();
+    }
+
+    //For automatic jax.rs resolution
+    public static Signee valueOf(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new Signee(a, i, Boolean.valueOf(v)), null, null);
     }
 
     @Override

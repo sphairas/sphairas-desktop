@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.thespheres.betula.document.util.Identities;
 
 @XmlType(name = "unitIdType", namespace = "http://www.thespheres.org/xsd/betula/betula.xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -45,6 +46,11 @@ public final class UnitId extends Identity<String> implements Serializable {
     @Override
     public String getAuthority() {
         return authority;
+    }
+
+    //For automatic jax.rs resolution
+    public static UnitId valueOf(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new UnitId(a, i), null, null);
     }
 
     @Override

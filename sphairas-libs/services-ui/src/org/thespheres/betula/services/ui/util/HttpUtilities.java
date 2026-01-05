@@ -22,6 +22,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.BasicUserPrincipal;
@@ -78,11 +79,15 @@ public class HttpUtilities {
     }
 
     public static void post(WebProvider wp, URI uri, ContentProducer producer, String contentType) throws IOException {
+        post(wp, uri, producer, contentType, null);
+    }
+
+    public static <R> R post(WebProvider wp, URI uri, ContentProducer producer, String contentType, ResponseConverter<R> converter) throws IOException {
         final EntityTemplate entity = new EntityTemplate(producer);
         if (contentType != null) {
             entity.setContentType(contentType);
         }
-        post(wp, uri, entity);
+        return post(wp, uri, entity, converter);
     }
 
     public static void putIfNoneMatch(WebProvider wp, URI uri, byte[] content, String contentType, String lockToken) throws IOException {
@@ -90,7 +95,7 @@ public class HttpUtilities {
         if (contentType != null) {
             entity.setContentType(contentType);
         }
-        putPost(wp, uri, entity, HttpPut.METHOD_NAME, lockToken, true);
+        putPost(wp, uri, entity, HttpPut.METHOD_NAME, lockToken, true, null);
     }
 
     public static void put(WebProvider wp, URI uri, byte[] content, String contentType, String lockToken) throws IOException {
@@ -98,7 +103,7 @@ public class HttpUtilities {
         if (contentType != null) {
             entity.setContentType(contentType);
         }
-        putPost(wp, uri, entity, HttpPut.METHOD_NAME, lockToken, false);
+        putPost(wp, uri, entity, HttpPut.METHOD_NAME, lockToken, false, null);
     }
 
     public static void put(WebProvider wp, URI uri, ContentProducer producer, String contentType, String lockToken) throws IOException {
@@ -117,15 +122,19 @@ public class HttpUtilities {
         put(wp, uri, entity, null);
     }
 
-    public static void post(WebProvider wp, URI uri, AbstractHttpEntity entity) throws IOException {
-        putPost(wp, uri, entity, HttpPost.METHOD_NAME, null, false);
+    public static <R> R post(WebProvider wp, URI uri, AbstractHttpEntity entity) throws IOException {
+        return putPost(wp, uri, entity, HttpPost.METHOD_NAME, null, false, null);
     }
 
-    public static void put(WebProvider wp, URI uri, AbstractHttpEntity entity, String lockToken) throws IOException {
-        putPost(wp, uri, entity, HttpPut.METHOD_NAME, lockToken, false);
+    public static <R> R post(WebProvider wp, URI uri, AbstractHttpEntity entity, ResponseConverter<R> converter) throws IOException {
+        return putPost(wp, uri, entity, HttpPost.METHOD_NAME, null, false, converter);
     }
 
-    private static void putPost(WebProvider wp, URI uri, AbstractHttpEntity entity, final String method, final String lockToken, final boolean ifNoneMatch) throws IOException {
+    public static HttpResponse put(WebProvider wp, URI uri, AbstractHttpEntity entity, String lockToken) throws IOException {
+        return putPost(wp, uri, entity, HttpPut.METHOD_NAME, lockToken, false, null);
+    }
+
+    private static <R> R putPost(WebProvider wp, URI uri, AbstractHttpEntity entity, final String method, final String lockToken, final boolean ifNoneMatch, final ResponseConverter<R> converter) throws IOException {
         final CloseableHttpClient httpclient = buildHttpClient(wp);
         final HttpEntityEnclosingRequestBase httpPost = HttpPut.METHOD_NAME.equals(method) ? new HttpPut(uri) : new HttpPost(uri);
 
@@ -148,6 +157,15 @@ public class HttpUtilities {
             // connection cannot be safely re-used and will be shut down and discarded
             // by the connection manager.
             HttpException.orElseThrow(response.getStatusLine(), uri);
+            final R ret;
+            if (converter != null) {
+                final BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent()); //? BufferedEntity?
+                ret = converter.apply(bis);
+            } else {
+                ret = null;
+            }
+            EntityUtils.consume(entity);
+            return ret;
         } catch (Exception ex) {
             if (ex instanceof IOException) {
                 throw (IOException) ex;
@@ -169,7 +187,7 @@ public class HttpUtilities {
             httpDelete.addHeader("If", ifValue);
         }
 
-        try ( CloseableHttpResponse response = NetworkSettings.suppressAuthenticationDialog(() -> httpclient.execute(httpDelete)) // The underlying HTTP connection is still held by the response object
+        try (CloseableHttpResponse response = NetworkSettings.suppressAuthenticationDialog(() -> httpclient.execute(httpDelete)) // The underlying HTTP connection is still held by the response object
                 // to allow the response content to be streamed directly from the network socket.
                 // In order to ensure correct deallocation of system resources
                 // the user MUST call CloseableHttpResponse#close() from a finally clause.
@@ -190,7 +208,7 @@ public class HttpUtilities {
         final CloseableHttpClient httpclient = buildHttpClient(wp);
         final HttpCopy httpCopy = new HttpCopy(from, to);
 
-        try ( CloseableHttpResponse response = NetworkSettings.suppressAuthenticationDialog(() -> httpclient.execute(httpCopy)) // The underlying HTTP connection is still held by the response object
+        try (CloseableHttpResponse response = NetworkSettings.suppressAuthenticationDialog(() -> httpclient.execute(httpCopy)) // The underlying HTTP connection is still held by the response object
                 // to allow the response content to be streamed directly from the network socket.
                 // In order to ensure correct deallocation of system resources
                 // the user MUST call CloseableHttpResponse#close() from a finally clause.
@@ -636,6 +654,12 @@ public class HttpUtilities {
     public static interface GetConverter<T, R> {
 
         public R apply(String lm, T t) throws IOException;
+    }
+
+    @FunctionalInterface
+    public static interface ResponseConverter<R> {
+
+        public R apply(InputStream is) throws IOException;
     }
 
 }

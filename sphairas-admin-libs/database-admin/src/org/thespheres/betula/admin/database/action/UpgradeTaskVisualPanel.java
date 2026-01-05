@@ -12,7 +12,7 @@ import org.jdesktop.swingx.renderer.StringValue;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
-import org.thespheres.betula.admin.database.DbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.DbAdminServiceProvider;
 import org.thespheres.betula.database.DBAdminTask;
 
 /**

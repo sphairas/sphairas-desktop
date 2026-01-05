@@ -33,6 +33,15 @@ public class URLs {
         return NbBundle.getMessage(URLs.class, "provider.name.info", host);
     }
 
+    @NbBundle.Messages("server.version=https://{0}:8181/admins/web/resource/provider/version")
+    public static String serverVersion(final LocalProperties prop) throws ConfigurationException {
+        final String host = prop.getProperty(HOST);
+        if (host == null) {
+            throw new ConfigurationException(prop, HOST);
+        }
+        return NbBundle.getMessage(URLs.class, "server.version", host);
+    }
+
     @Messages("admin.base.url=https://{0}:8181/admins/")
     public static String adminBase(final LocalProperties prop) throws ConfigurationException {
         String davBase = prop.getProperty(ADMIN_BASE);

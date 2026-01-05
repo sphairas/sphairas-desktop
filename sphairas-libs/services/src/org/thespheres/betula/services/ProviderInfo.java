@@ -21,7 +21,7 @@ public interface ProviderInfo extends Serializable {
     public String getURL();
 
     public String getDisplayName();
-
+    
     @Target(value = {ElementType.PACKAGE, ElementType.TYPE})
     @Retention(value = RetentionPolicy.SOURCE)
     public @interface Registration {

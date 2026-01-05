@@ -40,10 +40,13 @@ public class LocalFilePropertiesProviderImpl implements LocalFileProperties.Prov
     static class FilePropertiesImpl extends LocalFileProperties implements Runnable {
 
         private final Path location;
+//        private final SyncedProviderInstance provider;
 
-        FilePropertiesImpl(String name, Path path, String parent) throws IOException {
+        FilePropertiesImpl(String name, Path path, String parent, SyncedProviderInstance provider) throws IOException {
             super(name, Files.newInputStream(path, StandardOpenOption.CREATE));
             this.location = path;
+//            this.provider = provider;
+            addProperty(SyncedProviderInstance.SERVER_VERSION_PROP, provider.getServerVersion());
             if (parent != null) {
                 setParent(LocalFileProperties.find(parent));
             }

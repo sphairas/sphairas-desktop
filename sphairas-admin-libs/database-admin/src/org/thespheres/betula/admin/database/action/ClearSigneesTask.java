@@ -16,9 +16,12 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
-import org.thespheres.betula.admin.database.DbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.DbAdminServiceProvider;
 import org.thespheres.betula.admin.database.action.ClearSigneesTaskVisualPanel.ClearSigneesTaskPanel;
+import org.thespheres.betula.admin.database.service.AbstractDbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.AdminServiceProviders;
 import org.thespheres.betula.database.DBAdminTask;
+import org.thespheres.betula.services.LocalFileProperties;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportWizard;
 
@@ -60,7 +63,7 @@ public final class ClearSigneesTask implements ActionListener {
         if (DialogDisplayer.getDefault().notify(wd) == WizardDescriptor.FINISH_OPTION) {
             final ProviderInfo pi = (ProviderInfo) wd.getProperty(ClearSigneesTask.PROP_PROVIDER);
             if (pi != null) {
-                final DbAdminServiceProvider provider = DbAdminServiceProvider.create(pi);
+                final AbstractDbAdminServiceProvider provider = AdminServiceProviders.create(pi);
                 final TaskRunner tr = new TaskRunner(provider, task);
                 tr.sp.getDefaultRequestProcessor().post(tr);
             }

@@ -8,7 +8,7 @@ package org.thespheres.betula.admin.database.action;
 import org.openide.util.NbBundle;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
-import org.thespheres.betula.admin.database.DbAdminServiceProvider;
+import org.thespheres.betula.admin.database.service.AbstractDbAdminServiceProvider;
 import org.thespheres.betula.database.DBAdminTask;
 import org.thespheres.betula.database.DBAdminTaskResult;
 
@@ -22,10 +22,10 @@ import org.thespheres.betula.database.DBAdminTaskResult;
 class TaskRunner implements Runnable {
 
     private static InputOutput io;
-    final DbAdminServiceProvider sp;
+    final AbstractDbAdminServiceProvider sp;
     private final DBAdminTask task;
 
-    TaskRunner(DbAdminServiceProvider sp, DBAdminTask task) {
+    TaskRunner(AbstractDbAdminServiceProvider sp, DBAdminTask task) {
         this.sp = sp;
         this.task = task;
     }

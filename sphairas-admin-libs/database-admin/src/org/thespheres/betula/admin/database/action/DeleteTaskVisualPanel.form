@@ -149,7 +149,7 @@
           <Format format="#0" subtype="-1" type="0"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/thespheres/betula/admin/database/action/Bundle.properties" key="DeleteTaskVisualPanel.maxEntriesTextField.text_1" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/thespheres/betula/admin/database/action/Bundle.properties" key="DeleteTaskVisualPanel.maxEntriesTextField.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

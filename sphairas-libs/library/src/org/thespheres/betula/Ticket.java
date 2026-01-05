@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.thespheres.betula.document.util.Identities;
 
 /**
  *
@@ -43,6 +44,11 @@ public final class Ticket extends Identity<Long> implements Serializable {
     @Override
     public String getAuthority() {
         return authority;
+    }
+
+    //For automatic jax.rs resolution
+    public static Ticket valueOf(final String input) {
+        return Identities.resolve(input, (a, i, v) -> new Ticket(a, Long.valueOf(v)), null, null);
     }
 
     @Override
