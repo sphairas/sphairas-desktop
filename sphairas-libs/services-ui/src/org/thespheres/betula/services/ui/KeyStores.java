@@ -48,7 +48,6 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
-import org.thespheres.betula.services.ui.ks.CreateUserCertificateImpl;
 import org.thespheres.betula.ui.util.PlatformUtil;
 
 /**
@@ -386,40 +385,7 @@ public final class KeyStores {
 
         KeyStores.storeKeyStore(trustStore, tspath, password);
     }
-
-    public static String createSelfSignedUserCertificate(final String cn, final String hostName, final Path csrOut, final boolean addToKeyStore) throws Exception {
-        //"CN=Duke, OU=JavaSoft, O=Sun Microsystems, C=US"
-        final X500Principal principal = new X500Principal("CN=user");
-        final CreateUserCertificateImpl cuci = new CreateUserCertificateImpl(principal);
-
-        if (addToKeyStore) {
-            final KeyStore ks2;
-            try {
-                ks2 = KeyStore.getInstance(KeyStores.getKeystoreType());
-            } catch (KeyStoreException ex) {
-                throw new IOException(ex);
-            }
-            char[] password = Keyring.read(KeyStores.KEYRING_KEYSTORE_PASSWORD_KEY);
-            if (password == null) {
-                password = KeyStores.showUserKeyStorePasswordDialog();
-            }
-            final Path p = Paths.get(KeyStores.getKeystore());
-            try (final InputStream is = Files.newInputStream(p)) {
-                ks2.load(is, password);
-                ks2.setEntry(hostName, cuci.getEntry(), new KeyStore.PasswordProtection(password));
-            } catch (KeyStoreException ex) {
-                throw new IOException(ex);
-            }
-            KeyStores.storeKeyStore(ks2, p, password);
-        }
-
-        if (csrOut != null) {
-            cuci.writeCertRequest(csrOut);
-        }
-
-        return CreateUserCertificateImpl.PKCS10ToString(cuci.getCertRequest());
-    }
-
+    
     public static void addSignedKeyCertificate(final Path cer, final byte[] caCertBytes, final String hostName) throws IOException, CertificateException, KeyStoreException {
         final KeyStore ks2;
         try {
