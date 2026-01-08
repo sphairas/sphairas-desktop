@@ -30,7 +30,6 @@ public class DefaultUntisImports {
         ret.setSourceTargetLinksConfigFile(sourceTargetLinksConfigFile.toString());
         if (!StringUtils.isBlank(davBase)) {
             ret.setSourceTargetLinksWebDavUrl(davBase + UntisImportConfiguration.LINKS_FILENAME);
-            ret.setUntisXmlDocumentUploadHref(davBase + UntisImportConfiguration.UNTIS_FILENAME);
         }
         return ret;
     }

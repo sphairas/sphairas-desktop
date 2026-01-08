@@ -41,7 +41,6 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
     private final XmlTargetImportSettings importSettings;
     private final XmlTargetProcessorHintsSettings processorHints;
     private DocumentId careersDocument;
-    private String untisHref;
     private final String davBase;
 
     public DefaultConfigurableImportTarget(String provider, Product prod, XmlTargetImportSettings settings, XmlTargetProcessorHintsSettings hints) {
@@ -121,7 +120,7 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
 
 //    @Override// nur noch für kgs im Gebrauch
 //    public UnitId initPreferredTarget(int stufe, Marker fach, String kursnr, int rjahr) {
-////        return TranslateID.findId(stufe, rjahr, fach, kursnr, "kgs");
+    ////        return TranslateID.findId(stufe, rjahr, fach, kursnr, "kgs");
 //        final String kursid = kursnr != null ? kursnr.substring(1) : null;//Nru für kgs, durch Skript ersetzen
 //        String uid;
 ////        if (stufe == 10 && false) {
@@ -183,15 +182,6 @@ public class DefaultConfigurableImportTarget extends ConfigurableImportTarget im
                 return careersDocument;
         }
         return null;
-    }
-
-    @Override
-    public String getUntisXmlDocumentUploadHref() {
-        return untisHref;
-    }
-
-    public void setUntisXmlDocumentUploadHref(String untisHref) {
-        this.untisHref = untisHref;
     }
 
 }

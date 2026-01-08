@@ -365,6 +365,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
         this.submit = submit;
     }
 
+    @Deprecated
     public LessonTimeData[] getTimes() {
         if (times == null) {
             times = StudenplanUpdater.createTimes(lesson, general, this);
@@ -372,6 +373,7 @@ public class ImportedLesson extends ImportTargetsItem implements CloneableImport
         return times;
     }
 
+    @Deprecated
     public String getTimetable() {
         final StringJoiner sj = new StringJoiner(", ");
         Arrays.stream(getTimes())

@@ -5,27 +5,22 @@
  */
 package org.thespheres.betula.gpuntis.ui;
 
-import org.thespheres.betula.gpuntis.impl.StudenplanUpdater;
 import org.thespheres.betula.gpuntis.impl.UntisXmlDataObject;
 import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportAction;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.MissingResourceException;
 import java.util.Set;
-import javax.swing.Icon;
 import javax.swing.filechooser.FileFilter;
 import org.openide.WizardDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
-import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileChooserBuilder;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
@@ -40,14 +35,10 @@ import org.thespheres.betula.gpuntis.impl.UntisSourceUserOverrides;
 import org.thespheres.betula.gpuntis.impl.UntisDefaultUpdaterFilter;
 import org.thespheres.betula.gpuntis.impl.UntisSourceTargetAccess;
 import org.thespheres.betula.gpuntis.impl.UntisSourceTargetLinks;
-import org.thespheres.betula.gpuntis.impl.UploadXml;
 import org.thespheres.betula.gpuntis.xml.Document;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.scheme.spi.TermSchedule;
-import org.thespheres.betula.ui.util.LogLevel;
 import org.thespheres.betula.ui.util.MimeFileFilter;
-import org.thespheres.betula.ui.util.PlatformUtil;
-import org.thespheres.betula.xmlimport.ImportUtil;
 import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.utilities.AbstractSourceOverrides;
 import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
@@ -165,17 +156,8 @@ public class ImportAction extends AbstractFileImportAction<UntisImportData, Docu
 
     @Override
     protected void onWizardFinishOK(UntisImportConfiguration config, Set<?> selected, Document xml, UntisImportData wiz) {
-        if (wiz.isUploadUntisDocument()) {
-            uploadUntisDocument(config, xml);
-        }
         super.onWizardFinishOK(config, selected, xml, wiz);
         NbPreferences.forModule(ImportAction.class).put(SAVED_IMPORT_TARGET_PROVIDER, config.getProviderInfo().getURL());
-//        final RemoteLookup remote = config.getRemoteLookup();
-        if (ImportAction.LESSON.equals(type)) {
-            final StudenplanUpdater sup = new StudenplanUpdater(config, (Set<ImportedLesson>) selected);
-            config.getWebServiceProvider().getDefaultRequestProcessor().post(sup);
-//            remote.getRequestProcessor().post(sup);//TODO: use own RP  --> may last long until processed if app opened recently
-        }
     }
 
     @Override
@@ -186,24 +168,6 @@ public class ImportAction extends AbstractFileImportAction<UntisImportData, Docu
             if (links != null) {
                 acc.saveSourceTargetLinks(links, config);
             }
-        }
-    }
-
-    @Messages({"ImportAction.UploadXml.error.title=Fehler beim Upload",
-        "ImportAction.UploadXml.error.message=Beim Upload der Units-Datei ist ein Fehler aufgetreten: (Type: {0}, Message: {1}.",
-        "ImportAction.UploadXml.succes=Untis-Datei nach {0} hochgeladen."})
-    private void uploadUntisDocument(UntisImportConfiguration config, Document xml) throws MissingResourceException {
-        try {
-            UploadXml.upload(config, xml);
-            final String msg = NbBundle.getMessage(ImportAction.class, "ImportAction.UploadXml.succes", config.getUntisXmlDocumentUploadHref());
-            ImportUtil.getIO().getOut().println(msg);
-        } catch (IOException ex) {
-            PlatformUtil.getCodeNameBaseLogger(ImportAction.class).log(LogLevel.INFO_WARNING, ex.getMessage(), ex);
-            final Icon ic = ImageUtilities.loadImageIcon("org/thespheres/betula/ui/resources/exclamation-red-frame.png", true);
-            final String title = NbBundle.getMessage(ImportAction.class, "ImportAction.UploadXml.error.title");
-            final String message = NbBundle.getMessage(ImportAction.class, "ImportAction.UploadXml.error.message");
-            NotificationDisplayer.getDefault()
-                    .notify(title, ic, message, null, NotificationDisplayer.Priority.HIGH, NotificationDisplayer.Category.WARNING);
         }
     }
 

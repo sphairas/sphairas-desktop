@@ -27,8 +27,6 @@ public interface UntisImportConfiguration extends ImportTarget, CommonTargetProp
 
     public String getDefaultSigneeSuffix();
 
-    public String getUntisXmlDocumentUploadHref();
-
     public static abstract class Factory extends ImportTargetFactory<UntisImportConfiguration> {
 
         protected Factory() {

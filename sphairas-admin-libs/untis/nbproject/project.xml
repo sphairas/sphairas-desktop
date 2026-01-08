@@ -31,23 +31,6 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.glassfish.jersey.client</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>2.27</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>org.jdesktop.beansbinding</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <release-version>1</release-version>
-                        <specification-version>1.26.1.121</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>org.jdesktop.swingx</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
