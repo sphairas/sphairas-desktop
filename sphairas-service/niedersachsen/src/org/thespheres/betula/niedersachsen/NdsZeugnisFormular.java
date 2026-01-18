@@ -197,8 +197,16 @@ public class NdsZeugnisFormular {
         return toAdd;
     }
 
+    public List<String> getExceptions() {
+        return exception;
+    }
+
     public void addExceptionMessage(final String msg) {
         exception.add(msg);
+    }
+
+    public Integer getAddSpace() {
+        return addSpace;
     }
 
     public final void beforeMarshal(Marshaller m) {
@@ -582,6 +590,10 @@ public class NdsZeugnisFormular {
             return header;
         }
 
+        public List<Line> getLines() {
+            return lines;
+        }
+
         public void addEmptyLine() {
             lines.add(new Line());
         }
@@ -596,6 +608,10 @@ public class NdsZeugnisFormular {
             }
             lines.add(toAdd);
             return toAdd;
+        }
+
+        public List<LongLine> getLonglines() {
+            return longlines;
         }
 
         public void addLongLineCategory(final String cat) {
