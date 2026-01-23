@@ -14,12 +14,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>0.2.12</version>
+            <version>0.2.14</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>RELEASE82</version>
+            <version>RELEASE120</version>
         </dependency>
     </dependencies>
 </project>
