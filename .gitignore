@@ -1,5 +1,5 @@
 **/genfiles.properties
-
+/dev-user-dir/*
 
 /restricted/nbproject/private/
 /support/nbproject/private/
