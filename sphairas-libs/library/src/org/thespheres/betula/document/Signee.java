@@ -89,7 +89,7 @@ public final class Signee extends Identity<String> implements Serializable, Prin
 
     //For automatic jax.rs resolution
     public static Signee valueOf(final String input) {
-        return Identities.resolve(input, (a, i, v) -> new Signee(a, i, Boolean.valueOf(v)), null, null);
+        return Identities.resolve(input, (i, a, v) -> new Signee(a, i, Boolean.TRUE), null, null);
     }
 
     @Override
