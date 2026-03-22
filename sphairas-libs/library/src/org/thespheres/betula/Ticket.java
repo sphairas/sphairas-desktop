@@ -48,7 +48,7 @@ public final class Ticket extends Identity<Long> implements Serializable {
 
     //For automatic jax.rs resolution
     public static Ticket valueOf(final String input) {
-        return Identities.resolve(input, (a, i, v) -> new Ticket(a, Long.valueOf(v)), null, null);
+        return Identities.resolve(input, (a, i, v) -> new Ticket(a, Long.valueOf(i)), null, null);
     }
 
     @Override
