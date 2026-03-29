@@ -302,6 +302,7 @@ public abstract class RemoteUnitsModel implements UnitsModel<RemoteStudent, Remo
                 final DocumentId[] docs = fetchTargetAssessmentDocuments(arr);
                 synchronized (documents) {
                     Arrays.stream(docs)
+                            .filter(d -> !DocumentId.isNull(d)) //Not adding null documents
                             .forEach(documents::add);
                 }
                 doInit(null, INITIALISATION.MAXIMUM, rl);
@@ -645,7 +646,7 @@ public abstract class RemoteUnitsModel implements UnitsModel<RemoteStudent, Remo
         public String id();
 
         public RemoteUnitsModel create(String provider, AbstractUnitOpenSupport support, UnitId[] units) throws IOException;
-        
+
         public RemoteTargetAssessmentDocument find(String provider, DocumentId target) throws IOException;
     }
 
