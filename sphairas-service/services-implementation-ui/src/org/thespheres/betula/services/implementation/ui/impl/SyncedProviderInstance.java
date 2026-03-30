@@ -170,6 +170,9 @@ public class SyncedProviderInstance {
         //We can't use this.findLocalFileProperties() because INSTANCES aren't initialized yet
         final Path user = baseDir.resolve(LocalFileProperties.USER_PROPERTIES_FILE);
         final Map<String, String> m = Files.readAllLines(user).stream()
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .filter(l -> !l.startsWith("#"))
                 .collect(Collectors.toMap(s -> s.substring(0, s.indexOf("=")), s -> s.substring(s.indexOf("=") + 1)));
         class Prop implements LocalProperties {
 
