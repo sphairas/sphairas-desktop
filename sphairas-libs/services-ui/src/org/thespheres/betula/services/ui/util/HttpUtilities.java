@@ -404,7 +404,7 @@ public class HttpUtilities {
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
             final HostnameVerifier hostnameVerifier = ws.getHostnameVerifier();
-            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), SSLUtil.SSL_VERSIONS, null, hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         return builder.build();
@@ -439,7 +439,7 @@ public class HttpUtilities {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), SSLUtil.SSL_VERSIONS, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();
@@ -513,7 +513,7 @@ public class HttpUtilities {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), SSLUtil.SSL_VERSIONS, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();
@@ -593,7 +593,7 @@ public class HttpUtilities {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), SSLUtil.SSL_VERSIONS, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();

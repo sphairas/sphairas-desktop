@@ -79,7 +79,7 @@ public abstract class AbstractDownloadAction<C> extends WorkingDateSensitiveActi
                 HttpClients.custom();
         if (wsp instanceof WebProvider.SSL) {
             final SSLContext sc = ((WebProvider.SSL) wsp).getSSLContext();
-            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sc, new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sc, SSLUtil.SSL_VERSIONS, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();

@@ -30,7 +30,6 @@ import javax.net.ssl.X509KeyManager;
 import org.netbeans.api.keyring.Keyring;
 import org.openide.util.NbPreferences;
 import org.thespheres.betula.services.ui.KeyStores;
-import static org.thespheres.betula.services.ui.KeyStores.MODULE_PREFERENCES_OPENSC_CONFIG_LOCATION_KEY;
 import org.thespheres.betula.services.ws.api.AliasSelectorKeyManger;
 import org.thespheres.betula.services.ws.api.BetulaServiceClient;
 
@@ -40,10 +39,12 @@ import org.thespheres.betula.services.ws.api.BetulaServiceClient;
  */
 public class SSLUtil {
 
-    public static final String SSL_VERSION = "TLSv1.3";
+    public static final String[] SSL_VERSIONS = {"TLSv1.3", "TLSv1.2"};
+    public static final String PROP_SSL_PROTOCOL = "ssl.protocol";
+    public static final String PROP_SSL_DEFAULT_PROTOCOL = "TLSv1.3";
 
     private static void initPKCS11() {
-        final String cfg = NbPreferences.forModule(KeyStores.class).get(MODULE_PREFERENCES_OPENSC_CONFIG_LOCATION_KEY, null);
+        final String cfg = NbPreferences.forModule(KeyStores.class).get(KeyStores.MODULE_PREFERENCES_OPENSC_CONFIG_LOCATION_KEY, null);
         if (cfg != null) {
             try {//start configName with -- -> inlineconfig, lines... \\n
 //                Provider pr = new sun.security.pkcs11.SunPKCS11(cfg);
@@ -65,7 +66,8 @@ public class SSLUtil {
         char[] password = null;
         SSLContext ctx = null;
         try {
-            ctx = SSLContext.getInstance(SSL_VERSION); //.getInstance("SSLv3");  //TLSv1.2
+            final String protocol = System.getProperty(PROP_SSL_PROTOCOL, PROP_SSL_DEFAULT_PROTOCOL);
+            ctx = SSLContext.getInstance(protocol); //.getInstance("SSLv3");  //TLSv1.2
             final KeyManagerFactory kstorefac = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             final Path kspath = Paths.get(KeyStores.getKeystore());
             final KeyStore kstore = KeyStore.getInstance(KeyStores.getKeystoreType());

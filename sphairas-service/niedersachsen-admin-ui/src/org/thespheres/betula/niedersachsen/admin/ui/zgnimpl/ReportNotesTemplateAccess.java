@@ -94,7 +94,7 @@ class ReportNotesTemplateAccess implements Runnable {
 
     protected TermReportNoteSetTemplate findReportNotesTemplate() throws IOException {
 
-        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), SSLUtil.SSL_VERSIONS, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         final CloseableHttpClient httpclient
                 = //                .setDefaultCredentialsProvider(credsProvider)
                 HttpClients.custom().setSSLSocketFactory(sslsf).build();
@@ -141,7 +141,7 @@ class ReportNotesTemplateAccess implements Runnable {
     }
 
     protected String findLastModified() throws IOException {
-        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), new String[]{SSLUtil.SSL_VERSION}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(getWebService().getSSLContext(), SSLUtil.SSL_VERSIONS, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         final CloseableHttpClient httpclient
                 = //                .setDefaultCredentialsProvider(credsProvider)
                 HttpClients.custom().setSSLSocketFactory(sslsf).build();
