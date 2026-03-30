@@ -23,23 +23,33 @@ public class URLs {
     public static final String CALENDAR_BASE = "calendarBaseURL";
     public static final String STUDENTS = "studentsUrl";
     public static final String REPORTS = "zgnsrvUrl";
+    public static final String PROVIDER_NAME_INFO = "provider.name.info";
+    public static final String SERVER_VERSION = "server.version";
 
     @NbBundle.Messages("provider.name.info=https://{0}:8181/admins/web/resource/provider/name")
     public static String providerName(final LocalProperties prop) throws ConfigurationException {
-        final String host = prop.getProperty(HOST);
-        if (host == null) {
-            throw new ConfigurationException(prop, HOST);
+        final String pni = prop.getProperty(PROVIDER_NAME_INFO);
+        if (pni == null) {
+            final String host = prop.getProperty(HOST);
+            if (host == null) {
+                throw new ConfigurationException(prop, HOST);
+            }
+            return NbBundle.getMessage(URLs.class, "provider.name.info", host);
         }
-        return NbBundle.getMessage(URLs.class, "provider.name.info", host);
+        return pni;
     }
 
     @NbBundle.Messages("server.version=https://{0}:8181/admins/web/resource/provider/version")
     public static String serverVersion(final LocalProperties prop) throws ConfigurationException {
-        final String host = prop.getProperty(HOST);
-        if (host == null) {
-            throw new ConfigurationException(prop, HOST);
+        final String sVersion = prop.getProperty(SERVER_VERSION);
+        if (sVersion == null) {
+            final String host = prop.getProperty(HOST);
+            if (host == null) {
+                throw new ConfigurationException(prop, HOST);
+            }
+            return NbBundle.getMessage(URLs.class, "server.version", host);
         }
-        return NbBundle.getMessage(URLs.class, "server.version", host);
+        return sVersion;
     }
 
     @Messages("admin.base.url=https://{0}:8181/admins/")
