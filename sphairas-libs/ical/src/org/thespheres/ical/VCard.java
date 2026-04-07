@@ -11,6 +11,8 @@ package org.thespheres.ical;
  */
 public interface VCard extends IComponent<CardComponentProperty> {
 
+    public static final String MIME = "text/vcard";
+    
     public static String VCARD = "VCARD";
     public static String FN = "FN";
     public static String N = "N";
