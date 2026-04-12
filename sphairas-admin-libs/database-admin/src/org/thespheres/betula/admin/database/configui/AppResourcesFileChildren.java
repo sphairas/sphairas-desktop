@@ -18,6 +18,7 @@ import java.util.SortedSet;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 import javax.swing.Action;
+import org.apache.commons.lang3.StringUtils;
 import org.openide.awt.Actions;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.ChildFactory;
@@ -78,8 +79,8 @@ public class AppResourcesFileChildren extends ChildFactory<Entry> {
                 try {
                     final String davBase = URLs.adminResourcesDavBase(LocalProperties.find(provider));
                     final WebProvider service = WebProvider.find(provider, WebProvider.class);
-                    final URI uri = URI.create(davBase);
-                    readDirectories(service, uri, dir);
+                    final URI davRoot = URI.create(davBase);
+                    readDirectories(service, davRoot, dir);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 } finally {
@@ -109,14 +110,14 @@ public class AppResourcesFileChildren extends ChildFactory<Entry> {
         return root;
     }
 
-    static Map<String, String> readDirectories(final WebProvider wp, final URI uri, final Entry root) throws IOException {
+    static Map<String, String> readDirectories(final WebProvider wp, final URI davRoot, final Entry root) throws IOException {
         try {
-            final Multistatus ms = HttpUtilities.getProperties(wp, uri, -1, true);
+            final Multistatus ms = HttpUtilities.getProperties(wp, davRoot, -1, true);
             final Map<String, String> ret = new HashMap<>();
             synchronized (root) {
                 root.folderChildren.clear();
                 root.fileChildren.clear();
-                parseMultistatus(ms, root);
+                parseMultistatus(ms, root, davRoot);
             }
             return ret;
         } catch (NoProviderException | ConfigurationException ex) {
@@ -124,7 +125,7 @@ public class AppResourcesFileChildren extends ChildFactory<Entry> {
         }
     }
 
-    private static void parseMultistatus(final Multistatus ms, final Entry root) throws IOException {
+    private static void parseMultistatus(final Multistatus ms, final Entry root, final URI davRoot) throws IOException {
         responses:
         for (final Response r : ms.getResponses()) {
             final String href = r.getHref().stream()
@@ -132,37 +133,72 @@ public class AppResourcesFileChildren extends ChildFactory<Entry> {
             if (href == null) {
                 continue;
             }
-            final String path = href.substring("/web/dav/".length());
             for (final PropStat ps : r.getPropstat()) {
                 if (ps.getStatusCode() == 200) {
                     final DAVProp prop = (DAVProp) ps.getProp();
                     final boolean folder = Optional.ofNullable(prop.getResourcetype())
                             .map(ResourceType::getCollection)
                             .isPresent();
+                    final String path = extractDavPath(href, davRoot, folder); //href.substring("/web/dav/".length());
+                    if (StringUtils.isBlank(path)) {
+                        continue responses;
+                    }
                     final String name = Optional.ofNullable(prop.getDisplayName())
                             .map(DisplayName::getValue)
                             .orElse(null);
                     if (name != null) {
-                        final Entry dir;
-                        final int li = path.lastIndexOf('/');
-                        if (li == -1) {
-                            dir = root;
-                        } else {
-                            Entry ce = root;
-                            int i = -1;
-                            while ((i = path.indexOf('/', i + 1)) != -1) {
-                                final String sp = path.substring(0, i + 1);
-                                final Entry found = ce.folderChildren.stream()
-                                        .filter(fc -> fc.getResourcePath().equals(sp))
-                                        .collect(CollectionUtil.requireSingleOrNull());
-                                if (found != null) {
-                                    ce = found;
-                                } else {
-                                    ce = ce.addFolderEntry(sp);
-                                }
+//                        final Entry dir;
+//                        final int li = path.lastIndexOf('/');
+//                        if (li == -1) {
+//                            dir = root;
+//                        } else {
+//                            Entry ce = root;
+//                            int i = -1;
+//                            while ((i = path.indexOf('/', i + 1)) != -1) {
+//                                final String sp = path.substring(0, i + 1);
+//                                final Entry found = ce.folderChildren.stream()
+//                                        .filter(fc -> fc.getResourcePath().equals(sp))
+//                                        .collect(CollectionUtil.requireSingleOrNull());
+//                                if (found != null) {
+//                                    ce = found;
+//                                } else {
+//                                    ce = ce.addFolderEntry(sp);
+//                                }
+//                            }
+//                            dir = ce;
+//                        }
+
+                        // Determine the segments we need to ensure as folders.
+                        // If it's a folder, we process the whole path. If it's a file, we process everything but the filename.
+                        final String[] segments = path.split("/");
+                        final int lastFolderIndex = folder ? segments.length : segments.length - 1;
+
+                        Entry ce = root;
+                        StringBuilder currentPathBuilder = new StringBuilder();
+
+                        // Iterate through segments to find/create the directory structure
+                        for (int i = 0; i < lastFolderIndex; i++) {
+                            String segment = segments[i];
+                            if (segment.isEmpty()) {
+                                continue; // Handle leading or double slashes
                             }
-                            dir = ce;
+                            currentPathBuilder.append(segment);
+                            // Add trailing slash for matching if your Entry.getResourcePath() expects it
+                            // Or remove it if your new API preference is no-trailing-slash.
+                            // Assuming your system still uses trailing slashes for directory identities:
+                            currentPathBuilder.append("/");
+                            final String sp = currentPathBuilder.toString();
+                            final Entry found = ce.folderChildren.stream()
+                                    .filter(fc -> fc.getResourcePath().equals(sp))
+                                    .collect(CollectionUtil.requireSingleOrNull());
+                            if (found != null) {
+                                ce = found;
+                            } else {
+                                ce = ce.addFolderEntry(sp);
+                            }
                         }
+
+                        final Entry dir = ce;
                         if (dir == null) {
                             throw new IOException();
                         }
@@ -180,6 +216,33 @@ public class AppResourcesFileChildren extends ChildFactory<Entry> {
                 }
             }
         }
+    }
+
+    private static String extractDavPath(String href, final URI baseUri, final boolean folder) {
+        if (folder && !href.endsWith("/")) {
+            href += "/";
+        }
+        String target = URI.create(href).getPath();
+        int overlapIndex = -1;
+        String overlapString = "";
+
+        // We iterate to find the longest matching suffix of 'baseUri.getPath()' that matches the start of 'target'
+        for (int i = 0; i < baseUri.getPath().length(); i++) {
+            String potentialOverlap = baseUri.getPath().substring(i);
+            if (target.startsWith(potentialOverlap)) {
+                overlapIndex = i;
+                overlapString = potentialOverlap;
+                break;
+            }
+        }
+
+        if (overlapIndex != -1) {
+            // Return everything in target after the overlapString
+            return target.substring(overlapString.length());
+        }
+
+        // Fallback: if no overlap found, return the target as is or handle error
+        return target;
     }
 
     @Override
