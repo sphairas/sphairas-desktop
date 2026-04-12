@@ -295,10 +295,11 @@ class Updater implements Runnable {
 
     private Path findBackupPath(final String file) throws IOException {
         final Path dir = instance.getBaseDir().resolve("bak");
-        Files.createDirectories(dir);
         final Path bak1 = dir.resolve(file + ".bak1");
         final Path bak0 = dir.resolve(file + ".bak0");
         final Path bak = dir.resolve(file + ".bak");
+        Files.createDirectories(bak.getParent());
+        
         if (Files.exists(bak0)) {
             try {
                 Files.copy(bak0, bak1, StandardCopyOption.REPLACE_EXISTING);
