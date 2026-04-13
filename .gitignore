@@ -348,3 +348,7 @@
 /sphairas-common/bouncy-castle/build/
 /sphairas-common/bouncy-castle/release/modules/ext/*
 /sphairas-common/bouncy-castle/external/*
+/sphairas-admin-libs/schulconnex/build/
+/sphairas-common/schulconnex-api-qs/build/
+/sphairas-admin-libs/schulconnex/nbproject/private/
+/sphairas-common/schulconnex-api-qs/nbproject/private/

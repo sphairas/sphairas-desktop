@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licenseSummary>
+  <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.15.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.15.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.15.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-base</artifactId>
+      <version>2.15.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>2.15.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jaxb-annotations</artifactId>
+      <version>2.15.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>de.schulconnex</groupId>
+      <artifactId>api.qs</artifactId>
+      <version>1.0.0</version>
+      <licenses>
+        <!-- No license information available. -->
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.activation</groupId>
+      <artifactId>jakarta.activation-api</artifactId>
+      <version>1.2.2</version>
+      <licenses>
+        <license>
+          <name>EDL 1.0</name>
+          <url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+          <distribution>repo</distribution>
+          <file>edl 1.0 - edl-v10.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>2.3.3</version>
+      <licenses>
+        <license>
+          <name>Eclipse Distribution License - v 1.0</name>
+          <url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+          <distribution>repo</distribution>
+          <file>edl 1.0 - edl-v10.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+      <version>5.2.1</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents.core5</groupId>
+      <artifactId>httpcore5-h2</artifactId>
+      <version>5.2</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents.core5</groupId>
+      <artifactId>httpcore5</artifactId>
+      <version>5.2</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>Apache-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>jackson-databind-nullable</artifactId>
+      <version>0.2.6</version>
+      <licenses>
+        <license>
+          <name>Apache License 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+          <file>apache license 2.0 - license-2.0.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.36</version>
+      <licenses>
+        <license>
+          <name>MIT License</name>
+          <url>http://www.opensource.org/licenses/mit-license.php</url>
+          <distribution>repo</distribution>
+          <file>MIT.html</file>
+        </license>
+      </licenses>
+    </dependency>
+  </dependencies>
+</licenseSummary>

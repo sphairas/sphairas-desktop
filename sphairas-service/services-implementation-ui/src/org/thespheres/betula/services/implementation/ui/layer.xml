@@ -16,6 +16,7 @@
         <file name="common.imports" url="imports/common.imports" />
         <file name="sibank.imports" url="imports/sibank.imports" />
         <file name="untis.imports" url="imports/untis.imports" />
+        <file name="schulconnex.imports" url="imports/schulconnex.imports" />
         <file name="scripts.imports" url="imports/scripts.imports" />
     </folder>
 </filesystem>
