@@ -16,6 +16,7 @@ import org.thespheres.betula.xmlimport.model.Product;
 @Messages({"Schulconnex.product.displayName=Schulconnex"})
 public class Schulconnex {
 
+    public static final String VCARD_PROP_SCHULCONNEX_UUID = "X-SCHULCONNEX-UUID";
     private final static Product PRODUCT = new Product("schulconnex");
 
     static {

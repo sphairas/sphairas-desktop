@@ -5,44 +5,41 @@
  */
 package org.thespheres.betula.schulconnex.ui;
 
-import de.schulconnex.ApiClient;
-import de.schulconnex.ApiException;
-import de.schulconnex.SchulconnexQSApi;
-import de.schulconnex.auth.HttpTokenAuth;
-import de.schulconnex.qs.model.Gruppendatensatz;
-import de.schulconnex.qs.model.Personendatensatz;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
+import org.thespheres.betula.StudentId;
+import org.thespheres.betula.UnitId;
 import org.thespheres.betula.schulconnex.Schulconnex;
 import org.thespheres.betula.schulconnex.SchulconnexImportConfiguration;
 import org.thespheres.betula.schulconnex.SchulconnexImportData;
+import org.thespheres.betula.schulconnex.SchulconnexKlasseItem;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.xmlimport.ImportItem;
+import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.uiutil.AbstractImportAction;
-import org.openide.WizardDescriptor;
 import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
+import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
+import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
 
 /**
  * Menu action that triggers one of the Schulconnex import wizard variants.
  * <p>
- * The action is registered in the {@code Menu/import-export} folder.
- * When invoked it will:
+ * The action is registered in the {@code Menu/import-export} folder. When
+ * invoked it will:
  * <ol>
- *   <li>Connect to the Schulconnex API (TODO - not yet implemented)</li>
- *   <li>Show a wizard for the user to select the target provider and review the
- *       fetched data for the selected import type</li>
- *   <li>Push the selected entries to the sphairas web application</li>
+ * <li>Connect to the Schulconnex API (TODO - not yet implemented)</li>
+ * <li>Show a wizard for the user to select the target provider and review the
+ * fetched data for the selected import type</li>
+ * <li>Push the selected entries to the sphairas web application</li>
  * </ol>
  *
  * @author boris.heithecker
@@ -53,19 +50,14 @@ import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
     "SchulconnexImportAction.targetItem.displayName=Schulconnex (Kurse)",
     "SchulconnexImportAction.dialog.title=Schulconnex-Import"
 })
-public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImportData, SchulconnexImportConfiguration, ImportItem> implements PropertyChangeListener {
+public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImportData<?>, SchulconnexImportConfiguration, ImportItem> implements PropertyChangeListener {
 
+    public static final String SCHULCONNEX_IMPORT_TYPE = "schulconnex-import-type";
     public static final String SIGNEE = "signee";
     public static final String PRIMARY_UNIT = "primary-unit";
     public static final String TARGET_ITEM = "target-item";
-    public static final String IMPORT_TYPE = "schulconnex-import-type";
-    public static final String SCHULCONNEX_DATA = "schulconnex-api-data";
-    public static final String SCHULCONNEX_PERSONEN_DATA = "schulconnex-api-personen-data";
-    public static final String SCHULCONNEX_GRUPPEN_DATA = "schulconnex-api-gruppen-data";
 
     private static final RequestProcessor RP = new RequestProcessor(SchulconnexImportAction.class);
-    private static final Logger LOG = Logger.getLogger(SchulconnexImportAction.class.getName());
-
     private final String type;
 
     @ActionID(category = "Betula",
@@ -110,9 +102,9 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
      * a provider in step 1 and confirms to proceed to step 2.
      */
     @Override
-    protected SchulconnexImportData createSettingsAndIterator() {
-        final SchulconnexImportData d = new SchulconnexImportData();
-        d.putProperty(IMPORT_TYPE, type);
+    protected SchulconnexImportData<?> createSettingsAndIterator() {
+        final SchulconnexImportData<?> d = new SchulconnexImportData<>();
+        d.putProperty(SCHULCONNEX_IMPORT_TYPE, type);
         d.addPropertyChangeListener(this);
         iterator = new SchulconnexImportActionWizardIterator(type);
         return d;
@@ -122,43 +114,10 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
     public void propertyChange(final PropertyChangeEvent evt) {
         if (IMPORT_TARGET.equals(evt.getPropertyName())) {
             final SchulconnexImportConfiguration config = (SchulconnexImportConfiguration) evt.getNewValue();
-            final SchulconnexImportData wiz = (SchulconnexImportData) evt.getSource();
+            final SchulconnexImportData<SchulconnexKlasseItem> wiz = (SchulconnexImportData<SchulconnexKlasseItem>) evt.getSource();
             if (config != null) {
-                RP.post(() -> fetchSchulconnexData(config, wiz));
+                RP.post(() -> wiz.fetchSchulconnexData());
             }
-        }
-    }
-
-    private void fetchSchulconnexData(final SchulconnexImportConfiguration config, final SchulconnexImportData wiz) {
-        final ApiClient client = ApiClient.create(1, config.getSchulconnexApiEndpoint());
-        final HttpTokenAuth clientAuth = client.getAuthentication("token", HttpTokenAuth.class);
-        clientAuth.setTokenEndpoint(config.getSchulconnexTokenEndpoint());
-        clientAuth.setUsername(config.getSchulconnexClientId());
-        clientAuth.setPassword(config.getSchulconnexClientSecret());
-        final SchulconnexQSApi api = new SchulconnexQSApi(client);
-        try {
-            switch (type) {
-                case SIGNEE:
-                    final List<Personendatensatz> persons = api.searchPersonenkontexte(null, null, null, null);
-                    wiz.putProperty(SCHULCONNEX_DATA, persons);
-                    wiz.putProperty(SCHULCONNEX_PERSONEN_DATA, persons);
-                    break;
-                case PRIMARY_UNIT:
-                    final List<Gruppendatensatz> gruppen = api.searchGruppen(null, null, null, null, null, null, null, null);
-                    final List<Personendatensatz> personsForPrimaryUnit = api.searchPersonenkontexte(null, null, null, null);
-                    wiz.putProperty(SCHULCONNEX_DATA, gruppen);
-                    wiz.putProperty(SCHULCONNEX_GRUPPEN_DATA, gruppen);
-                    wiz.putProperty(SCHULCONNEX_PERSONEN_DATA, personsForPrimaryUnit);
-                    break;
-                case TARGET_ITEM:
-                    final List<Gruppendatensatz> gruppenForTargetItem = api.searchGruppen(null, null, null, null, null, null, null, null);
-                    wiz.putProperty(SCHULCONNEX_DATA, gruppenForTargetItem);
-                    wiz.putProperty(SCHULCONNEX_GRUPPEN_DATA, gruppenForTargetItem);
-                    break;
-            }
-        } catch (ApiException ex) {
-            LOG.log(Level.SEVERE, "Schulconnex API error", ex);
-            wiz.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, ex.getLocalizedMessage());
         }
     }
 
@@ -168,17 +127,53 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
     }
 
     /**
-    * Creates the updater that pushes the selected data to the web
-     * application.
+     * Creates the updater that pushes the selected data to the web application.
      * <p>
      * <b>TODO:</b> Implement once the API fetch step is in place.
      *
      * @return {@code null} until the implementation is complete (no-op stub)
      */
     @Override
-    protected AbstractUpdater<?> createUpdater(Set<?> selected, SchulconnexImportConfiguration config,
-            Term term, SchulconnexImportData wiz) {
-        // TODO: build and return the appropriate AbstractUpdater / SigneeUpdater
-        return null;
+    protected AbstractUpdater<?> createUpdater(Set<?> selected, SchulconnexImportConfiguration config, Term term, SchulconnexImportData<?> wiz) {
+        switch (type) {
+            case PRIMARY_UNIT:
+                final SchulconnexKlasseItem[] items = selected.stream()
+                        .map(SchulconnexKlasseItem.class::cast)
+                        .toArray(SchulconnexKlasseItem[]::new);
+                //see XmlCsvImportAction
+//                final TargetItemsUpdaterDescriptions d = createTargetItemsUpdaterDescriptions(config, wiz);
+                return new SchulconnexPrimaryUnitsUpdater(items,
+                        config.getWebServiceProvider(),
+                        term,
+                        Collections.singletonList(new PrimaryUnitUpdaterFilter()),
+                        config,
+                        null);
+            case SIGNEE:
+                // TODO Schulconnex: implement signee updater once ImportSigneeItem mapping is in place.
+                return null;
+            case TARGET_ITEM:
+                // TODO Schulconnex: implement target-item updater once target document mapping exists.
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    static class PrimaryUnitUpdaterFilter implements UpdaterFilter<ImportTargetsItem, TargetDocumentProperties> {
+
+        @Override
+        public boolean accept(final ImportTargetsItem iti) {
+            if (iti instanceof SchulconnexKlasseItem) {
+                final SchulconnexKlasseItem item = (SchulconnexKlasseItem) iti;
+                return item.isSelected() && item.isValid();
+            }
+            return iti != null && iti.isValid();
+        }
+
+        @Override
+        public boolean accept(final ImportTargetsItem iti, final UnitId u, final StudentId stud) {
+            // TODO Schulconnex: wire per-student selection when student items are implemented.
+            return UpdaterFilter.super.accept(iti, u, stud);
+        }
     }
 }

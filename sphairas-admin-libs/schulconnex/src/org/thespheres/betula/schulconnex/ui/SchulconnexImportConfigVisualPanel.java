@@ -26,7 +26,8 @@ import org.thespheres.betula.xmlimport.uiutil.ImportProviderComboBoxModel;
  */
 @NbBundle.Messages({
     "SchulconnexImportConfigVisualPanel.step.name=Mandant",
-    "SchulconnexImportConfigVisualPanel.providerLabel.text=Server:"
+    "SchulconnexImportConfigVisualPanel.providerLabel.text=Server:",
+    "SchulconnexImportConfigVisualPanel.dryRunBox.text=Probelauf"
 })
 class SchulconnexImportConfigVisualPanel extends JPanel {
 
@@ -52,11 +53,15 @@ class SchulconnexImportConfigVisualPanel extends JPanel {
     private void initComponents() {
         providerLabel = new javax.swing.JLabel();
         providerComboBox = new org.jdesktop.swingx.JXComboBox();
+        dryRunBox = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(providerLabel,
             NbBundle.getMessage(SchulconnexImportConfigVisualPanel.class, "SchulconnexImportConfigVisualPanel.providerLabel.text"));
 
         providerComboBox.setModel(providerModel);
+
+        org.openide.awt.Mnemonics.setLocalizedText(dryRunBox,
+            NbBundle.getMessage(SchulconnexImportConfigVisualPanel.class, "SchulconnexImportConfigVisualPanel.dryRunBox.text"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -64,11 +69,16 @@ class SchulconnexImportConfigVisualPanel extends JPanel {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(providerLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(providerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 266,
-                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                            javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(dryRunBox)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap()));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -78,10 +88,13 @@ class SchulconnexImportConfigVisualPanel extends JPanel {
                                 .addComponent(providerLabel)
                                 .addComponent(providerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(dryRunBox)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
     }
 
     // Variables declaration
+    private javax.swing.JCheckBox dryRunBox;
     private org.jdesktop.swingx.JXComboBox providerComboBox;
     private javax.swing.JLabel providerLabel;
     // End of variables declaration
@@ -89,6 +102,7 @@ class SchulconnexImportConfigVisualPanel extends JPanel {
     void store(SchulconnexImportData d) {
         final SchulconnexImportConfiguration p = providerModel.findTarget();
         d.putProperty(AbstractImportAction.IMPORT_TARGET, p);
+        d.putProperty(AbstractImportAction.PROP_DRY_RUN, dryRunBox.isSelected());
     }
 
     void read(SchulconnexImportData settings) {
@@ -100,9 +114,13 @@ class SchulconnexImportConfigVisualPanel extends JPanel {
         } else if (purl != null) {
             providerModel.setSelectedTarget(Schulconnex.getProduct(), purl);
         }
+        final Boolean dr = (Boolean) settings.getProperty(AbstractImportAction.PROP_DRY_RUN);
+        if (dr != null) {
+            dryRunBox.setSelected(dr);
+        }
     }
 
-    static class SchulconnexImportConfigPanel implements WizardDescriptor.Panel<SchulconnexImportData> {
+    static class SchulconnexImportConfigPanel implements WizardDescriptor.Panel<SchulconnexImportData<?>> {
 
         private SchulconnexImportConfigVisualPanel component;
 

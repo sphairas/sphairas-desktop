@@ -2,28 +2,39 @@ package org.thespheres.betula.schulconnex;
 
 import de.schulconnex.qs.model.Gruppendatensatz;
 import de.schulconnex.qs.model.Gruppe;
+import de.schulconnex.qs.model.Gruppenzugehoerigkeit;
 import de.schulconnex.qs.model.Laufzeit;
+import de.schulconnex.qs.model.Personendatensatz;
+import de.schulconnex.qs.model.Personenkontext;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Month;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.IOColorLines;
+import org.openide.windows.InputOutput;
+import org.thespheres.betula.StudentId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.NamingResolver;
 import org.thespheres.betula.services.ServiceConstants;
+import org.thespheres.betula.services.ui.util.dav.VCardStudents;
 import org.thespheres.betula.services.util.Units;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
 import org.thespheres.betula.xmlimport.parse.NameParser;
+import org.thespheres.betula.xmlimport.utilities.AbstractDelayedStudents;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 
 /**
@@ -33,52 +44,94 @@ import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 public class SchulconnexKlasseItem extends ImportTargetsItem {
 
     private final GeneratedUnitId generatedUnit = new GeneratedUnitId();
-    private boolean initialized;
+    private boolean selected = false;
     private boolean existsUnit;
     private final DelayedKlasseStudentSet schueler = new DelayedKlasseStudentSet();
     private final Gruppendatensatz source;
 
-    private SchulconnexKlasseItem(final Gruppendatensatz gds) {
+    SchulconnexKlasseItem(final Gruppendatensatz gds, final List<Personendatensatz> personen, final SchulconnexImportConfiguration config) {
         super(findSourceLabel(gds));
         this.source = gds;
+        initialize(personen, config);
     }
 
-    public static List<SchulconnexKlasseItem> createList(final List<Gruppendatensatz> l, final SchulconnexImportConfiguration config) {
-        return l.stream()
-                .filter(g -> g != null && g.getGruppe() != null)
-                .filter(g -> "KLASSE".equals(g.getGruppe().getTyp()))
-                .map(SchulconnexKlasseItem::new)
-                .peek(i -> i.initialize(config))
-                .collect(Collectors.toList());
+    static String findSourceLabel(final Gruppendatensatz gds) {
+        return gds.getGruppe().getBezeichnung();
     }
 
-    public synchronized void initialize(final SchulconnexImportConfiguration config) {
-        if (config == null) {
-            throw new IllegalArgumentException("config cannot be null");
-        }
-        if (initialized) {
+    @Messages({"SchulconnexKlasseItem.initialize.warning.no.level=Für die Schulconnex-Klasse \"{0}\" mit den Schulconnex-Jahrgangsstufen \"{1}\" kann keine eindeutige Stufe bestimmt werden."})
+    private void initialize(final List<Personendatensatz> personen, final SchulconnexImportConfiguration config) {
+        try {
+            setClientProperty(PROP_IMPORT_TARGET, config);
+        } catch (PropertyVetoException ex) {
+            ex.printStackTrace(ImportUtil.getIO().getErr());
             return;
         }
+//        Term term = (Term) wizard.getProperty(AbstractFileImportAction.TERM);
+//        try {
+//            setClientProperty(ImportTargetsItem.PROP_SELECTED_TERM, term);
+//        } catch (PropertyVetoException ex) {
+//        }
 
         uniqueMarkers.add(ServiceConstants.BETULA_PRIMARY_UNIT_MARKER);
         schueler.setConfiguration(config);
 
-        termScheduleProvider = config.getTermSchemeProvider().getInfo().getURL();
-        final Laufzeit laufzeit = getLaufzeit();
-        if (laufzeit != null && laufzeit.getBis() != null) {
-            setDeleteDate(laufzeit.getBis());
-        }
-
-        try {
-            setClientProperty(PROP_IMPORT_TARGET, config);
-        } catch (PropertyVetoException ex) {
-            throw new IllegalStateException(ex);
-        }
-
+//        termScheduleProvider = config.getTermSchemeProvider().getInfo().getURL();
+//        final Laufzeit laufzeit = getLaufzeit();
+//        if (laufzeit != null && laufzeit.getBis() != null) {
+//            setDeleteDate(laufzeit.getBis());
+//        }
         existsUnit = Units.get(config.getWebServiceProvider().getInfo().getURL())
                 .map(u -> u.hasUnit(getUnitId()))
                 .orElse(Boolean.FALSE);
-        initialized = true;
+
+        Integer level = null;
+        final List<String> jj = getSource().getGruppe().getJahrgangsstufen();
+        if (jj != null && jj.size() == 1) {
+            try {
+                level = Integer.valueOf(jj.get(0));
+            } catch (NumberFormatException nfex) {
+                Exceptions.printStackTrace(nfex);
+            }
+        }
+
+        if (level == null) {
+            String concat = jj == null ? "null" : jj.stream().collect(Collectors.joining(","));
+            final String message = NbBundle.getMessage(SchulconnexKlasseItem.class, "SchulconnexKlasseItem.initialize.warning.no.level", getKlasse(), concat);
+            InputOutput io = ImportUtil.getIO();
+            try {
+                IOColorLines.println(io, message, Color.RED);
+            } catch (IOException ex) {
+                io.getOut().println(message);
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        final int baseLevel = 5;
+        setDeleteDate(ImportUtil.calculateDeleteDate(level, baseLevel, Month.JULY));
+
+//        Signees.get(config.getWebServiceProvider().getInfo().getURL())
+//                .flatMap(s -> s.findSignee(getSourceSigneeName()))
+//                .ifPresent(this::setSignee);
+        schueler.setConfiguration(config);
+        schueler.clear();
+//             transformer.setParameter("authority", config.getAuthority());
+        getSource().getGruppenzugehoerigkeiten().stream()
+                .filter(gz -> gz.getRollen().stream().anyMatch("lern"::equalsIgnoreCase))
+                .map(gz -> createSchulconnexStudentItem(gz, personen, config))
+                .filter(Objects::nonNull)
+                .forEach(schueler::add);
+    }
+
+    private SchulconnexStudentItem createSchulconnexStudentItem(final Gruppenzugehoerigkeit gz, final List<Personendatensatz> personen, final SchulconnexImportConfiguration config) {
+        for (final Personendatensatz pds : personen) {
+            for (final Personenkontext pek : pds.getPersonenkontexte()) {
+                if (pek.getId().equals(gz.getKtid())) {
+                    final String label = SchulconnexUtil.createSortableName(pds.getPerson().getName()) + " (" + getKlasse() + ")";
+                    return new SchulconnexStudentItem(label, pds.getPerson(), pek, config);
+                }
+            }
+        }
+        return null;
     }
 
     public Gruppendatensatz getSource() {
@@ -91,6 +144,23 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
 
     public String getKlasse() {
         return findSourceLabel(source);
+    }
+
+    public Set<SchulconnexStudentItem> getImportStudents() {
+        return schueler.studs;
+    }
+
+    @Override
+    public StudentId[] getUnitStudents() {
+        return schueler.getUnitStudents();
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(final boolean selected) {
+        this.selected = selected;
     }
 
     @Override
@@ -192,13 +262,6 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
                         other.source != null && other.source.getGruppe() != null ? other.source.getGruppe().getBezeichnung() : null);
     }
 
-    private static String findSourceLabel(final Gruppendatensatz gds) {
-        if (gds == null || gds.getGruppe() == null || gds.getGruppe().getBezeichnung() == null) {
-            return "";
-        }
-        return gds.getGruppe().getBezeichnung();
-    }
-
     private Laufzeit getLaufzeit() {
         final Gruppe g = source != null ? source.getGruppe() : null;
         return g != null ? g.getLaufzeit() : null;
@@ -249,7 +312,7 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
             Integer baseLevel = null;
             if (bl != null) {
                 try {
-                    baseLevel = Integer.parseInt(bl);
+                    baseLevel = Integer.valueOf(bl);
                 } catch (NumberFormatException nfex) {
                     baseLevel = null;
                 }
@@ -268,14 +331,68 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
         }
     }
 
-    private static final class DelayedKlasseStudentSet {
+    private final class DelayedKlasseStudentSet extends AbstractDelayedStudents<SchulconnexKlasseItem> {
 
-        private void setConfiguration(final SchulconnexImportConfiguration config) {
-            // intentionally no-op for now; student assembly will be added in next step.
+        private final Set<SchulconnexStudentItem> studs = new HashSet<>();
+
+        private DelayedKlasseStudentSet() {
+            super(SchulconnexKlasseItem.this);
+        }
+
+        @Override
+        protected void onLoad() {
+            // TODO Schulconnex: initialize student/VCard mapping from getVCardStudents()
+            // once Personendatensatz to VCardStudent mapping is implemented
+            final VCardStudents students;
+            try {
+                students = getVCardStudents();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+                return;
+            }
+            synchronized (studs) {
+                studs.forEach(i -> i.initialize(students));
+            }
+        }
+
+        void add(SchulconnexStudentItem item) {
+            final VCardStudents students;
+            try {
+                students = getVCardStudents();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+                return;
+            }
+            synchronized (studs) {
+                studs.add(item);
+                if (students.getLoadTask().isFinished()) {
+                    item.initialize(students);
+                }
+            }
+        }
+
+        public StudentId[] getUnitStudents() {
+            synchronized (studs) {
+                return studs.stream()
+                        .map(SchulconnexStudentItem::getStudentId)
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .toArray(StudentId[]::new);
+            }
         }
 
         private boolean isValid() {
-            return true;
+            synchronized (studs) {
+                return studs.stream()
+                        .filter(i -> i.getStudentId() == null)
+                        .count() == 0;
+            }
+        }
+
+        public void clear() {
+            synchronized (studs) {
+                studs.clear();
+            }
         }
     }
 

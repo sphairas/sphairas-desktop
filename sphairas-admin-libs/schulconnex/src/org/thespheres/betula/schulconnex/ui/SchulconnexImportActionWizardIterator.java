@@ -13,13 +13,16 @@ import org.thespheres.betula.xmlimport.uiutil.AbstractFileImportWizard;
 /**
  * Wizard iterator for the Schulconnex import workflow.
  * <p>
- * Currently contains only the target-selection / configuration panel.
- * Once the Schulconnex API fetch is implemented, add a Lehrende-review panel
- * (analogous to {@code UntisSigneeImportVisualPanel}) here.
+ * Current step flow:
+ * <ol>
+ * <li>Target / provider configuration</li>
+ * <li>Type specific data/documents step</li>
+ * <li>Student review step (only for Schueler / PRIMARY_UNIT import)</li>
+ * </ol>
  *
  * @author boris.heithecker
  */
-final class SchulconnexImportActionWizardIterator extends AbstractFileImportWizard<SchulconnexImportData> {
+final class SchulconnexImportActionWizardIterator extends AbstractFileImportWizard<SchulconnexImportData<?>> {
 
     private final String type;
 
@@ -28,10 +31,13 @@ final class SchulconnexImportActionWizardIterator extends AbstractFileImportWiza
     }
 
     @Override
-    protected ArrayList<WizardDescriptor.Panel<SchulconnexImportData>> createPanels() {
-        final ArrayList<WizardDescriptor.Panel<SchulconnexImportData>> ret = new ArrayList<>();
+    protected ArrayList<WizardDescriptor.Panel<SchulconnexImportData<?>>> createPanels() {
+        final ArrayList<WizardDescriptor.Panel<SchulconnexImportData<?>>> ret = new ArrayList<>();
         ret.add(new SchulconnexImportConfigVisualPanel.SchulconnexImportConfigPanel());
-//        ret.add(new SchulconnexImportTypePlaceholderVisualPanel.SchulconnexImportTypePlaceholderPanel(type));
+        if (SchulconnexImportAction.PRIMARY_UNIT.equals(type)) {
+            ret.add(new SchulconnexPrimaryUnitDocumentsVisualPanel.SchulconnexDataDocumentsPanel());
+            ret.add(new SchulconnexPrimaryUnitStudentsVisualPanel.SchulconnexPrimaryUnitUpdateStudentsPanel());
+        }
         return ret;
     }
 }
