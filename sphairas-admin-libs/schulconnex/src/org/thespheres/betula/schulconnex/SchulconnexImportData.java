@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.WizardDescriptor;
 import org.thespheres.betula.schulconnex.ui.SchulconnexImportAction;
+import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.util.ChangeSet;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.uiutil.AbstractImportAction;
@@ -61,8 +62,7 @@ public class SchulconnexImportData<T extends ImportItem> extends DefaultImportWi
                     loadPrimaryUnits(api);
                     break;
                 case SchulconnexImportAction.TARGET_ITEM:
-                    final List<Gruppendatensatz> gruppenForTargetItem = api.searchGruppen(null, null, null, null, null, null, null, null);
-                    putProperty(SCHULCONNEX_GRUPPEN_DATA, gruppenForTargetItem);
+                    loadTargetItems(api);
                     break;
             }
         } catch (ApiException ex) {
@@ -71,7 +71,9 @@ public class SchulconnexImportData<T extends ImportItem> extends DefaultImportWi
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void loadPrimaryUnits(final SchulconnexQSApi api) throws ApiException {
+        final Term current = getProperty(AbstractImportAction.TERM, Term.class);
         final List<Gruppendatensatz> gruppen = api.searchGruppen(null, null, null, null, null, null, null, null);
         final List<Personendatensatz> personsForPrimaryUnit = api.searchPersons(null, null, null, null);
         putProperty(SCHULCONNEX_GRUPPEN_DATA, gruppen);
@@ -79,8 +81,21 @@ public class SchulconnexImportData<T extends ImportItem> extends DefaultImportWi
         final ChangeSet<T> cs = getSelectedNodesProperty();
         cs.clear();
         gruppen.stream()
-                .filter(g -> "KLASSE".equalsIgnoreCase(g.getGruppe().getTyp()))
-                .map(gds -> (T) new SchulconnexKlasseItem(gds, personsForPrimaryUnit, getConfiguration()))
+                .filter(g -> "Klasse".equalsIgnoreCase(g.getGruppe().getTyp()))
+                .map(gds -> (T) new SchulconnexKlasseItem(gds, personsForPrimaryUnit, getConfiguration(), current))
+                .forEach(cs::add);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void loadTargetItems(final SchulconnexQSApi api) throws ApiException {
+        final Term current = getProperty(AbstractImportAction.TERM, Term.class);
+        final List<Gruppendatensatz> gruppen = api.searchGruppen(null, null, null, null, null, null, null, null);
+        putProperty(SCHULCONNEX_GRUPPEN_DATA, gruppen);
+        final ChangeSet<T> cs = getSelectedNodesProperty();
+        cs.clear();
+        gruppen.stream()
+                .filter(g -> "Kurs".equalsIgnoreCase(g.getGruppe().getTyp()))
+                .map(gds -> (T) new SchulconnexKursItem(gds, gruppen, getConfiguration(), current))
                 .forEach(cs::add);
     }
 }

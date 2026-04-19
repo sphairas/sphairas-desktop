@@ -37,6 +37,8 @@ final class SchulconnexImportActionWizardIterator extends AbstractFileImportWiza
         if (SchulconnexImportAction.PRIMARY_UNIT.equals(type)) {
             ret.add(new SchulconnexPrimaryUnitDocumentsVisualPanel.SchulconnexDataDocumentsPanel());
             ret.add(new SchulconnexPrimaryUnitStudentsVisualPanel.SchulconnexPrimaryUnitUpdateStudentsPanel());
+        } else if (SchulconnexImportAction.TARGET_ITEM.equals(type)) {
+            ret.add(new SchulconnexTargetsDocumentsVisualPanel.SchulconnexTargetsDocumentsPanel());
         }
         return ret;
     }

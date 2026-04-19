@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class SchulconnexStudentItem extends ImportStudentItem {
     private boolean selected;
     protected final SchulconnexImportConfiguration configuration;
 
-     SchulconnexStudentItem(final String label, final Person person, final Personenkontext personenkontext, final SchulconnexImportConfiguration config) {
+    SchulconnexStudentItem(final String label, final Person person, final Personenkontext personenkontext, final SchulconnexImportConfiguration config) {
         super(label);
         this.uuid = personenkontext.getId();
         this.person = person;
@@ -92,8 +93,15 @@ public class SchulconnexStudentItem extends ImportStudentItem {
         } else if (found.size() == 1) {
             card = found.get(0);
         }
-        if(card == null) {
-            //TODO: find by name and date of birth
+        if (card == null) {
+            final List<VCardStudent> foundByName = students.getStudents().stream()
+                    .filter(this::equalsByNameAndBirth)
+                    .collect(Collectors.toList());
+            if (foundByName.size() > 1) {
+                handleDuplicate(found, SchulconnexUtil.findN(person));
+            } else if (foundByName.size() == 1) {
+                card = found.get(0);
+            }
         }
         if (card != null) {
             setStudentId(card.getStudentId());
@@ -112,6 +120,25 @@ public class SchulconnexStudentItem extends ImportStudentItem {
 
     protected StudentId generateStudentId() {
         return new StudentId(configuration.getAuthority(), generator.incrementAndGet());
+    }
+
+    protected boolean equalsByNameAndBirth(final VCardStudent other) {
+        final Geburt g;
+        if ((g = getPerson().getGeburt()) != null) {
+            if (!Objects.equals(g.getDatum(), other.getDateOfBirth())) {
+                return false;
+            }
+            if (!Objects.equals(g.getGeburtsort(), other.getBirthplace())) {
+                return false;
+            }
+        }
+        if (!getPerson().getName().getFamilienname().equals(other.getSurname())) {
+            return false;
+        }
+        if (!getPerson().getName().getVorname().equals(other.getGivenNames())) {
+            return false;
+        }
+        return true;
     }
 
     @NbBundle.Messages("SchulconnexStudentItem.student.conflict.message=Es wurden mehrere Schüler/-innen mit der Identität {0} in der Datenbank gefunden: {1}")

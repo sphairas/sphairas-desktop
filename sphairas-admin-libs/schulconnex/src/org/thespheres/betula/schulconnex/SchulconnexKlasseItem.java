@@ -1,21 +1,20 @@
 package org.thespheres.betula.schulconnex;
 
 import de.schulconnex.qs.model.Gruppendatensatz;
-import de.schulconnex.qs.model.Gruppe;
 import de.schulconnex.qs.model.Gruppenzugehoerigkeit;
 import de.schulconnex.qs.model.Laufzeit;
 import de.schulconnex.qs.model.Personendatensatz;
 import de.schulconnex.qs.model.Personenkontext;
 import java.awt.Color;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashSet;
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.openide.util.Exceptions;
@@ -29,12 +28,14 @@ import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.NamingResolver;
 import org.thespheres.betula.services.ServiceConstants;
+import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.ui.util.dav.VCardStudents;
 import org.thespheres.betula.services.util.Units;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
 import org.thespheres.betula.xmlimport.parse.NameParser;
 import org.thespheres.betula.xmlimport.utilities.AbstractDelayedStudents;
+import org.thespheres.betula.xmlimport.utilities.ConfigurableImportTarget;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 
 /**
@@ -43,23 +44,21 @@ import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
  */
 public class SchulconnexKlasseItem extends ImportTargetsItem {
 
-    private final GeneratedUnitId generatedUnit = new GeneratedUnitId();
+    private UnitId generatedUnitId;
     private boolean selected = false;
     private boolean existsUnit;
     private final DelayedKlasseStudentSet schueler = new DelayedKlasseStudentSet();
     private final Gruppendatensatz source;
+    private Integer baseLevel;
+    private final Term currentTerm;
 
-    SchulconnexKlasseItem(final Gruppendatensatz gds, final List<Personendatensatz> personen, final SchulconnexImportConfiguration config) {
-        super(findSourceLabel(gds));
+    SchulconnexKlasseItem(final Gruppendatensatz gds, final List<Personendatensatz> personen, final SchulconnexImportConfiguration config, final Term current) {
+        super(gds.getGruppe().getBezeichnung());
         this.source = gds;
+        this.currentTerm = current;
         initialize(personen, config);
     }
 
-    static String findSourceLabel(final Gruppendatensatz gds) {
-        return gds.getGruppe().getBezeichnung();
-    }
-
-    @Messages({"SchulconnexKlasseItem.initialize.warning.no.level=Für die Schulconnex-Klasse \"{0}\" mit den Schulconnex-Jahrgangsstufen \"{1}\" kann keine eindeutige Stufe bestimmt werden."})
     private void initialize(final List<Personendatensatz> personen, final SchulconnexImportConfiguration config) {
         try {
             setClientProperty(PROP_IMPORT_TARGET, config);
@@ -67,24 +66,37 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
             ex.printStackTrace(ImportUtil.getIO().getErr());
             return;
         }
-//        Term term = (Term) wizard.getProperty(AbstractFileImportAction.TERM);
-//        try {
-//            setClientProperty(ImportTargetsItem.PROP_SELECTED_TERM, term);
-//        } catch (PropertyVetoException ex) {
-//        }
 
         uniqueMarkers.add(ServiceConstants.BETULA_PRIMARY_UNIT_MARKER);
         schueler.setConfiguration(config);
+        generateUnitId(config);
 
-//        termScheduleProvider = config.getTermSchemeProvider().getInfo().getURL();
-//        final Laufzeit laufzeit = getLaufzeit();
-//        if (laufzeit != null && laufzeit.getBis() != null) {
-//            setDeleteDate(laufzeit.getBis());
-//        }
         existsUnit = Units.get(config.getWebServiceProvider().getInfo().getURL())
                 .map(u -> u.hasUnit(getUnitId()))
                 .orElse(Boolean.FALSE);
 
+        Integer level = findLevel();
+        if (baseLevel != null) {
+            setDeleteDate(ImportUtil.calculateDeleteDate(level, baseLevel, Month.JULY));
+        } else {
+            Optional.ofNullable(source.getGruppe().getLaufzeit())
+                    .map(Laufzeit::getBis)
+                    .map(bis -> bis.plusYears(1))
+                    .ifPresent(this::setDeleteDate);
+        }
+
+//        Signees.get(config.getWebServiceProvider().getInfo().getURL())
+//                .flatMap(s -> s.findSignee(getSourceSigneeName()))
+//                .ifPresent(this::setSignee);
+        getSource().getGruppenzugehoerigkeiten().stream()
+                .filter(gz -> gz.getRollen().stream().anyMatch("lern"::equalsIgnoreCase))
+                .map(gz -> createSchulconnexStudentItem(gz, personen, config))
+                .filter(Objects::nonNull)
+                .forEach(schueler::add);
+    }
+
+    @Messages({"SchulconnexKlasseItem.initialize.warning.no.level=Für die Schulconnex-Klasse \"{0}\" mit den Schulconnex-Jahrgangsstufen \"{1}\" kann keine eindeutige Stufe bestimmt werden."})
+    protected Integer findLevel() throws MissingResourceException {
         Integer level = null;
         final List<String> jj = getSource().getGruppe().getJahrgangsstufen();
         if (jj != null && jj.size() == 1) {
@@ -94,7 +106,6 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
                 Exceptions.printStackTrace(nfex);
             }
         }
-
         if (level == null) {
             String concat = jj == null ? "null" : jj.stream().collect(Collectors.joining(","));
             final String message = NbBundle.getMessage(SchulconnexKlasseItem.class, "SchulconnexKlasseItem.initialize.warning.no.level", getKlasse(), concat);
@@ -106,20 +117,55 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
                 Exceptions.printStackTrace(ex);
             }
         }
-        final int baseLevel = 5;
-        setDeleteDate(ImportUtil.calculateDeleteDate(level, baseLevel, Month.JULY));
+        return level;
+    }
 
-//        Signees.get(config.getWebServiceProvider().getInfo().getURL())
-//                .flatMap(s -> s.findSignee(getSourceSigneeName()))
-//                .ifPresent(this::setSignee);
-        schueler.setConfiguration(config);
-        schueler.clear();
-//             transformer.setParameter("authority", config.getAuthority());
-        getSource().getGruppenzugehoerigkeiten().stream()
-                .filter(gz -> gz.getRollen().stream().anyMatch("lern"::equalsIgnoreCase))
-                .map(gz -> createSchulconnexStudentItem(gz, personen, config))
-                .filter(Objects::nonNull)
-                .forEach(schueler::add);
+    @Messages("SchulconnexKlasseItem.generateUnitId.warning.no.generated.unitid=Für die Schulconnex-Klasse \"{0}\" wurde keine Unit-ID gefunden!")
+    private void generateUnitId(final SchulconnexImportConfiguration cfg) {
+        try {
+            final NameParser parser = createNameParser(cfg);
+            generatedUnitId = parser.findUnitId(getKlasse(), resolveReferenceYear());
+        } catch (Exception ex) {
+            generatedUnitId = null;
+        }
+        if (generatedUnitId == null) {
+            final String msg = NbBundle.getMessage(SchulconnexKlasseItem.class,
+                    "SchulconnexKlasseItem.generateUnitId.warning.no.generated.unitid", getKlasse());
+            try {
+                IOColorLines.println(ImportUtil.getIO(), msg, Color.RED);
+            } catch (IOException ex) {
+                ImportUtil.getIO().getOut().write(msg);
+            }
+        }
+    }
+
+    private NameParser createNameParser(final SchulconnexImportConfiguration cfg) {
+        final NamingResolver nr = cfg.getNamingResolver();
+        final String first = nr.properties().get("first-element");
+        final String bl = nr.properties().get("base-level");
+        if (bl != null) {
+            try {
+                baseLevel = Integer.valueOf(bl);
+            } catch (NumberFormatException nfex) {
+                baseLevel = null;
+            }
+        }
+        final NameParser ret = new NameParser(cfg.getAuthority(), first, baseLevel);
+        ret.setImportScripts(((ConfigurableImportTarget) getConfiguration()).getImportScripts());
+        return ret;
+    }
+
+    private int resolveReferenceYear() {
+        if (currentTerm != null) {
+            final Object j = currentTerm.getParameter("jahr");
+            if (j instanceof Integer) {
+                return (int) j;
+            }
+        }
+        return Optional.ofNullable(source.getGruppe().getLaufzeit())
+                .map(Laufzeit::getVon)
+                .map(LocalDate::getYear)
+                .orElse(LocalDate.now().getYear());
     }
 
     private SchulconnexStudentItem createSchulconnexStudentItem(final Gruppenzugehoerigkeit gz, final List<Personendatensatz> personen, final SchulconnexImportConfiguration config) {
@@ -143,7 +189,7 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
     }
 
     public String getKlasse() {
-        return findSourceLabel(source);
+        return source.getGruppe().getBezeichnung();
     }
 
     public Set<SchulconnexStudentItem> getImportStudents() {
@@ -205,12 +251,12 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
         if (u != null) {
             return u;
         }
-        return generatedUnit.getUnitId();
+        return generatedUnitId;
     }
 
     @Override
     public void setUnitId(final UnitId unit) {
-        if (unit == null || unit.equals(generatedUnit.getUnitId())) {
+        if (unit == null || unit.equals(generatedUnitId)) {
             super.setUnitId(null);
         } else {
             super.setUnitId(unit);
@@ -226,7 +272,7 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
         return null;
     }
 
-    public String resolveUnitDisplayName(final UnitId u) {
+    protected String resolveUnitDisplayName(final UnitId u) {
         final SchulconnexImportConfiguration cfg = getConfiguration();
         if (cfg != null) {
             final NamingResolver naming = cfg.getNamingResolver();
@@ -262,75 +308,6 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
                         other.source != null && other.source.getGruppe() != null ? other.source.getGruppe().getBezeichnung() : null);
     }
 
-    private Laufzeit getLaufzeit() {
-        final Gruppe g = source != null ? source.getGruppe() : null;
-        return g != null ? g.getLaufzeit() : null;
-    }
-
-    @Messages({
-        "SchulconnexKlasseItem.GeneratedUnitId.warning.no.generated.unitid=Für die Schulconnex Klasse \"{0}\" wurde keine ID gefunden!"
-    })
-    class GeneratedUnitId implements VetoableChangeListener {
-
-        private boolean isInit;
-        private UnitId uid;
-
-        @SuppressWarnings("LeakingThisInConstructor")
-        private GeneratedUnitId() {
-            SchulconnexKlasseItem.this.addVetoableChangeListener(this);
-        }
-
-        private synchronized UnitId getUnitId() {
-            if (!isInit) {
-                final SchulconnexImportConfiguration cfg = getConfiguration();
-                if (cfg != null) {
-                    try {
-                        final NameParser parser = createNameParser(cfg);
-                        uid = parser.findUnitId(getKlasse(), resolveReferenceYear());
-                    } catch (Exception ex) {
-                        uid = null;
-                    }
-                }
-                if (uid == null) {
-                    final String msg = NbBundle.getMessage(SchulconnexKlasseItem.class,
-                            "SchulconnexKlasseItem.GeneratedUnitId.warning.no.generated.unitid", getKlasse());
-                    try {
-                        IOColorLines.println(ImportUtil.getIO(), msg, Color.RED);
-                    } catch (IOException ex) {
-                        ImportUtil.getIO().getOut().write(msg);
-                    }
-                }
-                isInit = true;
-            }
-            return uid;
-        }
-
-        private NameParser createNameParser(final SchulconnexImportConfiguration cfg) {
-            final NamingResolver nr = cfg.getNamingResolver();
-            final String first = nr.properties().get("first-element");
-            final String bl = nr.properties().get("base-level");
-            Integer baseLevel = null;
-            if (bl != null) {
-                try {
-                    baseLevel = Integer.valueOf(bl);
-                } catch (NumberFormatException nfex) {
-                    baseLevel = null;
-                }
-            }
-            return new NameParser(cfg.getAuthority(), first, baseLevel);
-        }
-
-        private int resolveReferenceYear() {
-            final Laufzeit lz = getLaufzeit();
-            final LocalDate from = lz != null ? lz.getVon() : null;
-            return from != null ? from.getYear() : LocalDate.now().getYear();
-        }
-
-        @Override
-        public void vetoableChange(final PropertyChangeEvent evt) throws PropertyVetoException {
-        }
-    }
-
     private final class DelayedKlasseStudentSet extends AbstractDelayedStudents<SchulconnexKlasseItem> {
 
         private final Set<SchulconnexStudentItem> studs = new HashSet<>();
@@ -341,8 +318,6 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
 
         @Override
         protected void onLoad() {
-            // TODO Schulconnex: initialize student/VCard mapping from getVCardStudents()
-            // once Personendatensatz to VCardStudent mapping is implemented
             final VCardStudents students;
             try {
                 students = getVCardStudents();
@@ -389,11 +364,6 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
             }
         }
 
-        public void clear() {
-            synchronized (studs) {
-                studs.clear();
-            }
-        }
     }
 
 }

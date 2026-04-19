@@ -158,7 +158,7 @@ public abstract class SchulconnexPrimaryUnitStudentsTableColumns {
     }
 
     @NbBundle.Messages({
-        "SchulconnexPrimaryUnitStudentsTableColumns.SchulconnexUuidColumn.name=Schulconnex UUID"
+        "SchulconnexPrimaryUnitStudentsTableColumns.SchulconnexUuidColumn.name=Schulconnex-UUID"
     })
     public static final class SchulconnexUuidColumn extends ImportTableColumn<SchulconnexStudentItem, ConfigurableImportTarget, SchulconnexImportData<SchulconnexKlasseItem>, SchulconnexPrimaryUnitStudentsTableModel> {
 

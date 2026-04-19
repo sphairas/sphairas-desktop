@@ -5,6 +5,10 @@
  */
 package org.thespheres.betula.schulconnex;
 
+import org.thespheres.betula.assess.Grade;
+import org.thespheres.betula.assess.TargetDocument;
+import org.thespheres.betula.document.model.DocumentDefaults;
+import org.thespheres.betula.services.CommonTargetProperties;
 import org.thespheres.betula.xmlimport.ImportTarget;
 import org.thespheres.betula.xmlimport.ImportTargetFactory;
 
@@ -15,7 +19,7 @@ import org.thespheres.betula.xmlimport.ImportTargetFactory;
  *
  * @author boris.heithecker
  */
-public interface SchulconnexImportConfiguration extends ImportTarget {
+public interface SchulconnexImportConfiguration extends ImportTarget, CommonTargetProperties, DocumentDefaults<Grade, TargetDocument> {
 
     public static final String SCHULCONNEX_CLIENTSECRET = "schulconnex.client.secret";
     public static final String SCHULCONNEX_CLIENTID = "schulconnex.client.id";

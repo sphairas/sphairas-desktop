@@ -2,9 +2,12 @@ package org.thespheres.betula.schulconnex;
 
 import de.schulconnex.qs.model.Name;
 import de.schulconnex.qs.model.Person;
+import de.schulconnex.qs.model.SchulconnexEntitaet;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,6 +16,22 @@ import org.apache.commons.lang3.StringUtils;
  * @author boris.heithecker
  */
 public class SchulconnexUtil {
+
+    public static <T, S extends SchulconnexEntitaet> Collector<T, ?, T> collectByUUID(Function<T, S> toSchulconnexEntitaet) {
+        return Collectors.collectingAndThen(Collectors.toSet(), set -> {
+            if (set.isEmpty()) {
+                throw new IllegalStateException("No element found");
+            } else if (set.size() == 1) {
+                return set.iterator().next();
+            } else {
+                final String m = set.stream()
+                        .map(toSchulconnexEntitaet::apply)
+                        .map(SchulconnexEntitaet::getId)
+                        .collect(Collectors.joining(","));
+                throw new IllegalStateException("Multiple elements found, UUIDs: " + m + ".");
+            }
+        });
+    }
 
     public static String createSortableName(final Name name) {
         String ret = "";

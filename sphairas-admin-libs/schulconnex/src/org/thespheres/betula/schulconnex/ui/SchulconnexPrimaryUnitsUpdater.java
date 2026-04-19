@@ -45,7 +45,7 @@ import org.thespheres.betula.xmlimport.utilities.VCardStudentsUtil;
 @NbBundle.Messages({
     "SchulconnexPrimaryUnitsUpdater.message.updateVCards.network=Schüler/-innen werden importiert ...",
     "SchulconnexPrimaryUnitsUpdater.message.updateVCards.finish=Es wurden {0} Schüler/-innen in {1} ms importiert.",
-    "SchulconnexPrimaryUnitsUpdater.message.updateVCards.skip=VCard-Import übersprungen: Für die Schulconnex-Klassen sind noch keine Schüler-VCard-Daten verfügbar."
+    "SchulconnexPrimaryUnitsUpdater.message.updateVCards.skip=VCard-Import übersprungen: Keine aktualisierten Schüler-VCard-Daten."
 })
 public class SchulconnexPrimaryUnitsUpdater extends TargetItemsUpdater<SchulconnexKlasseItem> {
 

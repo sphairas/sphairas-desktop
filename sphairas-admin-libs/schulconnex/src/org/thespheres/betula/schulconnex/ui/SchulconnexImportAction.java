@@ -9,6 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
@@ -16,11 +17,13 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.thespheres.betula.StudentId;
+import org.thespheres.betula.TermId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.schulconnex.Schulconnex;
 import org.thespheres.betula.schulconnex.SchulconnexImportConfiguration;
 import org.thespheres.betula.schulconnex.SchulconnexImportData;
 import org.thespheres.betula.schulconnex.SchulconnexKlasseItem;
+import org.thespheres.betula.schulconnex.SchulconnexKursItem;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
@@ -28,6 +31,7 @@ import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.uiutil.AbstractImportAction;
 import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
+import org.thespheres.betula.xmlimport.utilities.TargetItemsUpdater;
 import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
 
 /**
@@ -114,6 +118,7 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
     public void propertyChange(final PropertyChangeEvent evt) {
         if (IMPORT_TARGET.equals(evt.getPropertyName())) {
             final SchulconnexImportConfiguration config = (SchulconnexImportConfiguration) evt.getNewValue();
+            @SuppressWarnings("unchecked")
             final SchulconnexImportData<SchulconnexKlasseItem> wiz = (SchulconnexImportData<SchulconnexKlasseItem>) evt.getSource();
             if (config != null) {
                 RP.post(() -> wiz.fetchSchulconnexData());
@@ -134,11 +139,13 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
      * @return {@code null} until the implementation is complete (no-op stub)
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected AbstractUpdater<?> createUpdater(Set<?> selected, SchulconnexImportConfiguration config, Term term, SchulconnexImportData<?> wiz) {
         switch (type) {
             case PRIMARY_UNIT:
                 final SchulconnexKlasseItem[] items = selected.stream()
                         .map(SchulconnexKlasseItem.class::cast)
+                        .filter(SchulconnexKlasseItem::isSelected)
                         .toArray(SchulconnexKlasseItem[]::new);
                 //see XmlCsvImportAction
 //                final TargetItemsUpdaterDescriptions d = createTargetItemsUpdaterDescriptions(config, wiz);
@@ -152,8 +159,12 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
                 // TODO Schulconnex: implement signee updater once ImportSigneeItem mapping is in place.
                 return null;
             case TARGET_ITEM:
-                // TODO Schulconnex: implement target-item updater once target document mapping exists.
-                return null;
+                final SchulconnexKursItem[] iti = selected.stream()
+                        .map(SchulconnexKursItem.class::cast)
+                        .filter(SchulconnexKursItem::isSelected)
+                        .toArray(SchulconnexKursItem[]::new);
+//                final TargetItemsUpdaterDescriptions d = createTargetItemsUpdaterDescriptions(config, wiz);
+                return new TargetItemsUpdater<>(iti, config.getWebServiceProvider(), term, Collections.singletonList(new TargetItemsUpdaterFilter()), null);
             default:
                 return null;
         }
@@ -175,5 +186,24 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
             // TODO Schulconnex: wire per-student selection when student items are implemented.
             return UpdaterFilter.super.accept(iti, u, stud);
         }
+    }
+
+    static class TargetItemsUpdaterFilter implements UpdaterFilter<ImportTargetsItem, TargetDocumentProperties> {
+
+        @Override
+        public boolean accept(ImportTargetsItem iti) {
+            return iti.isValid();
+        }
+
+        @Override
+        public boolean accept(ImportTargetsItem iti, TargetDocumentProperties td, StudentId stud) {
+            return td.getPreferredConvention() != null || td.isTextValueTarget();
+        }
+
+        @Override
+        public boolean accept(ImportTargetsItem iti, TargetDocumentProperties td, StudentId student, TermId term, ImportTargetsItem.GradeEntry entry) {
+            return StringUtils.equalsIgnoreCase(td.getTargetType(), "zeugnisnoten");
+        }
+
     }
 }
