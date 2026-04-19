@@ -19,6 +19,8 @@ import org.thespheres.betula.document.util.Identities;
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class StudentId extends Identity<Long> implements Serializable {
 
+    public static final StudentId NULL = new StudentId("null", 0l);
+
     private static final long serialVersionUID = 1L;
     @XmlAttribute(name = "id", required = true)
     private long id;
@@ -40,6 +42,10 @@ public final class StudentId extends Identity<Long> implements Serializable {
     public StudentId(Student s) {
         this.id = s.getStudentId().getId();
         this.authority = s.getStudentId().getAuthority();
+    }
+
+    public static boolean isNull(StudentId sid) {
+        return sid == null || sid.equals(NULL) || (0l == sid.getId() && "null".equals(sid.getAuthority()));
     }
 
     @Override
