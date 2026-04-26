@@ -65,7 +65,7 @@ public abstract class SiBankDefaultColumns extends ImportTableColumn<SiBankKursI
         public void initialize(final SiBankImportTarget config, final SiBankImportData<SiBankKursItem> wizard) {
             super.initialize(config, wizard);
             permitAltSubjectNames = config.permitAltSubjectNames();
-            this.box.setEditable(this.permitAltSubjectNames);
+            updateEditableSubjectEntry(this.permitAltSubjectNames);
         }
 
         @Override

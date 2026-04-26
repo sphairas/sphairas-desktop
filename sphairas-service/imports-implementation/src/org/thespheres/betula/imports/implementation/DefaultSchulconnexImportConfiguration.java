@@ -27,7 +27,8 @@ public class DefaultSchulconnexImportConfiguration extends DefaultConfigurableIm
     @Override
     public void initialize(final Map<String, String> properties) {
         super.initialize(properties);
-        // Schulconnex-specific initialization goes here if needed
+        final String m = properties.get(SchulconnexImportConfiguration.SCHULCONNEX_PERMIT_ALTSUBJECTNAME);
+        permitAltSubjects = Boolean.parseBoolean(m);
     }
 
     @Override

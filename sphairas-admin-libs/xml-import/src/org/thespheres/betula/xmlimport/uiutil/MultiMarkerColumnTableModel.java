@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.swing.DefaultCellEditor;
@@ -63,6 +64,7 @@ class MultiMarkerColumnTableModel extends AbstractPluggableTableModel<Object, Ma
 
     private List<MarkerSelection> createSelectionList(final Marker[] sel) {
         final List<MarkerSelection> ret = Arrays.stream(markers)
+                .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(m -> m.getLongLabel(), Collator.getInstance(Locale.getDefault())))
                 .map(MarkerSelection::new)
                 .collect(Collectors.toList());

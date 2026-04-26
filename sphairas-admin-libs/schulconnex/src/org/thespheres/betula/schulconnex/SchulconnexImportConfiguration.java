@@ -25,7 +25,8 @@ public interface SchulconnexImportConfiguration extends ImportTarget, CommonTarg
     public static final String SCHULCONNEX_CLIENTID = "schulconnex.client.id";
     public static final String SCHULCONNEX_API = "schulconnex.api.endpoint";
     public static final String SCHULCONNEX_TOKEN_ENDPOINT = "schulconnex.token.endpoint";
-
+    public static final String SCHULCONNEX_PERMIT_ALTSUBJECTNAME = "schulconnex.permit.altsubjectnames";
+    
     /**
      * Returns the Schulconnex API client ID from the configuration file
      * (schulconnex.properties under key "schulconnex.client.id").
@@ -57,6 +58,10 @@ public interface SchulconnexImportConfiguration extends ImportTarget, CommonTarg
      * @return the token endpoint URL, or null if not configured
      */
     String getSchulconnexTokenEndpoint();
+
+    public boolean permitAltSubjectNames();
+
+    public String getDefaultSigneeSuffix();
 
     public static abstract class Factory extends ImportTargetFactory<SchulconnexImportConfiguration> {
 

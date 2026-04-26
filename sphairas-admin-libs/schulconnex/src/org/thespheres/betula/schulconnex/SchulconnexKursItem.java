@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.openide.util.Exceptions;
@@ -25,6 +26,7 @@ import org.thespheres.betula.StudentId;
 import org.thespheres.betula.UnitId;
 import org.thespheres.betula.document.DocumentId;
 import org.thespheres.betula.document.Marker;
+import org.thespheres.betula.document.MarkerFactory;
 import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.NamingResolver;
 import org.thespheres.betula.services.scheme.spi.Term;
@@ -49,6 +51,8 @@ public class SchulconnexKursItem extends ImportTargetsItem {
     public enum Typ {
         KLASSENUNTERRICHT, KURSUNTERRICHT
     }
+    static final List<String> ROLLEN = List.of("Lern");
+    static final Marker WPK_NIEDERSACHSEN = MarkerFactory.find("niedersachsen.unterricht.art", "wpk", null);
     private final Gruppendatensatz source;
     private boolean selected;
     private Boolean existsUnit;
@@ -106,6 +110,9 @@ public class SchulconnexKursItem extends ImportTargetsItem {
                 })
                 .toArray(Marker[]::new);
         setSubjectMarker(subjects);
+        Optional.ofNullable(source.getGruppe().getBereich())
+                .filter("Wahlpflichtunterricht"::equalsIgnoreCase)
+                .ifPresent(b -> uniqueMarkers.add(WPK_NIEDERSACHSEN));
         if (config.getAssessmentConventions().length > 0) {
             setAssessmentConvention(config.getAssessmentConventions()[0]);
         }
@@ -134,7 +141,7 @@ public class SchulconnexKursItem extends ImportTargetsItem {
 //        Signees.get(config.getWebServiceProvider().getInfo().getURL())
 //                .flatMap(s -> s.findSignee(getSourceSigneeName()))
 //                .ifPresent(this::setSignee);
-        addParticipants(getSource(), List.of("Lern"), gruppen);
+        addParticipants(getSource(), null, gruppen);
     }
 
     @NbBundle.Messages({"SchulconnexKursItem.initialize.warning.no.level=Für die Schulconnex-Klasse \"{0}\" mit den Schulconnex-Jahrgangsstufen \"{1}\" kann keine eindeutige Stufe bestimmt werden."})
@@ -164,6 +171,11 @@ public class SchulconnexKursItem extends ImportTargetsItem {
 
     protected void addParticipants(final Gruppendatensatz gds, final List<String> addRollen, final List<Gruppendatensatz> gruppen) {
         gds.getGruppenzugehoerigkeiten().stream()
+                .filter(gz -> {
+                    final List<String> rollen = gz.getRollen();
+                    return rollen.stream()
+                            .anyMatch(r -> ROLLEN.stream().anyMatch(ar -> ar.equalsIgnoreCase(r)));
+                })
                 .filter(gz -> {
                     final List<String> rollen = gz.getRollen();
                     return addRollen == null
@@ -245,6 +257,16 @@ public class SchulconnexKursItem extends ImportTargetsItem {
         return (SchulconnexImportConfiguration) getClientProperty(PROP_IMPORT_TARGET);
     }
 
+    public void setSubjectAlternativeName(final String n) {
+        final String before = this.subjectAlternativeName;
+        this.subjectAlternativeName = n;
+        try {
+            vSupport.fireVetoableChange(ImportTargetsItem.PROP_SUBJECT_ALT_NAME, before, n);
+        } catch (final PropertyVetoException ex) {
+            this.subjectAlternativeName = before;
+        }
+    }
+
     public String getKurs() {
         return source.getGruppe().getBezeichnung();
     }
@@ -274,6 +296,12 @@ public class SchulconnexKursItem extends ImportTargetsItem {
     @Override
     public StudentId[] getUnitStudents() {
         return participants.getParticipants();
+    }
+
+    public int getUnitStudentsSize() {
+        synchronized (participants.studs) {
+            return participants.studs.size();
+        }
     }
 
     @Override
@@ -340,6 +368,27 @@ public class SchulconnexKursItem extends ImportTargetsItem {
     public boolean isValid() {
         return participants.isValid()
                 && getUnitId() != null;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return 79 * hash + Objects.hashCode(this.source);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SchulconnexKursItem other = (SchulconnexKursItem) obj;
+        return Objects.equals(this.source.getGruppe().getId(), other.source.getGruppe().getId());
     }
 
     private final class DelayedKursStudentSet extends AbstractDelayedStudents<SchulconnexKursItem> {

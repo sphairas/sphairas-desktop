@@ -5,9 +5,12 @@
  */
 package org.thespheres.betula.xmlimport.uiutil;
 
+import java.awt.Component;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComponent;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.util.NbBundle;
@@ -82,6 +85,16 @@ public abstract class MultiSubjectColumn<I extends ImportTargetsItem, T extends 
             fcbm.addElement(MULTIPLE_SUBJECTS);
         }
         box.setModel(fcbm);
+    }
+
+    protected final void updateEditableSubjectEntry(final boolean editable) {
+        box.setEditable(editable);
+        if (editable) {
+            final Component editor = box.getEditor().getEditorComponent();
+            if (editor instanceof JComponent) {
+                ((JComponent) editor).setBorder(BorderFactory.createEmptyBorder());
+            }
+        }
     }
 
     Marker[] showDialog(final I item) {

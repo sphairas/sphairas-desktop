@@ -120,7 +120,7 @@ class XmlTargetDataDocumentsTableModel extends ImportTableModel<TargetItemsXmlCs
         public void initialize(final ConfigurableImportTarget config, final XmlCsvImportSettings<TargetItemsXmlCsvItem> wizard) {
             super.initialize(config, wizard);
             permitAltSubjectNames = config.permitAltSubjectNames();
-            this.box.setEditable(this.permitAltSubjectNames);
+            updateEditableSubjectEntry(this.permitAltSubjectNames);
         }
 
         @Override
