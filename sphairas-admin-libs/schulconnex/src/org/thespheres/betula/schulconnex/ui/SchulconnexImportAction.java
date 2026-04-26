@@ -24,12 +24,14 @@ import org.thespheres.betula.schulconnex.SchulconnexImportConfiguration;
 import org.thespheres.betula.schulconnex.SchulconnexImportData;
 import org.thespheres.betula.schulconnex.SchulconnexKlasseItem;
 import org.thespheres.betula.schulconnex.SchulconnexKursItem;
+import org.thespheres.betula.schulconnex.SchulconnexSigneeItem;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.xmlimport.ImportItem;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.model.Product;
 import org.thespheres.betula.xmlimport.uiutil.AbstractImportAction;
 import org.thespheres.betula.xmlimport.utilities.AbstractUpdater;
+import org.thespheres.betula.xmlimport.utilities.SigneeUpdater;
 import org.thespheres.betula.xmlimport.utilities.TargetDocumentProperties;
 import org.thespheres.betula.xmlimport.utilities.TargetItemsUpdater;
 import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
@@ -49,7 +51,7 @@ import org.thespheres.betula.xmlimport.utilities.UpdaterFilter;
  * @author boris.heithecker
  */
 @Messages({
-    "SchulconnexImportAction.signee.displayName=Schulconnex (Lehrende)",
+    "SchulconnexImportAction.signee.displayName=Schulconnex (Unterzeichner)",
     "SchulconnexImportAction.primaryUnit.displayName=Schulconnex (Klassen)",
     "SchulconnexImportAction.targetItem.displayName=Schulconnex (Kurse)",
     "SchulconnexImportAction.dialog.title=Schulconnex-Import"
@@ -143,28 +145,31 @@ public class SchulconnexImportAction extends AbstractImportAction<SchulconnexImp
     protected AbstractUpdater<?> createUpdater(Set<?> selected, SchulconnexImportConfiguration config, Term term, SchulconnexImportData<?> wiz) {
         switch (type) {
             case PRIMARY_UNIT:
-                final SchulconnexKlasseItem[] items = selected.stream()
+                final SchulconnexKlasseItem[] skli = selected.stream()
                         .map(SchulconnexKlasseItem.class::cast)
                         .filter(SchulconnexKlasseItem::isSelected)
                         .toArray(SchulconnexKlasseItem[]::new);
                 //see XmlCsvImportAction
 //                final TargetItemsUpdaterDescriptions d = createTargetItemsUpdaterDescriptions(config, wiz);
-                return new SchulconnexPrimaryUnitsUpdater(items,
+                return new SchulconnexPrimaryUnitsUpdater(skli,
                         config.getWebServiceProvider(),
                         term,
                         Collections.singletonList(new PrimaryUnitUpdaterFilter()),
                         config,
                         null);
             case SIGNEE:
-                // TODO Schulconnex: implement signee updater once ImportSigneeItem mapping is in place.
-                return null;
+                final SchulconnexSigneeItem[] ssigi = selected.stream()
+                        .map(SchulconnexSigneeItem.class::cast)
+                        .filter(SchulconnexSigneeItem::isSelected)
+                        .toArray(SchulconnexSigneeItem[]::new);
+                return new SigneeUpdater<>(config, ssigi, SchulconnexSigneeItem::doUpdate);
             case TARGET_ITEM:
-                final SchulconnexKursItem[] iti = selected.stream()
+                final SchulconnexKursItem[] skui = selected.stream()
                         .map(SchulconnexKursItem.class::cast)
                         .filter(SchulconnexKursItem::isSelected)
                         .toArray(SchulconnexKursItem[]::new);
 //                final TargetItemsUpdaterDescriptions d = createTargetItemsUpdaterDescriptions(config, wiz);
-                return new TargetItemsUpdater<>(iti, config.getWebServiceProvider(), term, Collections.singletonList(new TargetItemsUpdaterFilter()), null);
+                return new TargetItemsUpdater<>(skui, config.getWebServiceProvider(), term, Collections.singletonList(new TargetItemsUpdaterFilter()), null);
             default:
                 return null;
         }

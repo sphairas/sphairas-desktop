@@ -11,6 +11,7 @@ import de.schulconnex.SchulconnexQSApi;
 import de.schulconnex.auth.HttpTokenAuth;
 import de.schulconnex.qs.model.Gruppendatensatz;
 import de.schulconnex.qs.model.Personendatensatz;
+import de.schulconnex.qs.model.Personenkontext;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,8 +56,7 @@ public class SchulconnexImportData<T extends ImportItem> extends DefaultImportWi
         try {
             switch (getImportType()) {
                 case SchulconnexImportAction.SIGNEE:
-                    final List<Personendatensatz> persons = api.searchPersons(null, null, null, null);
-                    putProperty(SCHULCONNEX_PERSONEN_DATA, persons);
+                    loadSignees(api);
                     break;
                 case SchulconnexImportAction.PRIMARY_UNIT:
                     loadPrimaryUnits(api);
@@ -98,4 +98,22 @@ public class SchulconnexImportData<T extends ImportItem> extends DefaultImportWi
                 .map(gds -> (T) new SchulconnexKursItem(gds, gruppen, getConfiguration(), current))
                 .forEach(cs::add);
     }
+
+    @SuppressWarnings("unchecked")
+    private void loadSignees(final SchulconnexQSApi api) throws ApiException {
+        final List<Personendatensatz> persons = api.searchPersons(null, null, null, null);
+        putProperty(SCHULCONNEX_PERSONEN_DATA, persons);
+        final ChangeSet<T> cs = getSelectedNodesProperty();
+        cs.clear();
+        for (final Personendatensatz pds : persons) {
+            for (final Personenkontext pek : pds.getPersonenkontexte()) {
+                if ("Lehr".equalsIgnoreCase(pek.getRolle())) {
+                    final String label = SchulconnexUtil.createSortableName(pds.getPerson().getName());
+                    final T i = (T) new SchulconnexSigneeItem(label, pds.getPerson(), pek, getConfiguration());
+                    cs.add(i);
+                }
+            }
+        }
+    }
+
 }

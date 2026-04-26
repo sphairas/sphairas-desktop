@@ -34,7 +34,9 @@ final class SchulconnexImportActionWizardIterator extends AbstractFileImportWiza
     protected ArrayList<WizardDescriptor.Panel<SchulconnexImportData<?>>> createPanels() {
         final ArrayList<WizardDescriptor.Panel<SchulconnexImportData<?>>> ret = new ArrayList<>();
         ret.add(new SchulconnexImportConfigVisualPanel.SchulconnexImportConfigPanel());
-        if (SchulconnexImportAction.PRIMARY_UNIT.equals(type)) {
+        if (SchulconnexImportAction.SIGNEE.equals(type)) {
+            ret.add(new SchulconnexSigneeVisualPanel.SchulconnexSigneePanel());
+        } else if (SchulconnexImportAction.PRIMARY_UNIT.equals(type)) {
             ret.add(new SchulconnexPrimaryUnitDocumentsVisualPanel.SchulconnexDataDocumentsPanel());
             ret.add(new SchulconnexPrimaryUnitStudentsVisualPanel.SchulconnexPrimaryUnitUpdateStudentsPanel());
         } else if (SchulconnexImportAction.TARGET_ITEM.equals(type)) {
