@@ -110,9 +110,13 @@ public class SchulconnexKursItem extends ImportTargetsItem {
                 })
                 .toArray(Marker[]::new);
         setSubjectMarker(subjects);
-        Optional.ofNullable(source.getGruppe().getBereich())
-                .filter("Wahlpflichtunterricht"::equalsIgnoreCase)
-                .ifPresent(b -> uniqueMarkers.add(WPK_NIEDERSACHSEN));
+        final Marker realm = Optional.ofNullable(source.getGruppe().getBereich())
+                .filter("Wahlpflicht"::equalsIgnoreCase)
+                .map(b -> WPK_NIEDERSACHSEN)
+                .orElse(Marker.NULL);//TODO: use Pflichtunterricht
+        if (!Marker.isNull(realm)) {
+            uniqueMarkers.add(realm);
+        }
         if (config.getAssessmentConventions().length > 0) {
             setAssessmentConvention(config.getAssessmentConventions()[0]);
         }
@@ -273,6 +277,11 @@ public class SchulconnexKursItem extends ImportTargetsItem {
 
     public Typ getTyp() {
         return typ;
+    }
+
+    public Marker getRealm() {
+        final String[] names = ((ConfigurableImportTarget) getConfiguration()).getRealmMarkerConventionNames();
+        return getUniqueMarkerSet().getUnique(names);
     }
 
     public boolean isSelected() {
