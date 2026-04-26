@@ -23,7 +23,7 @@ import org.thespheres.betula.schulconnex.SchulconnexKlasseItem;
  * @author boris.heithecker
  */
 @NbBundle.Messages({
-    "SchulconnexPrimaryUnitUpdateStudentsVisualPanel.step.name=Schüler/-innen"
+    "SchulconnexPrimaryUnitUpdateStudentsVisualPanel.step.name=Schüler/-innen auswählen"
 })
 final class SchulconnexPrimaryUnitStudentsVisualPanel extends JPanel {
 
