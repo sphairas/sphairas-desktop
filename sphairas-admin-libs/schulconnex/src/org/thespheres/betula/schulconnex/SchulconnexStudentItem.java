@@ -200,4 +200,25 @@ public class SchulconnexStudentItem extends ImportStudentItem {
         this.selected = selected;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return 53 * hash + Objects.hashCode(this.uuid);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SchulconnexStudentItem other = (SchulconnexStudentItem) obj;
+        return Objects.equals(this.uuid, other.uuid);
+    }
+
 }

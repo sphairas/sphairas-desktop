@@ -287,25 +287,23 @@ public class SchulconnexKlasseItem extends ImportTargetsItem {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(source != null && source.getGruppe() != null ? source.getGruppe().getOrgid() : null);
-        hash = 67 * hash + Objects.hashCode(source != null && source.getGruppe() != null ? source.getGruppe().getBezeichnung() : null);
-        return hash;
+        int hash = 5;
+        return 89 * hash + Objects.hashCode(this.source.getGruppe().getId());
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final SchulconnexKlasseItem other = (SchulconnexKlasseItem) obj;
-        return Objects.equals(source != null && source.getGruppe() != null ? source.getGruppe().getOrgid() : null,
-                other.source != null && other.source.getGruppe() != null ? other.source.getGruppe().getOrgid() : null)
-                && Objects.equals(source != null && source.getGruppe() != null ? source.getGruppe().getBezeichnung() : null,
-                        other.source != null && other.source.getGruppe() != null ? other.source.getGruppe().getBezeichnung() : null);
+        return Objects.equals(this.source.getGruppe().getId(), other.source.getGruppe().getId());
     }
 
     private final class DelayedKlasseStudentSet extends AbstractDelayedStudents<SchulconnexKlasseItem> {
