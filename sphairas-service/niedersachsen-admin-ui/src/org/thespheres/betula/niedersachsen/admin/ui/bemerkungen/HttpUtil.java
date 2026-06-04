@@ -85,7 +85,7 @@ class HttpUtil {
         }
         if (wp instanceof WebProvider.SSL) {
             WebProvider.SSL ws = (WebProvider.SSL) wp;
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ws.getSSLContext(), SSLUtil.SSL_VERSIONS, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             builder.setSSLSocketFactory(sslsf);
         }
         final CloseableHttpClient httpclient = builder.build();
