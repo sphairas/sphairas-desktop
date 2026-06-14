@@ -33,7 +33,7 @@ public class ZensurensprungValidationImpl extends ZensurensprungValidation<Remot
     private final Map<DocumentId, DocumentWatch> watches = new HashMap<>();
     private final Listener listener = new Listener();
     private final RequestProcessor.Task task;
-
+    
     @SuppressWarnings({"LeakingThisInConstructor"})
     ZensurensprungValidationImpl(final RemoteUnitsModel model, final Properties config) {
         super(model, config);
@@ -42,17 +42,17 @@ public class ZensurensprungValidationImpl extends ZensurensprungValidation<Remot
         addValidationListener(l);
         task = RP2.post(this::initAll, 0, PRIORITY);
     }
-
+    
     @Override
     protected boolean cancel(ValidationListener<ZensurensprungResultImpl> cancelledBy) {
         return task.cancel();
     }
-
+    
     @Override
     protected ZensurensprungResultImpl createResult(RemoteStudent student, TermId term, RemoteTargetAssessmentDocument doc, Grade before, Grade current) {
         return new ZensurensprungResultImpl(student, term, doc, before, current);
     }
-
+    
     private void initAll() {
         assert RP2.isRequestProcessorThread();
         if (!model.getInitialization().satisfies(RemoteUnitsModel.INITIALISATION.MAXIMUM)) {
@@ -66,21 +66,28 @@ public class ZensurensprungValidationImpl extends ZensurensprungValidation<Remot
         //TODO: let engine do run
         run();
     }
-
+    
+    @Override
+    protected void processOneDocument(RemoteTargetAssessmentDocument rtad) {
+        if ("zeugnisnoten".equals(rtad.getTargetType())) {
+            super.processOneDocument(rtad);
+        }
+    }
+    
     private void postRunOneDocument(RemoteTargetAssessmentDocument d, StudentId stud) {
         if (d != null) {
             RP2.post(() -> runOneDocument(d, stud, null));
         }
     }
-
+    
     private DocumentWatch createDocumentWatch(RemoteTargetAssessmentDocument rtad) {
         final DocumentWatch ret = new DocumentWatch();
         rtad.addListener(WeakListeners.create(GradeTermTargetAssessment.Listener.class, ret, rtad));
         return ret;
     }
-
+    
     private class Listener implements PropertyChangeListener {
-
+        
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             final String n = evt.getPropertyName();
@@ -91,11 +98,11 @@ public class ZensurensprungValidationImpl extends ZensurensprungValidation<Remot
                 task.schedule(DELAY);
             }
         }
-
+        
     }
-
+    
     private class DocumentWatch implements GradeTermTargetAssessment.Listener {
-
+        
         @Override
         public void valueForStudentChanged(Object source, StudentId stud, TermId gradeId, Grade old, Grade newGrade, Timestamp timestamp) {
             RemoteTargetAssessmentDocument rtad = (RemoteTargetAssessmentDocument) source;
