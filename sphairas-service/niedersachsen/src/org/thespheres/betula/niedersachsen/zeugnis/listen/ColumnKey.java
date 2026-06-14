@@ -54,6 +54,21 @@ abstract class ColumnKey {
             return marker.stream().min(comp).orElse(null);
         }
 
+        /**
+         * Compares keys by priority: marker keys first (ordered by position),
+         * then alt keys (ordered alphabetically), then empty keys last.
+         *
+         * <p>Transitivity must be strictly maintained across all three categories.
+         * In particular, the same "wins against" relationship must hold consistently:
+         * if marker &lt; alt and marker &lt; empty, then the alt-vs-empty ordering must
+         * not create a cycle. Example of a violation to avoid:
+         * <pre>
+         *   A (marker, pos=5) &lt; B (alt="xyz")   [marker always beats alt]
+         *   B (alt="xyz")     &lt; C (marker, pos=3) [WRONG: would make B &lt; C &lt; A &lt; B]
+         * </pre>
+         * The fix ensures the alt branch always defers to marker keys by returning +1
+         * when {@code o} has a non-null comparingMarker.
+         */
         @Override
         public int compareTo(MarkerColumnKey o) {
             if (comparingMarker(StudentDetailsXml.ORDER) != null) {
@@ -70,6 +85,9 @@ abstract class ColumnKey {
                 }
             }
             if (alt != null) {
+                if (o.comparingMarker(StudentDetailsXml.ORDER) != null) {
+                    return 1;
+                }
                 if (o.alt != null) {
                     return Collator.getInstance(Locale.getDefault()).compare(alt, o.alt);
                 } else {
