@@ -69,7 +69,7 @@ public class ZensurensprungValidationImpl extends ZensurensprungValidation<Remot
     
     @Override
     protected void processOneDocument(RemoteTargetAssessmentDocument rtad) {
-        if ("zeugnisnoten".equals(rtad.getTargetType())) {
+        if ("zeugnisnoten".equalsIgnoreCase(rtad.getTargetType())) {
             super.processOneDocument(rtad);
         }
     }
