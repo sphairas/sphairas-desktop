@@ -54,6 +54,8 @@ public class Signees {
     private final static Collator COLLATOR = Collator.getInstance(Locale.GERMAN);
     private final static Marker INACTIVE_SIGNEE = MarkerFactory.find(SigneeStatus.NAME, "inactive", null);
     private final static Marker ACTIVE_SIGNEE = MarkerFactory.find(SigneeStatus.NAME, "active", null);
+    public static final String SIGNEE_UNAME_PROPERTY = "UNAME";
+
     private final String providerUrl;
     private final static HashMap<String, Object> INSTANCES = new HashMap<>();
     private RequestProcessor.Task task;
@@ -111,6 +113,14 @@ public class Signees {
                 .filter(e -> !excludeInactive || isActive(e))
                 .map(Map.Entry::getKey)
                 //                .collect(CollectionUtil.singleton());
+                .collect(Collectors.collectingAndThen(Collectors.toSet(), Signees::toSet));
+    }
+
+    public Optional<Signee> findSigneeByUsername(final String username, final boolean excludeInactive) {
+        return getSignees().entrySet().stream()
+                .filter(e -> username.equals(e.getValue().getUsername()))
+                .filter(e -> !excludeInactive || isActive(e))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.collectingAndThen(Collectors.toSet(), Signees::toSet));
     }
 
@@ -241,11 +251,13 @@ public class Signees {
         private static final String MESSAGE_INACTIVE = NbBundle.getMessage(Signees.class, "Signees.label.inactive");
         private final String cn;
         private final Set<Marker> markers;
+        private final String username;
 
         private Holder(ContentValueEntry<Signee> entry) {
             this.cn = entry.getStringValue();
             this.markers = entry.getValue().getMarkerSet().stream()
                     .collect(Collectors.toSet());
+            this.username = entry.getValue().getContentString(SIGNEE_UNAME_PROPERTY);
         }
 
         private String getCn(final boolean addStatus) {
@@ -269,5 +281,10 @@ public class Signees {
                     .collect(CollectionUtil.singleOrNull());
             return t == null || t.equals(ACTIVE_SIGNEE);
         }
+
+        public String getUsername() {
+            return username;
+        }
+
     }
 }

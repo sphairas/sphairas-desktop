@@ -31,8 +31,10 @@ import org.thespheres.betula.services.IllegalAuthorityException;
 import org.thespheres.betula.services.NamingResolver;
 import org.thespheres.betula.services.scheme.spi.Term;
 import org.thespheres.betula.services.ui.util.dav.VCardStudents;
+import org.thespheres.betula.services.util.Signees;
 import org.thespheres.betula.services.util.Units;
 import org.thespheres.betula.services.vcard.VCardStudent;
+import org.thespheres.betula.util.CollectionUtil;
 import org.thespheres.betula.xmlimport.ImportTargetsItem;
 import org.thespheres.betula.xmlimport.ImportUtil;
 import org.thespheres.betula.xmlimport.parse.NameParser;
@@ -142,9 +144,15 @@ public class SchulconnexKursItem extends ImportTargetsItem {
                     .ifPresent(this::setDeleteDate);
         }
 
-//        Signees.get(config.getWebServiceProvider().getInfo().getURL())
-//                .flatMap(s -> s.findSignee(getSourceSigneeName()))
-//                .ifPresent(this::setSignee);
+        final String lehr = getSource().getGruppenzugehoerigkeiten().stream()
+                .filter(gz -> gz.getRollen().stream().anyMatch("Lehr"::equalsIgnoreCase))
+                .map(gz -> gz.getKtid())
+                .collect(CollectionUtil.singleOrNull());
+        if (lehr != null) {
+            Signees.get(config.getWebServiceProvider().getInfo().getURL())
+                    .flatMap(s -> s.findSigneeByUsername(lehr, true))
+                    .ifPresent(this::setSignee);
+        }
         addParticipants(getSource(), null, gruppen);
     }
 

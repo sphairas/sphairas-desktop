@@ -19,6 +19,7 @@ import org.thespheres.betula.document.Marker;
 import org.thespheres.betula.document.Signee;
 import org.thespheres.betula.document.Template;
 import org.thespheres.betula.document.util.ContentValueEntry;
+import org.thespheres.betula.services.util.Signees;
 import org.thespheres.betula.services.ws.BetulaWebService;
 import org.thespheres.betula.services.ws.Paths;
 import org.thespheres.betula.services.ws.ServiceException;
@@ -62,7 +63,7 @@ public class SigneeUpdater<I extends ImportSigneeItem> extends AbstractUpdater<I
                 .filter(i -> filter == null || filter.accept(i))
                 .forEach(s -> {
                     final Map<String, String> uname = Optional.ofNullable(s.getUsername())
-                            .map(v -> Map.of(ImportSigneeItem.SIGNEE_UNAME_PROPERTY, v))
+                            .map(v -> Map.of(Signees.SIGNEE_UNAME_PROPERTY, v))
                             .orElse(null);
                     final ContentValueEntry<Signee> cve = ContentValueEntry.create(s.getSignee(), Signee.class, null, s.getName(), uname);
 //                    Entry<Signee, String> entry = new Entry<>(null, s.getSignee());
