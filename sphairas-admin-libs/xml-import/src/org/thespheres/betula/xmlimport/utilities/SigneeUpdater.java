@@ -7,6 +7,8 @@ package org.thespheres.betula.xmlimport.utilities;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.xml.ws.WebServiceException;
 import org.openide.util.NbBundle;
@@ -41,7 +43,7 @@ public class SigneeUpdater<I extends ImportSigneeItem> extends AbstractUpdater<I
     protected final ThreadLocal<Integer> numImport = new ThreadLocal();
     private final SigneeUpdater.Filter filter;
     protected Exception exception;
-    
+
     public SigneeUpdater(final ImportTarget config, final I[] items, final SigneeUpdater.Filter<I> f) {
         super(items);
         this.config = config;
@@ -59,7 +61,10 @@ public class SigneeUpdater<I extends ImportSigneeItem> extends AbstractUpdater<I
         Arrays.stream(items)
                 .filter(i -> filter == null || filter.accept(i))
                 .forEach(s -> {
-                    final ContentValueEntry<Signee> cve = ContentValueEntry.create(s.getSignee(), Signee.class, null, s.getName());
+                    final Map<String, String> uname = Optional.ofNullable(s.getUsername())
+                            .map(v -> Map.of(ImportSigneeItem.SIGNEE_UNAME_PROPERTY, v))
+                            .orElse(null);
+                    final ContentValueEntry<Signee> cve = ContentValueEntry.create(s.getSignee(), Signee.class, null, s.getName(), uname);
 //                    Entry<Signee, String> entry = new Entry<>(null, s.getSignee());
 //                    entry.setValue(s.getName());
 //                    rt.getChildren().add(entry);

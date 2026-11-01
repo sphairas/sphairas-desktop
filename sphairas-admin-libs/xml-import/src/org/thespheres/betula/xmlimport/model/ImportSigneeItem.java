@@ -20,6 +20,8 @@ public abstract class ImportSigneeItem extends ImportItem {
     public static final String PROP_SIGNEE = "signee";
     public static final String PROP_SOURCE_STATUS = "source.status";
     public static final String PROP_STATUS = "status";
+    public static final String SIGNEE_UNAME_PROPERTY = "UNAME";
+    
     protected Marker status;
     protected String sourceStatus;
     private boolean selected;
@@ -51,6 +53,10 @@ public abstract class ImportSigneeItem extends ImportItem {
 
     public Marker getStatus() {
         return status;
+    }
+
+    public String getUsername() {
+        return null;
     }
 
     public abstract Marker[] getMarkers();

@@ -51,6 +51,7 @@ class SchulconnexSigneeTableColumns {
         ret.add(new LehrendNodeColumn());
         ret.add(new SigneeColumn(product));
         ret.add(new StatusColumn());
+        ret.add(new SigneeUUIDColumn());
         return ret;
     }
 
@@ -79,7 +80,7 @@ class SchulconnexSigneeTableColumns {
             return false;
         }
     }
-    
+
     @NbBundle.Messages("SchulconnexSigneeTableColumns.LehrendNodeColumn.name=Lehrkraft")
     static class LehrendNodeColumn extends ImportTableColumn<SchulconnexSigneeItem, SchulconnexImportConfiguration, SchulconnexImportData<SchulconnexSigneeItem>, SchulconnexSigneeTableModel> {
 
@@ -181,7 +182,7 @@ class SchulconnexSigneeTableColumns {
         private final MarkerConvention[] conventions;
 
         StatusColumn() {
-            super("status", 400, 75);
+            super("status", 400, 40);
             conventions = new MarkerConvention[]{MarkerFactory.findConvention(SigneeStatus.NAME)};
         }
 
@@ -204,6 +205,24 @@ class SchulconnexSigneeTableColumns {
         public boolean setColumnValue(final SchulconnexSigneeItem item, final Object value) {
             item.setStatus((Marker) value);
             return false;
+        }
+    }
+
+    @NbBundle.Messages("SchulconnexSigneeTableColumns.columnName.uuid=UUID")
+    static final class SigneeUUIDColumn extends ImportTableColumn<SchulconnexSigneeItem, SchulconnexImportConfiguration, SchulconnexImportData<SchulconnexSigneeItem>, SchulconnexSigneeTableModel> {
+
+        SigneeUUIDColumn() {
+            super("uuid", 500, false, 300);
+        }
+
+        @Override
+        public String getDisplayName() {
+            return NbBundle.getMessage(SchulconnexSigneeTableColumns.class, "SchulconnexSigneeTableColumns.columnName.uuid");
+        }
+
+        @Override
+        public Object getColumnValue(final SchulconnexSigneeItem item) {
+            return item.getUUID();
         }
     }
 

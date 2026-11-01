@@ -6,6 +6,7 @@
 package org.thespheres.betula.document.util;
 
 import java.io.Serializable;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.thespheres.betula.Identity;
@@ -33,11 +34,15 @@ public final class ContentValueEntry<I extends Identity> extends Entry<I, Conten
         super();
     }
 
-    private ContentValueEntry(I id, Action action, String value) {
+    private ContentValueEntry(I id, Action action, String value, Map<String, String> add) {
         super(action, id, new XmlContentValue(value));
+        if (add != null && !add.isEmpty()) {
+            final XmlContentValue val = (XmlContentValue) getValue();
+            add.entrySet().forEach(e -> val.setContent(e.getKey(), e.getValue()));
+        }
     }
 
-    public static <C extends Identity> ContentValueEntry<C> create(C id, Class<C> type, Action action, String value) {
+    public static <C extends Identity> ContentValueEntry<C> create(C id, Class<C> type, Action action, String value, Map<String, String> additionalContent) {
         if (!(DocumentId.class == type
                 || StudentId.class == type
                 || UnitId.class == type
@@ -46,7 +51,11 @@ public final class ContentValueEntry<I extends Identity> extends Entry<I, Conten
                 || Signee.class == type)) {
             throw new IllegalArgumentException();
         }
-        return new ContentValueEntry(id, action, value);
+        return new ContentValueEntry(id, action, value, additionalContent);
+    }
+
+    public static <C extends Identity> ContentValueEntry<C> create(C id, Class<C> type, Action action, String value) {
+        return ContentValueEntry.create(id, type, action, value, null);
     }
 
     public String getStringValue() {

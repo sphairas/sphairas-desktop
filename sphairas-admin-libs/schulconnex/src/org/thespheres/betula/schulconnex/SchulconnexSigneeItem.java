@@ -94,6 +94,11 @@ public class SchulconnexSigneeItem extends ImportSigneeItem implements Comparabl
         return uuid;
     }
 
+    @Override
+    public String getUsername() {
+        return getUUID();
+    }
+
     public Person getPerson() {
         return person;
     }
