@@ -123,18 +123,18 @@ public class SchulconnexKursItem extends ImportTargetsItem {
             setAssessmentConvention(config.getAssessmentConventions()[0]);
         }
 
+        final Integer level = findLevel();
         // UnitId bestimmen, TargetDocumentIdBase bestimmen
         if (Typ.KURSUNTERRICHT.equals(typ)) {
-            generateUnitId(config, source.getGruppe().getBezeichnung(), getSubjectMarker());
+            generateUnitId(config, source.getGruppe().getBezeichnung(), getSubjectMarker(), level);
         } else {
-            generateUnitId(config, klasse.get(0).getGruppe().getBezeichnung(), null);
+            generateUnitId(config, klasse.get(0).getGruppe().getBezeichnung(), null, level);
         }
         existsUnit = Units.get(config.getWebServiceProvider().getInfo().getURL())
                 .map(u -> u.hasUnit(getUnitId()))
                 .orElse(Boolean.FALSE);
-        generateTargetDocumentIdBase(config);
+        updateTargetDocumentIdBase();
 
-        Integer level = findLevel();
         if (baseLevel != null) {
             setDeleteDate(ImportUtil.calculateDeleteDate(level, baseLevel, Month.JULY));
         } else {
@@ -206,10 +206,10 @@ public class SchulconnexKursItem extends ImportTargetsItem {
     }
 
     @NbBundle.Messages("SchulconnexKursItem.generateUnitId.warning.no.generated.unitid=Für die Schulconnex-Klasse \"{0}\" wurde keine Unit-ID gefunden!")
-    private void generateUnitId(final SchulconnexImportConfiguration cfg, final String name, final Marker subject) {
+    private void generateUnitId(final SchulconnexImportConfiguration cfg, final String name, final Marker subject, final Integer level) {
         try {
             final NameParser parser = createNameParser(cfg);
-            generatedUnitId = parser.findUnitId(name, subject, resolveReferenceYear());
+            generatedUnitId = parser.findUnitId(name, subject, resolveReferenceYear(), level);
         } catch (Exception ex) {
             generatedUnitId = null;
         }
@@ -224,10 +224,10 @@ public class SchulconnexKursItem extends ImportTargetsItem {
         }
     }
 
-    protected void generateTargetDocumentIdBase(final SchulconnexImportConfiguration cfg) {
+    protected void updateTargetDocumentIdBase() {
         final UnitId u = getUnitId();
         if (u != null) {
-            final NameParser pn2 = createNameParser(cfg);
+            final NameParser pn2 = createNameParser(getConfiguration());
             targetDocBase = pn2.translateUnitIdToTargetDocumentBase(u.getId(), getSubjectMarker(), null);
         }
     }
@@ -337,6 +337,7 @@ public class SchulconnexKursItem extends ImportTargetsItem {
         } else {
             super.setUnitId(unit);
         }
+        updateTargetDocumentIdBase();
     }
 
     @Override

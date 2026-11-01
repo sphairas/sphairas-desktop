@@ -67,7 +67,7 @@ public class NameParser {
 //                sb.append("klasse-");
 //                if (stufe == 10 && klasse.length() > 2) {
 //                    uid = resolveJg10uid(klasse);
-////                uid = klasse.length() > 3 ? klasse.substring(3) : "?";
+    ////                uid = klasse.length() > 3 ? klasse.substring(3) : "?";
 //                } else {
 //                    uid = klasse.toLowerCase(Locale.GERMANY).substring(1);
 //                }
@@ -150,12 +150,17 @@ public class NameParser {
                 final int stufe = Integer.parseInt(m.group());
                 if (stufe >= 1 && (checkLevel == null || checkLevel == stufe)) {
                     final String raw = StringUtils.trimToNull(name.substring(m.end()));
-                    final String ident = StringUtils.removePattern(raw, "\\A[\\.\\-]*");
+                    //Remove any leading periods (.) or hyphens (-) from the beginning of the raw string,
+                    //then replace any sequence of whitespace characters with a single underscore
+                    final String ident = StringUtils.removePattern(raw, "\\A[\\.\\-]*").replaceAll("\\s+", "_");
                     uid = createId(stufe, referenzjahr, ident, subject);
                 }
             } else if (checkLevel != null && checkLevel >= baseLevel) {//No starting number
                 final int stufe = checkLevel;
-                uid = createId(stufe, referenzjahr, name, subject);
+                //Remove any periods (.) or hyphens (-) from the name string,
+                //then replace any sequence of whitespace characters with a single underscore
+                final String ident = StringUtils.removePattern(name, "[\\.\\-]*").replaceAll("\\s+", "_");
+                uid = createId(stufe, referenzjahr, ident, subject);
             }
         }
         if (uid != null) {
