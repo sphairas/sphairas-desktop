@@ -126,9 +126,12 @@ public class SchulconnexKursItem extends ImportTargetsItem {
         final Integer level = findLevel();
         // UnitId bestimmen, TargetDocumentIdBase bestimmen
         if (Typ.KURSUNTERRICHT.equals(typ)) {
-            generateUnitId(config, source.getGruppe().getBezeichnung(), getSubjectMarker(), level);
+            //Der Identifier soll später als Kennung (in moin.schule vorhanden) konfiguriert werden können
+            //Muss als Schulconnex-Anbieterattribut bereitgestellt werden.
+            final String kennung = null; //source.getGruppe().get
+            generateUnitId(config, source.getGruppe().getBezeichnung(), getSubjectMarker(), level, kennung);
         } else {
-            generateUnitId(config, klasse.get(0).getGruppe().getBezeichnung(), null, level);
+            generateUnitId(config, klasse.get(0).getGruppe().getBezeichnung(), null, level, null);
         }
         existsUnit = Units.get(config.getWebServiceProvider().getInfo().getURL())
                 .map(u -> u.hasUnit(getUnitId()))
@@ -206,10 +209,10 @@ public class SchulconnexKursItem extends ImportTargetsItem {
     }
 
     @NbBundle.Messages("SchulconnexKursItem.generateUnitId.warning.no.generated.unitid=Für die Schulconnex-Klasse \"{0}\" wurde keine Unit-ID gefunden!")
-    private void generateUnitId(final SchulconnexImportConfiguration cfg, final String name, final Marker subject, final Integer level) {
+    private void generateUnitId(final SchulconnexImportConfiguration cfg, final String name, final Marker subject, final Integer level, final String kennung) {
         try {
             final NameParser parser = createNameParser(cfg);
-            generatedUnitId = parser.findUnitId(name, subject, resolveReferenceYear(), level);
+            generatedUnitId = parser.findUnitId(name, subject, resolveReferenceYear(), level, kennung);
         } catch (Exception ex) {
             generatedUnitId = null;
         }

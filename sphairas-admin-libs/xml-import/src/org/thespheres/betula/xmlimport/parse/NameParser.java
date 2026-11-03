@@ -106,22 +106,26 @@ public class NameParser {
 //        return new UnitId(authority, sb.toString());
 //    }
     public UnitId findUnitId(String resolvedName, int referenzjahr) {
-        return findUnitIdImpl(resolvedName, null, referenzjahr, null);
+        return findUnitIdImpl(resolvedName, null, referenzjahr, null, null);
     }
 
     public UnitId findUnitId(String resolvedName, int referenzjahr, int levelToCheck) {
-        return findUnitIdImpl(resolvedName, null, referenzjahr, (Integer) levelToCheck);
+        return findUnitIdImpl(resolvedName, null, referenzjahr, (Integer) levelToCheck, null);
     }
 
     public UnitId findUnitId(String resolvedName, Marker subject, int referenzjahr) {
-        return findUnitIdImpl(resolvedName, subject, referenzjahr, null);
+        return findUnitIdImpl(resolvedName, subject, referenzjahr, null, null);
     }
 
     public UnitId findUnitId(String resolvedName, Marker subject, int referenzjahr, int levelToCheck) {
-        return findUnitIdImpl(resolvedName, subject, referenzjahr, (Integer) levelToCheck);
+        return findUnitIdImpl(resolvedName, subject, referenzjahr, (Integer) levelToCheck, null);
     }
 
-    private UnitId findUnitIdImpl(final String resolvedName, final Marker subject, final int referenzjahr, final Integer checkLevel) {
+    public UnitId findUnitId(String resolvedName, Marker subject, int referenzjahr, int levelToCheck, final String identifier) {
+        return findUnitIdImpl(resolvedName, subject, referenzjahr, (Integer) levelToCheck, null);
+    }
+
+    private UnitId findUnitIdImpl(final String resolvedName, final Marker subject, final int referenzjahr, final Integer checkLevel, final String identifier) {
         final String name = StringUtils.trimToEmpty(resolvedName);
         if (importScripts != null) {
             final String suid = importScripts.parseUnitName(resolvedName, subject, referenzjahr, checkLevel);
@@ -149,17 +153,27 @@ public class NameParser {
             if (m.find()) {
                 final int stufe = Integer.parseInt(m.group());
                 if (stufe >= 1 && (checkLevel == null || checkLevel == stufe)) {
-                    final String raw = StringUtils.trimToNull(name.substring(m.end()));
-                    //Remove any leading periods (.) or hyphens (-) from the beginning of the raw string,
-                    //then replace any sequence of whitespace characters with a single underscore
-                    final String ident = StringUtils.removePattern(raw, "\\A[\\.\\-]*").replaceAll("\\s+", "_");
+                    final String ident;
+                    if (identifier == null) {
+                        final String raw = StringUtils.trimToNull(name.substring(m.end()));
+                        //Remove any leading periods (.) or hyphens (-) from the beginning of the raw string,
+                        //then replace any sequence of whitespace characters with a single underscore
+                        ident = StringUtils.removePattern(raw, "\\A[\\.\\-]*").replaceAll("\\s+", "_");
+                    } else {
+                        ident = identifier;
+                    }
                     uid = createId(stufe, referenzjahr, ident, subject);
                 }
             } else if (checkLevel != null && checkLevel >= baseLevel) {//No starting number
                 final int stufe = checkLevel;
-                //Remove any periods (.) or hyphens (-) from the name string,
-                //then replace any sequence of whitespace characters with a single underscore
-                final String ident = StringUtils.removePattern(name, "[\\.\\-]*").replaceAll("\\s+", "_");
+                final String ident;
+                if (identifier == null) {
+                    //Remove any periods (.) or hyphens (-) from the name string,
+                    //then replace any sequence of whitespace characters with a single underscore
+                    ident = StringUtils.removePattern(name, "[\\.\\-]*").replaceAll("\\s+", "_");
+                } else {
+                    ident = identifier;
+                }
                 uid = createId(stufe, referenzjahr, ident, subject);
             }
         }
