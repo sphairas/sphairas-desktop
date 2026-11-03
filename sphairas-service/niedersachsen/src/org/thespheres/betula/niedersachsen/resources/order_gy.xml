@@ -79,6 +79,9 @@ and open the template in the editor.
     </fach>
     <fach position="5060" >
         <marker convention="niedersachsen.unterricht.faecher" id="katholischereligion" />
+    </fach>    
+    <fach position="5070" >
+        <marker convention="niedersachsen.unterricht.faecher" id="christlichereligion" />
     </fach>
     <fach position="5100" >
         <marker convention="niedersachsen.unterricht.faecher" id="wertenormen" />
