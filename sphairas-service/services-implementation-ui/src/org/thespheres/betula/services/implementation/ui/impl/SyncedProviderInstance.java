@@ -63,7 +63,6 @@ public class SyncedProviderInstance {
     private static final Map<String, SyncedProviderInstance> INSTANCES = new ConcurrentHashMap<>();
     private static boolean initialized;
     public static final String HOST_PROP = "host";
-    public static final String SERVER_VERSION_PROP = "server.version";
     private final String provider;
     private final Path baseDir;
     private final FilePropertiesImpl[] properties = new FilePropertiesImpl[]{null};
@@ -145,7 +144,7 @@ public class SyncedProviderInstance {
     @NbBundle.Messages("checkProvider.message=Remote ({0}) and local ({1}) names not equal.")
     private void checkProvider() {
         try {
-            final String name = fetchProviderInfoFromServer(p -> URI.create(URLs.providerName(p)), false);
+            final String name = fetchProviderInfoFromServer(p -> URI.create(URLs.providerName(p)), URLs.PROVIDER_NAME_INFO, "provider.name.info.legacy", false);
             if (name != null && !name.equals(provider)) {
                 final String msg = NbBundle.getMessage(SyncedProviderInstance.class, "checkProvider.message", name, provider);
                 throw new IllegalStateException(msg);
@@ -157,7 +156,7 @@ public class SyncedProviderInstance {
 
     private void fetchServerVersion() {
         try {
-            final String version = fetchProviderInfoFromServer(p -> URI.create(URLs.serverVersion(p)), true);
+            final String version = fetchProviderInfoFromServer(p -> URI.create(URLs.serverVersion(p)), URLs.SERVER_VERSION, "server.version.legacy", true);
             if (version != null) {
                 this.serverVersion = version;
             }
@@ -166,7 +165,8 @@ public class SyncedProviderInstance {
         }
     }
 
-    private String fetchProviderInfoFromServer(final Function<LocalProperties, URI> uri, final boolean ignoreNotFound) throws IOException {
+    private String fetchProviderInfoFromServer(final Function<LocalProperties, URI> uri, final String overrideKey,
+            final String legacyKey, final boolean ignoreNotFound) throws IOException {
         //We can't use this.findLocalFileProperties() because INSTANCES aren't initialized yet
         final Path user = baseDir.resolve(LocalFileProperties.USER_PROPERTIES_FILE);
         final Map<String, String> m = Files.readAllLines(user).stream()
@@ -223,7 +223,13 @@ public class SyncedProviderInstance {
             }
 
         }
-        return HttpUtilities.get(new Web(), uri.apply(prop), null, ignoreNotFound);
+        final Web web = new Web();
+        final String result = HttpUtilities.get(web, uri.apply(prop), null, prop.getProperty(overrideKey) == null || ignoreNotFound);
+        if (result != null || prop.getProperty(overrideKey) != null) {
+            return result;
+        }
+        final URI legacy = URI.create(NbBundle.getMessage(URLs.class, legacyKey, prop.getProperty(URLs.HOST)));
+        return HttpUtilities.get(web, legacy, null, ignoreNotFound);
     }
 
     public String getProvider() {
@@ -294,7 +300,7 @@ public class SyncedProviderInstance {
     }
 
     public <W extends WebProvider> W findWebProvider(final Class<W> subType) {
-        if ("2".equals(serverVersion)) {
+        if (URLs.serverVersionAtLeast(serverVersion, "2")) {
             if (subType.isAssignableFrom(AdminRESTProvider.class)) {
                 if (serviceProvider[0] == null) {
                     serviceProvider[0] = AdminRESTProvider.create(provider, findLocalFileProperties());

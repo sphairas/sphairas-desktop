@@ -36,9 +36,14 @@ import org.thespheres.betula.services.ui.web.SSLUtil;
 public class BaseNewProviderAction {
 
     protected String newProvider(final String host, final String certName) throws IOException {
-        final String base = NbBundle.getMessage(URLs.class, "resources.dav.base.url", host);
-        final Properties prop = fetchProperties(base, certName);
-        String name = retrieveProviderName(host, certName);
+        String base = NbBundle.getMessage(URLs.class, "resources.dav.base.url", host);
+        Properties prop = fetchProperties(base, certName, true);
+        final boolean standalone = prop != null;
+        if (!standalone) {
+            base = NbBundle.getMessage(URLs.class, "resources.dav.base.url.legacy", host);
+            prop = fetchProperties(base, certName, false);
+        }
+        String name = retrieveProviderName(host, certName, standalone);
         if (StringUtils.isEmpty(name)) {
             name = prop.getProperty("providerURL");
         }
@@ -63,8 +68,9 @@ public class BaseNewProviderAction {
         return provider;
     }
 
-    String retrieveProviderName(final String host, final String certName) throws IOException {
-        final String url = NbBundle.getMessage(URLs.class, "provider.name.info", host);
+    String retrieveProviderName(final String host, final String certName, final boolean standalone) throws IOException {
+        final String url = NbBundle.getMessage(URLs.class,
+                standalone ? "provider.name.info" : "provider.name.info.legacy", host);
         final URI uri = URI.create(url);
         final SSLContext ssl = SSLUtil.createSSLContext(certName);
         class Access implements WebProvider.SSL {
@@ -113,7 +119,7 @@ public class BaseNewProviderAction {
         HttpUtilities.get(new Access(), uri, (lm, is) -> Files.copy(is, dir.resolve("layer.xml"), StandardCopyOption.REPLACE_EXISTING), null, false);
     }
 
-    Properties fetchProperties(final String base, final String certName) throws IOException {
+    Properties fetchProperties(final String base, final String certName, final boolean ignoreNotFound) throws IOException {
         final String url = base + "default.properties";
         final URI uri = URI.create(url);
         final SSLContext ssl = SSLUtil.createSSLContext(certName);
@@ -137,15 +143,9 @@ public class BaseNewProviderAction {
         }
         final Properties ret = HttpUtilities.get(new Access(), uri, (lm, is) -> {
             final Properties p = new Properties();
-            try {
-                p.load(is);
-            } catch (IOException ex) {
-                return null;
-            } finally {
-                is.close();
-            }
+            p.load(is);
             return p;
-        }, null, false);
+        }, null, ignoreNotFound);
         return ret;
     }
 

@@ -311,6 +311,7 @@ public class HttpUtilities {
         if (sc == HttpStatus.SC_NOT_MODIFIED && ifModifiedSince != null) {
             return null;
         } else if (ignoreNotFound && sc == HttpStatus.SC_NOT_FOUND) {
+            response.close();
             return null;
         } else if (sc != HttpStatus.SC_OK) {
             throw new IOException("Unexpected response status: " + response.getStatusLine() + " at: " + uri);
@@ -354,6 +355,7 @@ public class HttpUtilities {
         if (sc == HttpStatus.SC_NOT_MODIFIED && ifModifiedSince != null) {
             return null;
         } else if (ignoreNotFound && sc == HttpStatus.SC_NOT_FOUND) {
+            response.close();
             return null;
         } else if (sc != HttpStatus.SC_OK) {
             throw new IOException("Unexpected response status: " + response.getStatusLine() + " at: " + uri);

@@ -7,6 +7,7 @@ package org.thespheres.betula.admin.database.service;
 
 import org.thespheres.betula.services.LocalFileProperties;
 import org.thespheres.betula.services.ProviderInfo;
+import org.thespheres.betula.services.ui.util.dav.URLs;
 
 /**
  *
@@ -15,8 +16,7 @@ import org.thespheres.betula.services.ProviderInfo;
 public class AdminServiceProviders {
 
     public static AbstractDbAdminServiceProvider create(ProviderInfo pi) {
-        String serverVersion = LocalFileProperties.find(pi).getProperty("server.version", "1");
-        if ("2".equals(serverVersion)) {
+        if (URLs.serverVersionAtLeast(LocalFileProperties.find(pi), "2")) {
             return DbAdminRESTProvider.create(pi);
         } else {
             return DbAdminServiceProvider.create(pi);

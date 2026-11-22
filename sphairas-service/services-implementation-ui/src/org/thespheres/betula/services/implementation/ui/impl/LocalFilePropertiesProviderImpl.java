@@ -19,6 +19,7 @@ import org.thespheres.betula.services.LocalFileProperties;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.adminconfig.ProviderSyncEvent;
 import org.thespheres.betula.ui.util.PlatformUtil;
+import org.thespheres.betula.services.ui.util.dav.URLs;
 
 /**
  *
@@ -46,7 +47,7 @@ public class LocalFilePropertiesProviderImpl implements LocalFileProperties.Prov
             super(name, Files.newInputStream(path, StandardOpenOption.CREATE));
             this.location = path;
 //            this.provider = provider;
-            addProperty(SyncedProviderInstance.SERVER_VERSION_PROP, provider.getServerVersion());
+            addProperty(URLs.DETECTED_SERVER_VERSION, provider.getServerVersion());
             if (parent != null) {
                 setParent(LocalFileProperties.find(parent));
             }
