@@ -13,6 +13,7 @@ import org.thespheres.betula.database.DbAdminService;
 import org.thespheres.betula.services.LocalProperties;
 import org.thespheres.betula.services.ProviderInfo;
 import org.thespheres.betula.services.ui.util.AppProperties;
+import org.thespheres.betula.services.ui.util.dav.URLs;
 
 /**
  *
@@ -39,14 +40,15 @@ public class DbAdminRESTProvider extends AbstractDbAdminServiceProvider {
             final int port = Optional.ofNullable(attr.getProperty(PORT_PROP))
                     .map(Integer::parseInt)
                     .orElse(DEFAULT_PORT);
-            base = createBaseURI(attr.getProperty("host"), port);
+            base = createBaseURI(attr.getProperty("host"), port, URLs.serverVersionAtLeast(attr, "2.1"));
         }
         final String certAlias = AppProperties.privateKeyAlias(attr, provider.getURL());
         return new DbAdminRESTProvider(provider, base, certAlias);
     }
 
-    static URI createBaseURI(final String host, final int port) {
-        return URI.create("https://" + host + ":" + Integer.toString(port) + "/admins/service/api/db/");
+    static URI createBaseURI(final String host, final int port, final boolean standalone) {
+        return URI.create("https://" + host + ":" + Integer.toString(port)
+                + (standalone ? "/service/api/db/" : "/admins/service/api/db/"));
     }
 
     @Override
